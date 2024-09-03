@@ -88,7 +88,7 @@ geojsons["East Coast ZEV Corridor"] = os.path.join(
 geojsons["Midwest ZEV Corridor"] = os.path.join(geojson_directory, "midwest.geojson")
 geojsons["Houston to LA H2 Corridor"] = os.path.join(geojson_directory, "h2la.geojson")
 geojsons["I-710 EV Corridor"] = os.path.join(geojson_directory, "la_i710.geojson")
-geojsons["Northeast EV Corridor"] = os.path.join(geojson_directory, "northeast.geojson")
+geojsons["Northeast Electric Highways Study"] = os.path.join(geojson_directory, "northeast.geojson")
 geojsons["Bay Area EV Roadmap"] = os.path.join(geojson_directory, "bayarea.geojson")
 geojsons["Salt Lake City Region EV Plan"] = os.path.join(
     geojson_directory, "saltlake.geojson"

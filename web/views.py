@@ -109,7 +109,7 @@ geojsons["State-Level Incentives and Regulations"] = os.path.join(
 )
 
 # Truck charger layers
-geojsons["Truck Stop Charging"] = os.path.join(
+geojsons["Savings from Pooled Charging Infrastructure"] = os.path.join(
     geojson_directory,
     "infrastructure_pooling_thought_experiment/Truck_Stop_Parking_Along_Interstate_with_min_chargers_range_200.0_chargingtime_4.0_maxwait_0.5.geojson",
 )

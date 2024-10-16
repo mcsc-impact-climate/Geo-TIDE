@@ -434,7 +434,7 @@ document.body.addEventListener('click', function(event) {
     createAttributeDropdown(key);
 
     // Create additional dropdown menus for the truck charging layer
-    if(key === "Truck Stop Charging") {
+    if(key === "Savings from Pooled Charging Infrastructure") {
         createChargingDropdowns(key);
     }
   }

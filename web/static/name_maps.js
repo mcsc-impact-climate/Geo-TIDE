@@ -13,7 +13,7 @@ export let selectedGradientTypes = {
   'Planned Electrolyzers': 'size',
   'Hydrogen from Refineries': 'size',
   'State-Level Incentives and Regulations': 'color',
-  'Truck Stop Charging': 'size',
+  'Savings from Pooled Charging Infrastructure': 'size',
   'Lifecycle Truck Emissions': 'color',
   'Total Cost of Truck Ownership': 'color',
   'Grid Generation and Capacity': 'color',
@@ -35,7 +35,7 @@ export const availableGradientAttributes = {
   'Planned Electrolyzers': ['Power_kW'],
   'Hydrogen from Refineries': ['Cap_MMSCFD'],
   'State-Level Incentives and Regulations': ['all', 'Biodiesel', 'Ethanol', 'Electricit', 'Hydrogen', 'Natural Ga', 'Propane', 'Renewable'],// 'Emissions'],
-  'Truck Stop Charging': ['Tot Trips', 'CPD', 'Half_CPD', 'Min_Charge', 'Half_Charg', 'Min_Ratio', 'Half_Ratio', 'Col_Save'],
+  'Savings from Pooled Charging Infrastructure': ['Tot Trips', 'CPD', 'Half_CPD', 'Min_Charge', 'Half_Charg', 'Min_Ratio', 'Half_Ratio', 'Col_Save'],
   'Lifecycle Truck Emissions': ['C_mi_tot', 'C_mi_grid'],
   'Total Cost of Truck Ownership': ['$_mi_tot', 'dies_tot', 'diff_tot', 'perc_tot'],
   'Grid Generation and Capacity': ['Ann_Gen', 'Cap_MW', 'Ann_Cap', 'Ann_Diff', 'Ann_Rat'],
@@ -57,7 +57,7 @@ export let selectedGradientAttributes = {
   'Planned Electrolyzers': 'Power_kW',
   'Hydrogen from Refineries': 'Cap_MMSCFD',
   'State-Level Incentives and Regulations': 'all',
-  'Truck Stop Charging': 'Tot Trips',
+  'Savings from Pooled Charging Infrastructure': 'Tot Trips',
   'Lifecycle Truck Emissions': 'C_mi_tot',
   'Total Cost of Truck Ownership': '$_mi_tot',
   'Grid Generation and Capacity': 'Ann_Gen',
@@ -105,7 +105,7 @@ export const legendLabels = {
 //    'Emissions': 'Incentives and Regulations (Emissions)',
  },
     
-  'Truck Stop Charging': {
+  'Savings from Pooled Charging Infrastructure': {
     'Tot Trips': 'Trucks Passing Per Day',
     'CPD': 'Truck Charges Per Day (Full Fleet)',
     'Half_CPD': 'Truck Charges Per Day (Half Fleet)',
@@ -382,7 +382,7 @@ export const geojsonColors = {
   'LNG Stations': 'orange',
   'CNG Stations': 'purple',
   'LPG Stations': 'cyan',
-  'Truck Stop Charging': 'red',
+  'Savings from Pooled Charging Infrastructure': 'red',
   'Principal Ports': 'purple',
 };
 
@@ -417,7 +417,7 @@ export const geojsonTypes = {
   'Truck Stop Locations': ['point', 'other'],
   //'DOE Corridors': ['point', 'other'],
   'Principal Ports': ['point', 'other'],
-  'Truck Stop Charging': ['point', 'other'],
+  'Savings from Pooled Charging Infrastructure': ['point', 'other'],
   'Lifecycle Truck Emissions': 'area',
   'Total Cost of Truck Ownership': 'area',
   'Grid Generation and Capacity': 'area',
@@ -452,7 +452,7 @@ export const dataInfo = {
   'Truck Stop Locations': "Locations of truck stops parking facilities in the U.S. Obtained from the DOT Bureau of Transportation Statistics's <a href='https://geodata.bts.gov/datasets/usdot::truck-stop-parking'>Truck Stop Parking database</a> (<a href='https://opendata.arcgis.com/api/v3/datasets/0849b1bd4a5e4b4e831877b7c25d6062_0/downloads/data?format=shp&spatialRefId=3857&where=1%3D1'>link to download</a>)",
   //'DOE corridors': "Locations of truck stops parking facilities in the U.S. Obtained from the DOT Bureau of Transportation Statistics's <a href='https://geodata.bts.gov/datasets/usdot::truck-stop-parking'>Truck Stop Parking database</a> (<a href='https://opendata.arcgis.com/api/v3/datasets/0849b1bd4a5e4b4e831877b7c25d6062_0/downloads/data?format=shp&spatialRefId=3857&where=1%3D1'>link to download</a>)",
   'Principal Ports': "Locations of principal ports in the US. Obtained from <a href='https://geodata.bts.gov/datasets/usdot::principal-ports/'>USDOT BTS</a> (<a href='https://opendata.arcgis.com/api/v3/datasets/e3b6065cce144be8a13a59e03c4195fe_1/downloads/data?format=shp&spatialRefId=4326&where=1%3D1'>link to download</a>).",
-  'Truck Stop Charging': "These layers are used to visualize an analysis of theoretical savings from pooled investment in charging infrastructure at selected U.S. truck stops. The analysis integrates truck stop locations in the U.S. (see 'Truck Stop Locations' layer for details), along with highway freight flow data from the Freight Analysis Framework - see 'Highway Flows (Interstate)' layer for details.",
+  'Savings from Pooled Charging Infrastructure': "These layers are used to visualize an analysis <a href='https://dspace.mit.edu/handle/1721.1/153617'>presented in this publication</a> of theoretical savings from pooled investment in charging infrastructure at selected U.S. truck stops. The analysis integrates truck stop locations in the U.S. (see 'Truck Stop Locations' layer for details), along with highway freight flow data from the Freight Analysis Framework - see 'Highway Flows (Interstate)' layer for details.",
   'Lifecycle Truck Emissions': "Estimated lifecycle emissions per mile for the Tesla Semi due to charging and battery manufacturing. Charging emissions are based on the CO2e emission intensity of the grid balancing authority region. Emissions are calculated using the model developed by <a href='https://chemrxiv.org/engage/chemrxiv/article-details/656e4691cf8b3c3cd7c96810'>Sader et al.</a>, calibrated to <a href='https://runonless.com/run-on-less-electric-depot-reports/'>NACFE Run on Less data</a> for the Tesla Semi from the 2023 PepsiCo Semi pilot.<br><br><a href='https://github.com/mcsc-impact-climate/Green_Trucking_Analysis'>Link to Git repo with code used to produce these layers</a>",
   'Total Cost of Truck Ownership': "Estimated lifecycle total cost of ownership per mile for the Tesla Semi due to truck purchase, charging, labor, maintenance, insurance and other operating costs. Charging costs are evaluated using state-level commercial electricity price and demand charge. Costs are calculated using the model developed by <a href='https://chemrxiv.org/engage/chemrxiv/article-details/656e4691cf8b3c3cd7c96810'>Sader et al.</a>, calibrated to <a href='https://runonless.com/run-on-less-electric-depot-reports/'>NACFE Run on Less data</a> for the Tesla Semi from the 2023 PepsiCo Semi pilot.<br><br><a href='https://github.com/mcsc-impact-climate/Green_Trucking_Analysis'>Link to Git repo with code used to produce these layers</a>",
   'Grid Generation and Capacity': "Grid electricity generation and net summer power capacity by state for 2022, along with estimated theoretical maximum generation capacity and its difference and ratio relative to the actual grid electricity generation. Theoretical maximum electricity generation capacity is obtained under the assumption that the grid operates at its net summer power capacity year-round. <br><br>Data is obtained from the EIA's <a href='https://www.eia.gov/electricity/data/state/'>state-level electricity database</a>.<br><a href='https://www.eia.gov/electricity/data/state/annual_generation_state.xls'>Link to download annual generation data</a><br><a href='https://www.eia.gov/electricity/data/state/existcapacity_annual.xlsx'>Link to download net summer power capacity data</a>",

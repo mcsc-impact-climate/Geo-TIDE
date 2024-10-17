@@ -193,4 +193,4 @@ function isLineStringLayer(layer) {
 
 
 
-export { createStyleFunction, isPolygonLayer, isPointLayer, isLineStringLayer };
+export { createStyleFunction, isPolygonLayer, isPointLayer, isLineStringLayer, assignColorToLayer };

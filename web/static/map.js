@@ -1,6 +1,7 @@
-import { createStyleFunction, isPolygonLayer, isPointLayer, isLineStringLayer } from './styles.js';
+import { createStyleFunction, isPolygonLayer, isPointLayer, isLineStringLayer, assignColorToLayer } from './styles.js';
 import { getSelectedLayers, getSelectedLayersValues, showStateRegulations, getAreaLayerName } from './ui.js';
 import { legendLabels, selectedGradientAttributes, geojsonColors, selectedGradientTypes, dataInfo } from './name_maps.js';
+import { uploadedGeojsonNames } from './main.js'
 
 var vectorLayers = [];
 var map;
@@ -208,7 +209,7 @@ async function loadLayer(layerName) {
         features: features,
       }),
       style: createStyleFunction(layerName),
-      key: layerName.split(".")[0], // Set the key property with the geojson name without extension
+      key: layerName//.split(".")[0], // Set the key property with the geojson name without extension // DMM: Try setting the key to the full layer name
     });
 
     // Add the layer to the map and cache it
@@ -275,13 +276,6 @@ async function updateSelectedLayers() {
 
   const selectedLayers = getSelectedLayers();
 
-  const uploadedLayerDropdown = document.getElementById("uploaded-layer-dropdown");
-  const uploadedLayers = Array.from(uploadedLayerDropdown.selectedOptions).map(option => option.value);
-  selectedLayers.push(...uploadedLayers);  // Add uploaded layers to the selectedLayers array
-  
-
-  console.log("Selected layers:", selectedLayers);
-
   // Create an array of promises for loading layers
   const loadingPromises = [];
 
@@ -327,6 +321,13 @@ async function updateSelectedLayers() {
   for (const layerName of selectedLayers) {
     map.addLayer(layerCache[layerName]);
   }
+  console.log("Selected layers:", selectedLayers);
+}
+
+function reverseMapping(originalMap) {
+  return Object.fromEntries(
+    Object.entries(originalMap).map(([key, value]) => [value, key])
+  );
 }
 
 function updateLegend() {
@@ -352,8 +353,8 @@ function updateLegend() {
   vectorLayers.forEach((layer) => {
     const layerName = layer.get("key"); // Get the key property
 
-    // Check if this layer is in the list of selected layers or if "All Layers" is selected
-    if (selectedLayers.includes(layerName) || selectedLayers.includes("all")) {
+    // Check if this layer is in the list of selected layers
+    if (selectedLayers.includes(layerName)) {
       const layerDiv = document.createElement("div");
       layerDiv.style.display = "flex";
       layerDiv.style.alignItems = "center";
@@ -375,7 +376,16 @@ function updateLegend() {
       const ctx = canvas.getContext("2d");
 
       const useGradient = layerName in selectedGradientAttributes;
-      const layerColor = geojsonColors[layerName] || 'blue'; // Fetch color from dictionary, or default to blue
+        
+      // If the layer is pre-defined, set it to its defined color, or default to yellow
+      let layerColor = '';
+      if (layerName in dataInfo) {
+          layerColor = geojsonColors[layerName] || 'yellow'; // Fetch color from dictionary, or default to yellow
+      }
+      // Otherwise, set the color dynamically
+      else {
+          layerColor = assignColorToLayer(layerName);
+      }
       let attributeName = '';
       let gradientType = '';
       if (useGradient) {
@@ -578,8 +588,11 @@ function updateLegend() {
 
       symbolLabelContainer.appendChild(symbolContainer);  // Append symbolContainer to symbolLabelContainer
 
+      // Make a title for the legend entry
       const title = document.createElement("div");
+      const uploadedGeojsonNames_reverse = reverseMapping(uploadedGeojsonNames)
 
+      // First, check if the layer is included in the pre-defined legend labels
       if (layerName in legendLabels) {
         if (typeof legendLabels[layerName] === 'string') {
           title.innerText = legendLabels[layerName];
@@ -587,7 +600,13 @@ function updateLegend() {
         else if (isDictionary(legendLabels[layerName])) {
           title.innerText = legendLabels[layerName][selectedGradientAttributes[layerName]];
         }
-        } else {
+      }
+      // Next, check if it's included the uploaded layers
+      else if (layerName in uploadedGeojsonNames_reverse) {
+          title.innerText = legendLabels[layerName] = uploadedGeojsonNames_reverse[layerName];
+      }
+      // Otherwise, just use the layer name directly
+      else {
         title.innerText = layerName;
         }
       title.style.marginLeft = "20px";

@@ -161,6 +161,11 @@ function getSelectedLayers() {
       selectedLayerNames.push(option.text); // Push the text of the selected option
     }
   }
+  
+  // Get selected uploaded layers
+  const uploadedLayerDropdown = document.getElementById("uploaded-layer-dropdown");
+  const uploadedLayers = Array.from(uploadedLayerDropdown.selectedOptions).map(option => option.value);
+  selectedLayerNames.push(...uploadedLayers);  // Add uploaded layers to the selectedLayers array
   return selectedLayerNames;
 }
 

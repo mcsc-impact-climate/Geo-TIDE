@@ -1,6 +1,6 @@
 import { createStyleFunction, isPolygonLayer, isPointLayer, isLineStringLayer } from './styles.js';
 import { getSelectedLayers, getSelectedLayersValues, showStateRegulations, getAreaLayerName } from './ui.js';
-import { legendLabels, selectedGradientAttributes, geojsonColors, selectedGradientTypes } from './name_maps.js';
+import { legendLabels, selectedGradientAttributes, geojsonColors, selectedGradientTypes, dataInfo } from './name_maps.js';
 
 var vectorLayers = [];
 var map;
@@ -34,7 +34,6 @@ function initMap() {
   map.on('pointermove', handleMapHover);
   map.on('singleclick', handleMapClick);
   let lastFeature = null;
-
 }
 
 // Attach the updateSelectedLayers function to the button click event
@@ -42,6 +41,7 @@ async function attachEventListeners() {
   const applyButton = document.getElementById("apply-button");
   applyButton.addEventListener('click', async () => {
     await updateSelectedLayers(); // Wait for updateSelectedLayers to complete
+    //await updateSelectedLayers();
     updateLegend(); // Now, call updateLegend after updateSelectedLayers is done
   });
 
@@ -57,7 +57,7 @@ async function attachEventListeners() {
     // Use select2's specific events for handling changes
     uploadedLayerDropdown.on('select2:select select2:unselect', async () => {
       console.log('Uploaded layer dropdown change detected via select2');
-      await updateSelectedLayers({ includeUploaded: true }); // Call function to update layers based on uploaded files
+      await updateSelectedLayers(); // Call function to update layers based on uploaded files
       updateLegend(); // Update the legend to include uploaded layers
     });
   } else {
@@ -143,7 +143,7 @@ function compareLayers(a, b) {
 }
 
 // Function to load a specific layer from the server
-async function loadLayer(layerName, filename='') {
+async function loadLayer(layerName) {
   const layerMap=getSelectedLayersValues();
 //  console.log(layerMap.get(layerName))
 
@@ -151,14 +151,14 @@ async function loadLayer(layerName, filename='') {
   //const url = `/get_geojson/${layerName}`;
   let url = `${STORAGE_URL}${layerMap.get(layerName)}`
 
-  console.log(url)
-  // If needed, update the filename in the url
-  if (filename !== '') {
+  // If the layer name isn't in the data info, assume it's user uploaded and construct the url accordingly
+  if (!(layerName in dataInfo)) {
     const lastSlashIndex = url.lastIndexOf('/');
     const dir = url.substring(0, lastSlashIndex + 1);
-    url = dir + filename;
-    console.log(url)
+    url = dir + layerName;
   }
+    
+  console.log("Download url: ", url)
 
   let spinner = document.getElementById('lds-spinner')
   try {
@@ -254,17 +254,14 @@ function setLayerVisibility(layerName, isVisible) {
 }
 
 // Function to update the selected layers on the map
-async function updateSelectedLayers(options = {}) {
-  const { includeUploaded = false } = options;  // Destructure the options object with a default value
+async function updateSelectedLayers() {
 
   const selectedLayers = getSelectedLayers();
 
-  // If includeUploaded is true, add the selected layers from the uploadedLayerDropdown
-  if (includeUploaded) {
-    const uploadedLayerDropdown = document.getElementById("uploaded-layer-dropdown");
-    const uploadedLayers = Array.from(uploadedLayerDropdown.selectedOptions).map(option => option.value);
-    selectedLayers.push(...uploadedLayers);  // Add uploaded layers to the selectedLayers array
-  }
+  const uploadedLayerDropdown = document.getElementById("uploaded-layer-dropdown");
+  const uploadedLayers = Array.from(uploadedLayerDropdown.selectedOptions).map(option => option.value);
+  selectedLayers.push(...uploadedLayers);  // Add uploaded layers to the selectedLayers array
+  
 
   console.log("Selected layers:", selectedLayers);
 
@@ -275,7 +272,7 @@ async function updateSelectedLayers(options = {}) {
   for (const layerName of selectedLayers) {
     if (!layerCache[layerName]) {
       // Push the promise returned by loadLayer into the array
-      loadingPromises.push(loadLayer(layerName, includeUploaded ? layerName : ''));
+      loadingPromises.push(loadLayer(layerName));
     } else {
       // Layer is in the cache; update its visibility
       setLayerVisibility(layerName, true);

@@ -36,6 +36,20 @@ function initMap() {
   let lastFeature = null;
 }
 
+// Function to show/hide uploaded-layer-selection based on uploaded layers
+function toggleUploadedLayerSelection() {
+  const uploadedLayerDropdown = document.getElementById("uploaded-layer-dropdown");
+
+  // Check if there are any uploaded layers in the dropdown
+  if (uploadedLayerDropdown && uploadedLayerDropdown.options.length > 1) {
+    // Show the div if there are options other than the placeholder "Select Layer"
+    document.getElementById("uploaded-layer-selection").style.display = 'block';
+  } else {
+    // Hide the div if there are no uploaded layers
+    document.getElementById("uploaded-layer-selection").style.display = 'none';
+  }
+}
+
 // Attach the updateSelectedLayers function to the button click event
 async function attachEventListeners() {
   const applyButton = document.getElementById("apply-button");
@@ -60,6 +74,9 @@ async function attachEventListeners() {
       await updateSelectedLayers(); // Call function to update layers based on uploaded files
       updateLegend(); // Update the legend to include uploaded layers
     });
+
+    // Call this function initially to check if there are layers on page load
+    toggleUploadedLayerSelection();
   } else {
     console.error('uploaded-layer-dropdown not found in the DOM');
   }

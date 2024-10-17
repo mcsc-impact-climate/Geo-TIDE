@@ -678,4 +678,135 @@ function clearLayerSelections() {
   updateLegend();
 }
 
+// Event listener for the "Options" button
+document.getElementById('options-button').addEventListener('click', function() {
+    // Get selected uploaded layers
+    const uploadedLayerDropdown = document.getElementById('uploaded-layer-dropdown');
+    const selectedLayers = Array.from(uploadedLayerDropdown.selectedOptions).map(option => option.value);
+    
+    // If no layers are selected, show a message
+    if (selectedLayers.length === 0) {
+        alert("Please select at least one uploaded layer.");
+        return;
+    }
+
+    // Populate the layer-dropdown in the modal with the selected layers
+    const layerDropdown = document.getElementById('layer-dropdown');
+    layerDropdown.innerHTML = ''; // Clear previous options
+
+    // Always add the "Select uploaded layer" option first
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = 'Select uploaded layer';
+    layerDropdown.appendChild(defaultOption);
+
+    // Populate with the selected layers
+    selectedLayers.forEach(layer => {
+        const option = document.createElement('option');
+        option.value = layer;
+        option.textContent = layer; // Layer name as option text
+        layerDropdown.appendChild(option);
+    });
+
+    // Set the first option as the default selection (prompt the user to select a layer)
+    layerDropdown.value = '';
+
+    // Show the options modal
+    document.getElementById('options-modal').style.display = 'block';
+});
+
+// Event listener for applying options in the modal
+document.getElementById('apply-options').addEventListener('click', function() {
+
+    const selectedLayer = document.getElementById('layer-dropdown').value;
+    const selectedGradient = document.getElementById('gradient-dropdown').value;
+
+    if (selectedLayer && selectedGradient) {
+        // You can use a function to apply the selected options (e.g., update the map layer with new gradient)
+        applyLayerOptions(selectedLayer, selectedGradient);
+    } else {
+        alert("Please select both a layer and an attribute.");
+    }
+
+    // Close the modal after applying
+    document.getElementById('options-modal').style.display = 'none';
+});
+
+// Event listener for closing the modal
+document.getElementById('close-modal').addEventListener('click', function() {
+    document.getElementById('options-modal').style.display = 'none';
+});
+
+document.getElementById('layer-dropdown').addEventListener('change', function() {
+    const selectedLayer = this.value;
+
+    // Populate the gradient-dropdown based on the selected layer's available attributes
+    const gradientDropdown = document.getElementById('gradient-dropdown');
+    gradientDropdown.innerHTML = ''; // Clear previous options
+
+    // Assuming you have a function getAttributesForLayer to fetch the available attributes for a given layer
+    const attributes = getAttributesForLayer(selectedLayer);
+
+    attributes.forEach(attribute => {
+        const option = document.createElement('option');
+        option.value = attribute;
+        option.textContent = attribute;
+        gradientDropdown.appendChild(option);
+    });
+});
+
+function getAttributesForLayer(layerName) {
+    // Check if the layer is available in the cache
+    if (!layerCache[layerName]) {
+        console.error(`Layer ${layerName} not found in cache.`);
+        return [];
+    }
+
+    // Get the layer object from the cache
+    const layer = layerCache[layerName];
+
+    // Get all features from the layer
+    const features = layer.getSource().getFeatures();
+    if (!features || features.length === 0) {
+        console.warn(`No features found in layer ${layerName}.`);
+        return [];
+    }
+
+    // Assuming all features have the same properties, we can extract the properties from the first feature
+    const firstFeature = features[0];
+    const properties = firstFeature.getProperties();
+
+    // Remove geometry-related properties if needed (since we only want non-geometry attributes)
+    delete properties.geometry; // Optionally delete the geometry attribute
+
+    // Return the attribute names (keys of the properties object)
+    return Object.keys(properties);
+}
+
+async function applyLayerOptions(layerName, gradientAttribute) {
+    // This is where you apply the selected gradient or attribute to the layer
+    //console.log(`Applying gradient ${gradientAttribute} to layer ${layerName}`);
+
+    // Check if the layer is available in the cache
+    if (!layerCache[layerName]) {
+        console.error(`Layer ${layerName} not found in cache.`);
+        return [];
+    }
+
+    // Get the layer object from the cache
+    const layer = layerCache[layerName];
+    
+    selectedGradientAttributes[layerName] = gradientAttribute;
+    if (isPolygonLayer(layer)) selectedGradientTypes[layerName] = 'color';
+    else selectedGradientTypes[layerName] = 'size';
+    
+    // Update the layer with its new gradient attribute
+    updateLayer(layerName, gradientAttribute)
+    
+    // Update the map
+    await updateSelectedLayers(); // Wait for updateSelectedLayers to complete
+    updateLegend(); // Now, call updateLegend after updateSelectedLayers is done
+}
+
+
 export { initMap, updateSelectedLayers, updateLegend, attachEventListeners, updateLayer, attributeBounds, data, removeLayer, loadLayer, handleMapClick, handleMapHover, map, fetchCSVData };

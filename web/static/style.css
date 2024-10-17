@@ -104,6 +104,18 @@ body {
   margin-top: 20px;
 }
 
+/* Additional styles for the "Options" button (you can customize these styles) */
+#options-button {
+  display: block; /* Always on its own line */
+  background-color: blue; /* background color */
+  color: white; /* White text color */
+  padding: 5px 5px; /* Padding to make it bigger */
+  font-size: 14px; /* Font size */
+  border: 2px solid black; /* Remove border */
+  cursor: pointer; /* Add a pointer cursor on hover */
+  margin-top: 20px;
+}
+
 .modal {
   font-size: 14px;
   display: none;

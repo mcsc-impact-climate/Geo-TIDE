@@ -1,5 +1,28 @@
-import { selectedGradientAttributes, geojsonColors, selectedGradientTypes } from './name_maps.js';
+import { selectedGradientAttributes, geojsonColors, selectedGradientTypes, predefinedColors, dataInfo } from './name_maps.js';
 import { attributeBounds } from './map.js'
+
+let colorIndex = 0; // Tracks which color to assign next
+const layerColors = {}; // To store assigned colors for each layer
+
+// Function to assign colors to layers
+function assignColorToLayer(layerName) {
+  if (!(layerName in layerColors)) {
+    // If all predefined colors are used, generate a new color dynamically
+    if (colorIndex >= predefinedColors.length) {
+      const newColor = generateDistinctColor(); // Use a custom function or fallback to generate a color
+      predefinedColors.push(newColor); // Add the newly generated color to predefined colors
+    }
+    layerColors[layerName] = predefinedColors[colorIndex];
+    colorIndex++;
+  }
+  return layerColors[layerName];
+}
+
+// Function to generate distinct color dynamically (optional)
+function generateDistinctColor() {
+  const hue = Math.random() * 360;
+  return `hsl(${hue}, 100%, 50%)`;
+}
 
 function createStyleFunction(layerName, boundaryColor='gray', boundaryWidth=1, isHover = false) {
   //console.log('print');
@@ -15,7 +38,16 @@ function createStyleFunction(layerName, boundaryColor='gray', boundaryWidth=1, i
         attributeValue = feature.get(attributeName);
     }
     const bounds = attributeBounds[layerName]; // Get the bounds for this specific geojson
-    const layerColor = geojsonColors[layerName] || 'yellow'; // Fetch color from dictionary, or default to blue
+    
+    // If the layer is pre-defined, set it to its defined color, or default to yellow
+    let layerColor = '';
+    if (layerName in dataInfo) {
+      layerColor = geojsonColors[layerName] || 'yellow'; // Fetch color from dictionary, or default to yellow
+    }
+    // Otherwise, set the color dynamically
+    else {
+      layerColor = assignColorToLayer(layerName);
+    }
     //console.log(geojsonColors[layerName]);
     const geometryType = feature.getGeometry().getType();
 

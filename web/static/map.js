@@ -1,6 +1,6 @@
-import { createStyleFunction, isPolygonLayer, isPointLayer, isLineStringLayer } from './styles.js';
+import { createStyleFunction, isPolygonLayer, isPointLayer, isLineStringLayer, assignColorToLayer } from './styles.js';
 import { getSelectedLayers, getSelectedLayersValues, showStateRegulations, getAreaLayerName } from './ui.js';
-import { legendLabels, selectedGradientAttributes, geojsonColors, selectedGradientTypes } from './name_maps.js';
+import { legendLabels, selectedGradientAttributes, geojsonColors, selectedGradientTypes, dataInfo } from './name_maps.js';
 
 var vectorLayers = [];
 var map;
@@ -34,7 +34,20 @@ function initMap() {
   map.on('pointermove', handleMapHover);
   map.on('singleclick', handleMapClick);
   let lastFeature = null;
+}
 
+// Function to show/hide uploaded-layer-selection based on uploaded layers
+function toggleUploadedLayerSelection() {
+  // const uploadedLayerDropdown = document.getElementById("usefiles-data-ajax");
+
+  // // Check if there are any uploaded layers in the dropdown
+  // if (uploadedLayerDropdown && uploadedLayerDropdown.options.length > 1) {
+  //   // Show the div if there are options other than the placeholder "Select Layer"
+  //   document.getElementById("uploaded-layer-selection").style.display = 'block';
+  // } else {
+  //   // Hide the div if there are no uploaded layers
+  //   document.getElementById("uploaded-layer-selection").style.display = 'none';
+  // }
 }
 
 // Attach the updateSelectedLayers function to the button click event
@@ -42,8 +55,33 @@ async function attachEventListeners() {
   const applyButton = document.getElementById("apply-button");
   applyButton.addEventListener('click', async () => {
     await updateSelectedLayers(); // Wait for updateSelectedLayers to complete
+    //await updateSelectedLayers();
     updateLegend(); // Now, call updateLegend after updateSelectedLayers is done
   });
+
+  const uploadedLayerDropdown = $('#usefiles-data-ajax');
+  console.log(uploadedLayerDropdown); // This should not be null or undefined
+  if (uploadedLayerDropdown.length > 0) {
+
+    // Use select2's specific events for handling changes
+    uploadedLayerDropdown.on('select2:select', async (e) => {
+      console.log('Uploaded layer dropdown change detected via select2');
+      uploadedGeojsonNames[e.params.data.id] = e.params.data.text
+      await updateSelectedLayers(); // Call function to update layers based on uploaded files
+      updateLegend(); // Update the legend to include uploaded layers
+    });
+
+    uploadedLayerDropdown.on('select2:unselect', async (e) => {
+      console.log('Uploaded layer dropdown change detected via select2');
+      delete uploadedGeojsonNames[e.params.data.id]
+      await updateSelectedLayers(); // Call function to update layers based on uploaded files
+      updateLegend(); // Update the legend to include uploaded layers
+    });
+    // Call this function initially to check if there are layers on page load
+    toggleUploadedLayerSelection();
+  } else {
+    console.error('usefiles-data-ajax not found in the DOM');
+  }
 }
 
 let lastFeature;
@@ -124,19 +162,26 @@ function compareLayers(a, b) {
 }
 
 // Function to load a specific layer from the server
-async function loadLayer(layerName, filename='') {
+async function loadLayer(layerName) {
   const layerMap=getSelectedLayersValues();
+//  console.log(layerMap.get(layerName))
 
   // Construct the URL without the "geojsons/" prefix
   //const url = `/get_geojson/${layerName}`;
   let url = `${STORAGE_URL}${layerMap.get(layerName)}`
 
-  // If needed, update the filename in the url
-  if (filename !== '') {
-    const lastSlashIndex = url.lastIndexOf('/');
-    const dir = url.substring(0, lastSlashIndex + 1);
-    url = dir + filename;
+  if(layerName.startsWith('https://')) {
+    url = layerName
   }
+
+  // If the layer name isn't in the data info, assume it's user uploaded and construct the url accordingly
+  // if (!(layerName in dataInfo)) {
+  //   const lastSlashIndex = url.lastIndexOf('/');
+  //   const dir = url.substring(0, lastSlashIndex + 1);
+  //   url = dir + layerName;
+  // }
+    
+  console.log("Download url: ", url)
 
   let spinner = document.getElementById('lds-spinner')
   try {
@@ -169,7 +214,7 @@ async function loadLayer(layerName, filename='') {
         features: features,
       }),
       style: createStyleFunction(layerName),
-      key: layerName.split(".")[0], // Set the key property with the geojson name without extension
+      key: layerName//.split(".")[0], // Set the key property with the geojson name without extension // DMM: Try setting the key to the full layer name
     });
 
     // Add the layer to the map and cache it
@@ -233,6 +278,7 @@ function setLayerVisibility(layerName, isVisible) {
 
 // Function to update the selected layers on the map
 async function updateSelectedLayers() {
+
   const selectedLayers = getSelectedLayers();
 
   // Create an array of promises for loading layers
@@ -242,8 +288,7 @@ async function updateSelectedLayers() {
   for (const layerName of selectedLayers) {
     if (!layerCache[layerName]) {
       // Push the promise returned by loadLayer into the array
-        loadingPromises.push(loadLayer(layerName));
-
+      loadingPromises.push(loadLayer(layerName));
     } else {
       // Layer is in the cache; update its visibility
       setLayerVisibility(layerName, true);
@@ -279,8 +324,15 @@ async function updateSelectedLayers() {
 
   // Add the selected layers to the map
   for (const layerName of selectedLayers) {
-        map.addLayer(layerCache[layerName]);
+    map.addLayer(layerCache[layerName]);
   }
+  console.log("Selected layers:", selectedLayers);
+}
+
+function reverseMapping(originalMap) {
+  return Object.fromEntries(
+    Object.entries(originalMap).map(([key, value]) => [value, key])
+  );
 }
 
 function updateLegend() {
@@ -306,8 +358,8 @@ function updateLegend() {
   vectorLayers.forEach((layer) => {
     const layerName = layer.get("key"); // Get the key property
 
-    // Check if this layer is in the list of selected layers or if "All Layers" is selected
-    if (selectedLayers.includes(layerName) || selectedLayers.includes("all")) {
+    // Check if this layer is in the list of selected layers
+    if (selectedLayers.includes(layerName)) {
       const layerDiv = document.createElement("div");
       layerDiv.style.display = "flex";
       layerDiv.style.alignItems = "center";
@@ -329,7 +381,16 @@ function updateLegend() {
       const ctx = canvas.getContext("2d");
 
       const useGradient = layerName in selectedGradientAttributes;
-      const layerColor = geojsonColors[layerName] || 'blue'; // Fetch color from dictionary, or default to blue
+        
+      // If the layer is pre-defined, set it to its defined color, or default to yellow
+      let layerColor = '';
+      if (layerName in dataInfo) {
+          layerColor = geojsonColors[layerName] || 'yellow'; // Fetch color from dictionary, or default to yellow
+      }
+      // Otherwise, set the color dynamically
+      else {
+          layerColor = assignColorToLayer(layerName);
+      }
       let attributeName = '';
       let gradientType = '';
       if (useGradient) {
@@ -532,8 +593,10 @@ function updateLegend() {
 
       symbolLabelContainer.appendChild(symbolContainer);  // Append symbolContainer to symbolLabelContainer
 
+      // Make a title for the legend entry
       const title = document.createElement("div");
 
+      // First, check if the layer is included in the pre-defined legend labels
       if (layerName in legendLabels) {
         if (typeof legendLabels[layerName] === 'string') {
           title.innerText = legendLabels[layerName];
@@ -541,7 +604,13 @@ function updateLegend() {
         else if (isDictionary(legendLabels[layerName])) {
           title.innerText = legendLabels[layerName][selectedGradientAttributes[layerName]];
         }
-        } else {
+      }
+      // Next, check if it's included the uploaded layers
+      else if (layerName in uploadedGeojsonNames) {
+          title.innerText = legendLabels[layerName] = uploadedGeojsonNames[layerName];
+      }
+      // Otherwise, just use the layer name directly
+      else {
         title.innerText = layerName;
         }
       title.style.marginLeft = "20px";
@@ -612,5 +681,132 @@ function clearLayerSelections() {
   updateSelectedLayers();
   updateLegend();
 }
+
+// Event listener for the "Options" button
+document.getElementById('options-button').addEventListener('click', function() {
+    // If no layers are selected, show a message
+    if (Object.keys(uploadedGeojsonNames).length  === 0) {
+        alert("Please select at least one uploaded layer.");
+        return;
+    }
+
+    // Populate the layer-dropdown in the modal with the selected layers
+    const layerDropdown = document.getElementById('layer-dropdown');
+    layerDropdown.innerHTML = ''; // Clear previous options
+
+    // Always add the "Select uploaded layer" option first
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = 'Select uploaded layer';
+    layerDropdown.appendChild(defaultOption);
+
+    // Populate with the selected layers
+    for (const [key, value] of Object.entries(uploadedGeojsonNames)){
+      const option = document.createElement('option');
+      option.value = key;
+      option.textContent = value; // Layer name as option text
+      layerDropdown.appendChild(option);
+    }
+
+    // Set the first option as the default selection (prompt the user to select a layer)
+    layerDropdown.value = '';
+
+    // Show the options modal
+    document.getElementById('options-modal').style.display = 'block';
+});
+
+// Event listener for applying options in the modal
+document.getElementById('apply-options').addEventListener('click', function() {
+
+    const selectedLayer = document.getElementById('layer-dropdown').value;
+    const selectedGradient = document.getElementById('gradient-dropdown').value;
+
+    if (selectedLayer && selectedGradient) {
+        // You can use a function to apply the selected options (e.g., update the map layer with new gradient)
+        applyLayerOptions(selectedLayer, selectedGradient);
+    } else {
+        alert("Please select both a layer and an attribute.");
+    }
+
+    // Close the modal after applying
+    document.getElementById('options-modal').style.display = 'none';
+});
+
+// Event listener for closing the modal
+document.getElementById('close-modal').addEventListener('click', function() {
+    document.getElementById('options-modal').style.display = 'none';
+});
+
+document.getElementById('layer-dropdown').addEventListener('change', function() {
+    const selectedLayer = this.value;
+
+    // Populate the gradient-dropdown based on the selected layer's available attributes
+    const gradientDropdown = document.getElementById('gradient-dropdown');
+    gradientDropdown.innerHTML = ''; // Clear previous options
+
+    // Assuming you have a function getAttributesForLayer to fetch the available attributes for a given layer
+    const attributes = getAttributesForLayer(selectedLayer);
+
+    attributes.forEach(attribute => {
+        const option = document.createElement('option');
+        option.value = attribute;
+        option.textContent = attribute;
+        gradientDropdown.appendChild(option);
+    });
+});
+
+function getAttributesForLayer(layerName) {
+    // Check if the layer is available in the cache
+    if (!layerCache[layerName]) {
+        console.error(`Layer ${layerName} not found in cache.`);
+        return [];
+    }
+
+    // Get the layer object from the cache
+    const layer = layerCache[layerName];
+
+    // Get all features from the layer
+    const features = layer.getSource().getFeatures();
+    if (!features || features.length === 0) {
+        console.warn(`No features found in layer ${layerName}.`);
+        return [];
+    }
+
+    // Assuming all features have the same properties, we can extract the properties from the first feature
+    const firstFeature = features[0];
+    const properties = firstFeature.getProperties();
+
+    // Remove geometry-related properties if needed (since we only want non-geometry attributes)
+    delete properties.geometry; // Optionally delete the geometry attribute
+
+    // Return the attribute names (keys of the properties object)
+    return Object.keys(properties);
+}
+
+async function applyLayerOptions(layerName, gradientAttribute) {
+    // This is where you apply the selected gradient or attribute to the layer
+    //console.log(`Applying gradient ${gradientAttribute} to layer ${layerName}`);
+
+    // Check if the layer is available in the cache
+    if (!layerCache[layerName]) {
+        console.error(`Layer ${layerName} not found in cache.`);
+        return [];
+    }
+
+    // Get the layer object from the cache
+    const layer = layerCache[layerName];
+    
+    selectedGradientAttributes[layerName] = gradientAttribute;
+    if (isPolygonLayer(layer)) selectedGradientTypes[layerName] = 'color';
+    else selectedGradientTypes[layerName] = 'size';
+    
+    // Update the layer with its new gradient attribute
+    updateLayer(layerName, gradientAttribute)
+    
+    // Update the map
+    await updateSelectedLayers(); // Wait for updateSelectedLayers to complete
+    updateLegend(); // Now, call updateLegend after updateSelectedLayers is done
+}
+
 
 export { initMap, updateSelectedLayers, updateLegend, attachEventListeners, updateLayer, attributeBounds, data, removeLayer, loadLayer, handleMapClick, handleMapHover, map, fetchCSVData };

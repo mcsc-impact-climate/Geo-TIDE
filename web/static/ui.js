@@ -63,7 +63,6 @@ function populateLayerDropdown(mapping) {
   const pointH2prodContainer = document.getElementById("point-h2prod-checkboxes");
   const pointRefuelContainer = document.getElementById("point-refuel-checkboxes");
   const pointOtherContainer = document.getElementById("point-other-checkboxes");
-
   // Clear existing options and checkboxes
   areaLayerDropdown.innerHTML = "";
   highwayFlowContainer.innerHTML = "";
@@ -77,7 +76,7 @@ function populateLayerDropdown(mapping) {
   option.value = 'None';
   option.textContent = 'None';
   areaLayerDropdown.appendChild(option);
-
+    
   // Add options for area layers
   for (const key in mapping) {
     if (geojsonTypes[key] === "area") {
@@ -151,6 +150,11 @@ function getSelectedLayers() {
       selectedLayerNames.push(option.text); // Push the text of the selected option
     }
   }
+  
+  // Get selected uploaded layers
+  const userFilesLayerDropdown = document.getElementById("usefiles-data-ajax");
+  const uploadedLayers = Array.from(userFilesLayerDropdown.selectedOptions).map(option => option.value);
+  selectedLayerNames.push(...uploadedLayers);  // Add uploaded layers to the selectedLayers array
   return selectedLayerNames;
 }
 

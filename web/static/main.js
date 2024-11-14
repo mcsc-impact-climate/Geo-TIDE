@@ -3,7 +3,8 @@ import { populateLayerDropdown, getSelectedLayers } from './ui.js';
 
 let geojsonNames = {};
 
-// Fetch available geojson names from the Flask app
+
+// Fetch available geojson names from the Django app
 fetch(GET_GEOJSONS)
   .then(response => {
     if (!response.ok) {
@@ -13,7 +14,23 @@ fetch(GET_GEOJSONS)
   })
   .then(data => {
     geojsonNames = data;
-    // Populate the layer selection drop-down with geojson names
+
+    // Fetch uploaded geojson names from the Django app
+    // return fetch(GET_UPLOADED_GEOJSONS, {
+    //   method: 'GET',
+    //   headers: {
+    //       "Content-Type": "application/json",
+    //   },
+    // });
+  })
+  // .then(response => {
+  //   if (!response.ok) {
+  //     throw new Error('Network response was not ok');
+  //   }
+  //   return response.json();
+  // })
+  .then(data => {
+    // Populate the layer selection drop-down with both geojson names and uploaded geojson names
     populateLayerDropdown(geojsonNames);
     attachEventListeners(); // Attach event listeners after populating the dropdown
     initMap(); // Initialize the map after populating the dropdown
@@ -25,3 +42,4 @@ fetch(GET_GEOJSONS)
   });
 
 export { geojsonNames };
+

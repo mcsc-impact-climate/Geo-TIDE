@@ -38,16 +38,16 @@ function initMap() {
 
 // Function to show/hide uploaded-layer-selection based on uploaded layers
 function toggleUploadedLayerSelection() {
-  const uploadedLayerDropdown = document.getElementById("uploaded-layer-dropdown");
+  // const uploadedLayerDropdown = document.getElementById("usefiles-data-ajax");
 
-  // Check if there are any uploaded layers in the dropdown
-  if (uploadedLayerDropdown && uploadedLayerDropdown.options.length > 1) {
-    // Show the div if there are options other than the placeholder "Select Layer"
-    document.getElementById("uploaded-layer-selection").style.display = 'block';
-  } else {
-    // Hide the div if there are no uploaded layers
-    document.getElementById("uploaded-layer-selection").style.display = 'none';
-  }
+  // // Check if there are any uploaded layers in the dropdown
+  // if (uploadedLayerDropdown && uploadedLayerDropdown.options.length > 1) {
+  //   // Show the div if there are options other than the placeholder "Select Layer"
+  //   document.getElementById("uploaded-layer-selection").style.display = 'block';
+  // } else {
+  //   // Hide the div if there are no uploaded layers
+  //   document.getElementById("uploaded-layer-selection").style.display = 'none';
+  // }
 }
 
 // Attach the updateSelectedLayers function to the button click event
@@ -59,26 +59,28 @@ async function attachEventListeners() {
     updateLegend(); // Now, call updateLegend after updateSelectedLayers is done
   });
 
-  const uploadedLayerDropdown = $('#uploaded-layer-dropdown');
+  const uploadedLayerDropdown = $('#usefiles-data-ajax');
   console.log(uploadedLayerDropdown); // This should not be null or undefined
   if (uploadedLayerDropdown.length > 0) {
-    // Initialize select2 if not already done
-    uploadedLayerDropdown.select2({
-      placeholder: 'Select one or more layers',
-      allowClear: true
-    });
 
     // Use select2's specific events for handling changes
-    uploadedLayerDropdown.on('select2:select select2:unselect', async () => {
+    uploadedLayerDropdown.on('select2:select', async (e) => {
       console.log('Uploaded layer dropdown change detected via select2');
+      uploadedGeojsonNames[e.params.data.id] = e.params.data.text
       await updateSelectedLayers(); // Call function to update layers based on uploaded files
       updateLegend(); // Update the legend to include uploaded layers
     });
 
+    uploadedLayerDropdown.on('select2:unselect', async (e) => {
+      console.log('Uploaded layer dropdown change detected via select2');
+      delete uploadedGeojsonNames[e.params.data.id]
+      await updateSelectedLayers(); // Call function to update layers based on uploaded files
+      updateLegend(); // Update the legend to include uploaded layers
+    });
     // Call this function initially to check if there are layers on page load
     toggleUploadedLayerSelection();
   } else {
-    console.error('uploaded-layer-dropdown not found in the DOM');
+    console.error('usefiles-data-ajax not found in the DOM');
   }
 }
 

@@ -59,8 +59,7 @@
         </div>
 
     </div>
-    
-    <div id="uploaded-layer-selection" style="position: absolute; top: 10px; left: 40px; background: rgba(255, 255, 255, 0.8); padding: 10px;">
+    <div id="uploaded-layer-selection" style="position: absolute; top: 10px; left: 40px; background: rgba(255, 255, 255, 0.8); padding: 10px; {% if not uploaded_files%} display:none {%endif%}">
       <select id="usefiles-data-ajax"  multiple="multiple" style="width: 100%;">
       </select>
       <button id="options-button" class="options-button" style="margin-top: 10px;">Options</button>
@@ -77,7 +76,7 @@
               cache: true,
               delay: 250,
               dataType: 'json',
-              url: '{% url "uploaded_files" %}',
+              url: '{{uploaded_files}}',
               headers: {
                   "Content-Type" : "application/json",
               },
@@ -102,11 +101,6 @@
                       }
               }
             },
-        });
-
-
-        $('#usefiles-data-ajax').on('select2:select', function (e) {
-          uploadedGeojsonNames[e.params.data.id] = e.params.data.text
         });
     });
 </script>
@@ -156,7 +150,6 @@
 <!-- Stuff Displaying DOE Plan, on pause -->
 <script>
   const GET_GEOJSONS = '{% url "get-geojsons" %}';
-  const GET_UPLOADED_GEOJSONS = '{% url "files" %}';
   const GET_GEOJSON = '{% url "get-geojson" %}';
   const STORAGE_URL = 'https://mcsc-datahub-files.s3.us-west-2.amazonaws.com/';
   const CSV_URL = 'https://raw.githubusercontent.com/mcsc-impact-climate/FAF5-Analysis/main/data/incentives_and_regulations/state_level/';

@@ -6,6 +6,7 @@ from functools import wraps
 from django.core.files.storage import default_storage
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.urls import reverse, NoReverseMatch
 from urllib.parse import urlparse
 
 INDEX_TEMPLATE = "local.html" if __package__ == "web" else "index_main.html"
@@ -149,7 +150,11 @@ def auth_required(function):
 
 @auth_required
 def index(request):
-    return render(request, INDEX_TEMPLATE)
+    try:
+        uploaded_files = reverse('uploaded_files')
+    except NoReverseMatch:
+        uploaded_files = None  # Fallback URL if route is not found
+    return render(request, INDEX_TEMPLATE, {'uploaded_files': uploaded_files})
 
 
 @auth_required

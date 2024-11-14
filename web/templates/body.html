@@ -59,23 +59,54 @@
         </div>
 
     </div>
-
-
-    <div id="uploaded-layer-selection" style="position: absolute; top: 85px; left: 40px; background: rgba(255, 255, 255, 0.8); padding: 10px; display: none;">
-        <h3>Uploaded Layers</h3>
-        <select id="uploaded-layer-dropdown" multiple="multiple" style="width: 100%;">
-            <option>Select Layer</option>
-            <!-- Add options for uploaded layers -->
-        </select>
-        <button id="options-button" class="options-button" style="margin-top: 10px;">Options</button>
+    
+    <div id="uploaded-layer-selection" style="position: absolute; top: 10px; left: 40px; background: rgba(255, 255, 255, 0.8); padding: 10px;">
+      <select id="usefiles-data-ajax"  multiple="multiple" style="width: 100%;">
+      </select>
+      <button id="options-button" class="options-button" style="margin-top: 10px;">Options</button>
     </div>
 
 <!-- Initialize Select2 -->
 <script>
+    let uploadedGeojsonNames = {};
     $(document).ready(function() {
-        $('#uploaded-layer-dropdown').select2({
+        $('#usefiles-data-ajax').select2({
             placeholder: 'Select one or more layers',
-            allowClear: true
+            allowClear: true,
+            ajax: {
+              cache: true,
+              delay: 250,
+              dataType: 'json',
+              url: '{% url "uploaded_files" %}',
+              headers: {
+                  "Content-Type" : "application/json",
+              },
+              processResults: function (data) {
+                const kv = []
+                for(const item of data.data) {
+                  const geojsonFile = item.files.find(file => file.file_link.includes('.geojson'));
+                  if (geojsonFile) {
+                    kv.push({text: item.name, id: geojsonFile.file_link})
+                  }
+                }
+                // Transforms the top-level key of the response object from 'items' to 'results'
+                return {
+                  results: kv,
+                  pagination: { more: data.next_page || false}
+                };
+              },
+              data: function (params) {
+              return {
+                      search_query: params.term,
+                      page: params.page
+                      }
+              }
+            },
+        });
+
+
+        $('#usefiles-data-ajax').on('select2:select', function (e) {
+          uploadedGeojsonNames[e.params.data.id] = e.params.data.text
         });
     });
 </script>
@@ -125,7 +156,7 @@
 <!-- Stuff Displaying DOE Plan, on pause -->
 <script>
   const GET_GEOJSONS = '{% url "get-geojsons" %}';
-  const GET_UPLOADED_GEOJSONS = '{% url "get-uploaded-geojsons" %}';
+  const GET_UPLOADED_GEOJSONS = '{% url "files" %}';
   const GET_GEOJSON = '{% url "get-geojson" %}';
   const STORAGE_URL = 'https://mcsc-datahub-files.s3.us-west-2.amazonaws.com/';
   const CSV_URL = 'https://raw.githubusercontent.com/mcsc-impact-climate/FAF5-Analysis/main/data/incentives_and_regulations/state_level/';

@@ -56,15 +56,13 @@ const stateNames = {
   'WY': 'Wyoming'
 };
 
-function populateLayerDropdown(mapping, mapping_uploaded) {
+function populateLayerDropdown(mapping) {
   const areaLayerDropdown = document.getElementById("area-layer-dropdown");
   const highwayFlowContainer = document.getElementById("highway-flow-checkboxes");
   const highwayInfraContainer = document.getElementById("highway-infra-checkboxes");
   const pointH2prodContainer = document.getElementById("point-h2prod-checkboxes");
   const pointRefuelContainer = document.getElementById("point-refuel-checkboxes");
   const pointOtherContainer = document.getElementById("point-other-checkboxes");
-  const uploadedLayerDropdown = document.getElementById("uploaded-layer-dropdown");
-
   // Clear existing options and checkboxes
   areaLayerDropdown.innerHTML = "";
   highwayFlowContainer.innerHTML = "";
@@ -72,7 +70,6 @@ function populateLayerDropdown(mapping, mapping_uploaded) {
   pointH2prodContainer.innerHTML = "";
   pointRefuelContainer.innerHTML = "";
   pointOtherContainer.innerHTML = "";
-  uploadedLayerDropdown.innerHTML = "";
 
   // Make a 'None' option for area feature in case the user doesn't want one
   const option = document.createElement("option");
@@ -108,14 +105,6 @@ function populateLayerDropdown(mapping, mapping_uploaded) {
       }
     }
   }
-    
-    // Add options for uploaded layers
-    for (const key in mapping_uploaded) {
-        const option = document.createElement("option");
-        option.value = mapping_uploaded[key];
-        option.textContent = key;
-        uploadedLayerDropdown.appendChild(option);
-    }
 }
 
 function addLayerCheckbox(key, value, container) {
@@ -163,8 +152,8 @@ function getSelectedLayers() {
   }
   
   // Get selected uploaded layers
-  const uploadedLayerDropdown = document.getElementById("uploaded-layer-dropdown");
-  const uploadedLayers = Array.from(uploadedLayerDropdown.selectedOptions).map(option => option.value);
+  const userFilesLayerDropdown = document.getElementById("usefiles-data-ajax");
+  const uploadedLayers = Array.from(userFilesLayerDropdown.selectedOptions).map(option => option.value);
   selectedLayerNames.push(...uploadedLayers);  // Add uploaded layers to the selectedLayers array
   return selectedLayerNames;
 }

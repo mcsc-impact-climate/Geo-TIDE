@@ -1,7 +1,6 @@
 import { createStyleFunction, isPolygonLayer, isPointLayer, isLineStringLayer, assignColorToLayer } from './styles.js';
 import { getSelectedLayers, getSelectedLayersValues, showStateRegulations, getAreaLayerName } from './ui.js';
 import { legendLabels, selectedGradientAttributes, geojsonColors, selectedGradientTypes, dataInfo } from './name_maps.js';
-import { uploadedGeojsonNames } from './main.js'
 
 var vectorLayers = [];
 var map;
@@ -169,12 +168,16 @@ async function loadLayer(layerName) {
   //const url = `/get_geojson/${layerName}`;
   let url = `${STORAGE_URL}${layerMap.get(layerName)}`
 
-  // If the layer name isn't in the data info, assume it's user uploaded and construct the url accordingly
-  if (!(layerName in dataInfo)) {
-    const lastSlashIndex = url.lastIndexOf('/');
-    const dir = url.substring(0, lastSlashIndex + 1);
-    url = dir + layerName;
+  if(layerName.startsWith('https://')) {
+    url = layerName
   }
+
+  // If the layer name isn't in the data info, assume it's user uploaded and construct the url accordingly
+  // if (!(layerName in dataInfo)) {
+  //   const lastSlashIndex = url.lastIndexOf('/');
+  //   const dir = url.substring(0, lastSlashIndex + 1);
+  //   url = dir + layerName;
+  // }
     
   console.log("Download url: ", url)
 
@@ -590,7 +593,6 @@ function updateLegend() {
 
       // Make a title for the legend entry
       const title = document.createElement("div");
-      const uploadedGeojsonNames_reverse = reverseMapping(uploadedGeojsonNames)
 
       // First, check if the layer is included in the pre-defined legend labels
       if (layerName in legendLabels) {
@@ -602,8 +604,8 @@ function updateLegend() {
         }
       }
       // Next, check if it's included the uploaded layers
-      else if (layerName in uploadedGeojsonNames_reverse) {
-          title.innerText = legendLabels[layerName] = uploadedGeojsonNames_reverse[layerName];
+      else if (layerName in uploadedGeojsonNames) {
+          title.innerText = legendLabels[layerName] = uploadedGeojsonNames[layerName];
       }
       // Otherwise, just use the layer name directly
       else {
@@ -680,12 +682,8 @@ function clearLayerSelections() {
 
 // Event listener for the "Options" button
 document.getElementById('options-button').addEventListener('click', function() {
-    // Get selected uploaded layers
-    const uploadedLayerDropdown = document.getElementById('uploaded-layer-dropdown');
-    const selectedLayers = Array.from(uploadedLayerDropdown.selectedOptions).map(option => option.value);
-    
     // If no layers are selected, show a message
-    if (selectedLayers.length === 0) {
+    if (Object.keys(uploadedGeojsonNames).length  === 0) {
         alert("Please select at least one uploaded layer.");
         return;
     }
@@ -701,12 +699,12 @@ document.getElementById('options-button').addEventListener('click', function() {
     layerDropdown.appendChild(defaultOption);
 
     // Populate with the selected layers
-    selectedLayers.forEach(layer => {
-        const option = document.createElement('option');
-        option.value = layer;
-        option.textContent = layer; // Layer name as option text
-        layerDropdown.appendChild(option);
-    });
+    for (const [key, value] of Object.entries(uploadedGeojsonNames)){
+      const option = document.createElement('option');
+      option.value = key;
+      option.textContent = value; // Layer name as option text
+      layerDropdown.appendChild(option);
+    }
 
     // Set the first option as the default selection (prompt the user to select a layer)
     layerDropdown.value = '';

@@ -10,7 +10,7 @@ from django.urls import reverse, NoReverseMatch
 from urllib.parse import urlparse
 
 INDEX_TEMPLATE = "local.html" if __package__ == "web" else "index_main.html"
-STORAGE_URL = 'https://mcsc-datahub-files.s3.us-west-2.amazonaws.com/'
+STORAGE_URL_PRIVATE = 'https://mcsc-datahub-files.s3.us-west-2.amazonaws.com/'
 
 # Create an ordered dictionary to maintain the order of items
 geojsons = OrderedDict()
@@ -172,7 +172,7 @@ def get_uploaded_geojsons(request):
 
     try:
         # Parse the STORAGE_URL to extract bucket name and prefix
-        parsed_url = urlparse(STORAGE_URL)
+        parsed_url = urlparse(STORAGE_URL_PRIVATE)
         bucket_name = parsed_url.netloc.split('.')[0]  # Extract the bucket name
         s3_prefix = parsed_url.path.lstrip('/') + uploaded_geojson_directory  # Combine path with geojson directory
 

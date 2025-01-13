@@ -300,8 +300,9 @@ function createDropdown(name, parameter, dropdown_label, key, options_list, sele
   // Add an event listener to the dropdown to handle attribute selection
   dropdown.addEventListener("change", async function () {
     selected_options_list[parameter] = dropdown.value;
+    //console.log("selected option: ", selected_options_list[parameter])
     await removeLayer(key);
-    await loadLayer(key, filename_creation_function(selected_options_list));
+    await loadLayer(key, `${STORAGE_URL}${filename_creation_function(selected_options_list)}`);
     await updateSelectedLayers();
     if (key === "State-Level Incentives and Regulations") {
         for (const fuel_type in legendLabels[key]) {
@@ -329,11 +330,11 @@ function convertToTitleCase(str) {
 
 
 function createTruckChargingFilename(selected_options_list) {
-  return "Truck_Stop_Parking_Along_Interstate_with_min_chargers_range_" + selected_options_list['Range'] + "_chargingtime_" + selected_options_list['Charging Time'] + "_maxwait_" + selected_options_list['Max Allowed Wait Time'] + ".geojson";
+  return "geojsons_simplified/infrastructure_pooling_thought_experiment/" + "Truck_Stop_Parking_Along_Interstate_with_min_chargers_range_" + selected_options_list['Range'] + "_chargingtime_" + selected_options_list['Charging Time'] + "_maxwait_" + selected_options_list['Max Allowed Wait Time'] + ".geojson";
 }
 
 function createStateSupportFilename(selected_options_list) {
-  return selected_options_list['Support Target'] + "_" + selected_options_list['Support Type'] + ".geojson";
+  return "geojsons_simplified/incentives_and_regulations/" + selected_options_list['Support Target'] + "_" + selected_options_list['Support Type'] + ".geojson";
 }
 
 function createStateSupportCSVFilename(selected_options_list) {
@@ -341,23 +342,23 @@ function createStateSupportCSVFilename(selected_options_list) {
 }
 
 function createTcoFilename(selected_options_list) {
-  return "costs_per_mile_payload" + selected_options_list['Average Payload'] + "_avVMT" + selected_options_list['Average VMT'] + '_maxChP' + selected_options_list['Max Charging Power'] + ".geojson";
+  return "geojsons_simplified/costs_and_emissions/" + "costs_per_mile_payload" + selected_options_list['Average Payload'] + "_avVMT" + selected_options_list['Average VMT'] + '_maxChP' + selected_options_list['Max Charging Power'] + ".geojson";
 }
 
 function createEmissionsFilename(selected_options_list) {
-  return selected_options_list['Visualize By'] + "emissions_per_mile_payload" + selected_options_list['Average Payload'] + "_avVMT" + selected_options_list['Average VMT'] + ".geojson";
+  return "geojsons_simplified/costs_and_emissions/" + selected_options_list['Visualize By'] + "emissions_per_mile_payload" + selected_options_list['Average Payload'] + "_avVMT" + selected_options_list['Average VMT'] + ".geojson";
 }
 
 function createGridEmissionsFilename(selected_options_list) {
-  return selected_options_list['Visualize By'] + "_merged.geojson";
+  return "geojsons_simplified/grid_emission_intensity/" + selected_options_list['Visualize By'] + "_merged.geojson";
 }
 
 function createHourlyEmissionsFilename(selected_options_list) {
-  return "daily_grid_emission_profile_hour" + selected_options_list['Hour of Day'] + ".geojson";
+  return "geojsons_simplified/daily_grid_emission_profiles/daily_grid_emission_profile_hour" + selected_options_list['Hour of Day'] + ".geojson";
 }
 
 function createFaf5Filename(selected_options_list) {
-  return 'mode_truck_commodity_' + selected_options_list['Commodity'] + "_origin_all_dest_all.geojson";
+  return 'geojsons_simplified/faf5_freight_flows/mode_truck_commodity_' + selected_options_list['Commodity'] + "_origin_all_dest_all.geojson";
 }
 
 function createChargingDropdowns(key) {
@@ -779,7 +780,6 @@ function getSelectedLayerCombinations() {
   const supportType = selectedStateSupportOptions['Support Type'];
   const supportTarget = selectedStateSupportOptions['Support Target'];
 
-  //console.log('hi')
   //console.log(selectedStateSupportOptions)
 
   const combinations = [];

@@ -60,7 +60,7 @@ async function attachEventListeners() {
   });
 
   const uploadedLayerDropdown = $('#usefiles-data-ajax');
-  console.log(uploadedLayerDropdown); // This should not be null or undefined
+  //console.log(uploadedLayerDropdown); // This should not be null or undefined
   if (uploadedLayerDropdown.length > 0) {
 
     // Use select2's specific events for handling changes
@@ -162,14 +162,17 @@ function compareLayers(a, b) {
 }
 
 // Function to load a specific layer from the server
-async function loadLayer(layerName) {
+async function loadLayer(layerName, layerUrl = null) {
+  //console.log("In loadLayer()")
   const layerMap=getSelectedLayersValues();
 //  console.log(layerMap.get(layerName))
 
-  // Construct the URL without the "geojsons/" prefix
-  //const url = `/get_geojson/${layerName}`;
-  let url = `${STORAGE_URL}${layerMap.get(layerName)}`
+  // Construct the URL based on the second argument or fallback logic
+  let url = layerUrl && layerUrl.startsWith('https://')
+    ? layerUrl
+    : `${STORAGE_URL}${layerMap.get(layerName)}`;
 
+  //console.log("Layer Name: ", layerName)
   if(layerName.startsWith('https://')) {
     url = layerName
   }
@@ -181,7 +184,8 @@ async function loadLayer(layerName) {
   //   url = dir + layerName;
   // }
     
-  console.log("Download url: ", url)
+  console.log("Layer Name: ", layerName);
+  console.log("Download url: ", url);
 
   let spinner = document.getElementById('lds-spinner')
   try {
@@ -278,7 +282,7 @@ function setLayerVisibility(layerName, isVisible) {
 
 // Function to update the selected layers on the map
 async function updateSelectedLayers() {
-
+  //console.log("In updateSelectedLayers()")
   const selectedLayers = getSelectedLayers();
 
   // Create an array of promises for loading layers
@@ -286,6 +290,7 @@ async function updateSelectedLayers() {
 
   // Iterate through the selected layers
   for (const layerName of selectedLayers) {
+    //console.log("Updating layer ", layerName)
     if (!layerCache[layerName]) {
       // Push the promise returned by loadLayer into the array
       loadingPromises.push(loadLayer(layerName));
@@ -326,7 +331,7 @@ async function updateSelectedLayers() {
   for (const layerName of selectedLayers) {
     map.addLayer(layerCache[layerName]);
   }
-  console.log("Selected layers:", selectedLayers);
+  //console.log("Selected layers:", selectedLayers);
 }
 
 function reverseMapping(originalMap) {
@@ -784,6 +789,7 @@ function getAttributesForLayer(layerName) {
 }
 
 async function applyLayerOptions(layerName, gradientAttribute) {
+    //console.log("In applyLayerOptions()")
     // This is where you apply the selected gradient or attribute to the layer
     //console.log(`Applying gradient ${gradientAttribute} to layer ${layerName}`);
 

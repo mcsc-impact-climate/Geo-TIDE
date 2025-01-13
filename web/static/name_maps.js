@@ -265,7 +265,7 @@ export const emissionsOptions = {
 export let selectedEmissionsOptions = {
     'Average Payload': '40000',
     'Average VMT': '100000',
-    'Visualize By': 'State'
+    'Visualize By': 'state_'
 };
 
 export const gridEmissionsOptions = {

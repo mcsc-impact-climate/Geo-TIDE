@@ -218,7 +218,7 @@ async function loadLayer(layerName, layerUrl = null) {
         features: features,
       }),
       style: createStyleFunction(layerName),
-      key: layerName//.split(".")[0], // Set the key property with the geojson name without extension // DMM: Try setting the key to the full layer name
+      key: layerName//.split(".")[0], // Set the key property with the geojson name without extension
     });
 
     // Add the layer to the map and cache it
@@ -612,7 +612,14 @@ function updateLegend() {
       }
       // Next, check if it's included the uploaded layers
       else if (layerName in uploadedGeojsonNames) {
-          title.innerText = legendLabels[layerName] = uploadedGeojsonNames[layerName];
+          // Check if a gradient attribute is selected for the layer
+          if (layerName in selectedGradientAttributes && selectedGradientAttributes[layerName]) {
+              // Set the legend label to the name of the selected gradient attribute
+              title.innerText = uploadedGeojsonNames[layerName] + ": " + selectedGradientAttributes[layerName];
+          } else {
+              // Default to the GeoJSON file name
+              title.innerText = uploadedGeojsonNames[layerName];
+          }
       }
       // Otherwise, just use the layer name directly
       else {
@@ -729,6 +736,7 @@ document.getElementById('apply-options').addEventListener('click', function() {
     if (selectedLayer && selectedGradient) {
         // You can use a function to apply the selected options (e.g., update the map layer with new gradient)
         applyLayerOptions(selectedLayer, selectedGradient);
+        
     } else {
         alert("Please select both a layer and an attribute.");
     }

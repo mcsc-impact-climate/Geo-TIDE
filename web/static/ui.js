@@ -55,6 +55,7 @@ const stateNames = {
   'WI': 'Wisconsin',
   'WY': 'Wyoming'
 };
+const zoneNames = ['US-CAL-BANC', 'US-CAL-CISO', 'US-CAL-LDWP', 'US-CAL-TIDC', 'US-CAR-CPLE', 'US-CAR-CPLW', 'US-CAR-DUK', 'US-CAR-SC', 'US-CAR-SCEG', 'US-CENT-SPA', 'US-CENT-SWPP', 'US-FLA-FMPP', 'US-FLA-FPC', 'US-NW-NWMT', 'US-FLA-GVL', 'US-FLA-JEA', 'US-SW-WALC', 'US-FLA-TAL', 'US-FLA-TEC', 'US-HI-OA', 'US-MIDA-PJM', 'US-MIDW-AECI', 'US-MIDW-MISO', 'US-MIDW-LGEE', 'US-NE-ISNE', 'US-NW-BPAT', 'US-NW-CHPD', 'US-NW-DOPD', 'US-NW-GCPD', 'US-NW-GRID', 'US-SW-AZPS', 'US-NW-IPCO', 'US-NW-NEVP', 'US-FLA-FPL', 'US-NW-PACE', 'US-NW-PACW', 'US-NW-PGE', 'US-NW-PSCO', 'US-NW-PSEI', 'US-NW-TPWR', 'US-NW-WACM', 'US-NY-NYIS', 'US-SE-SOCO', 'US-SW-EPE', 'US-SW-SRP', 'US-SW-PNM', 'US-SW-TEPC', 'US-TEN-TVA', 'US-TEX-ERCO', 'US-NW-SCL']
 
 function populateLayerDropdown(mapping) {
   const areaLayerDropdown = document.getElementById("area-layer-dropdown");
@@ -624,6 +625,29 @@ function resetModalContent() {
     modalContent.removeChild(chargingPowerDropdownContainer);
   }
 }
+async function showHourlyGridEmissions(zoneName, properties, layerName) {
+  const modal = document.getElementById('hourly-grid-emissions-modal');
+  const content = document.getElementById('hourly-grid-emissions-content');
+  content.innerHTML = `
+    <span class="close-hourly-grid-emissions">&times;</span>
+    <h1>Hourly Grid Emissions for ${zoneName}</h1>
+    <p>Explore the hourly grid emission data for <strong>${zoneName}</strong>.</p>
+  `;
+  // Display the modal
+  modal.style.display = 'flex';
+  // Add event listener for the close button
+  const closeButton = modal.querySelector('.close-hourly-grid-emissions');
+  closeButton.onclick = function() {
+    modal.style.display = 'none';
+  };
+  // Close the modal if the user clicks anywhere outside of the modal content
+  window.onclick = function(event) {
+    if (event.target === modal) {
+      modal.style.display = 'none';
+    }
+  };
+}
+
 
 async function showStateRegulations(stateAbbreviation, properties, layerName) {
   const modal = document.getElementById('regulations-modal');
@@ -845,4 +869,4 @@ function getSelectedLayerCombinations() {
 
 
 
-export { populateLayerDropdown, getSelectedLayers, getSelectedLayersValues, showStateRegulations, getAreaLayerName};
+export { populateLayerDropdown, getSelectedLayers, getSelectedLayersValues, showStateRegulations, getAreaLayerName, showHourlyGridEmissions};

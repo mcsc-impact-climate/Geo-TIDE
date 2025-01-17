@@ -607,6 +607,49 @@ ul {
   top: 10px;
   right: 20px;
 }
+/*Hourly Grid Emissions*/
+/* General Modal Styles */
+#hourly-grid-emissions-modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scrolling if needed */
+  background-color: rgba(0, 0, 0, 0.4); /* Black background with opacity */
+}
+
+/* Modal Content */
+#hourly-grid-emissions-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* Centered vertically and horizontally */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 60%; /* Adjust width as needed */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for better visibility */
+  position: relative; /* Relative for positioning the close button */
+}
+
+/* Close Button */
+.close-hourly-grid-emissions {
+  color: #aaa;
+  position: absolute; /* Position within the modal */
+  top: 10px; /* Spacing from the top */
+  right: 15px; /* Spacing from the right */
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close-hourly-grid-emissions:hover,
+.close-hourly-grid-emissions:focus {
+  color: black;
+  text-decoration: none;
+}
+
 
 /* Collapsible header styles */
 .collapsible {

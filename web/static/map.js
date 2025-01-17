@@ -1,5 +1,5 @@
 import { createStyleFunction, isPolygonLayer, isPointLayer, isLineStringLayer, assignColorToLayer } from './styles.js';
-import { getSelectedLayers, getSelectedLayersValues, showStateRegulations, getAreaLayerName } from './ui.js';
+import { getSelectedLayers, getSelectedLayersValues, showStateRegulations, getAreaLayerName, showHourlyGridEmissions } from './ui.js';
 import { legendLabels, selectedGradientAttributes, geojsonColors, selectedGradientTypes, dataInfo } from './name_maps.js';
 
 var vectorLayers = [];
@@ -131,7 +131,16 @@ function handleMapClick(event) {
         }
       }
     }
-  });
+    else if (layerName == 'Hourly Grid Emissions') {
+      if (feature) {
+        const properties = feature.getProperties();
+        const zoneName = properties.zoneName;
+        //console.log(zoneName);
+        showHourlyGridEmissions(zoneName, properties, layerName);
+      }
+    }
+  }
+);
 }
 
 

@@ -1,5 +1,7 @@
 # MCSC Geospatial Trucking Industry Decarbonization Explorer (Geo-TIDE)
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14804046.svg)](https://doi.org/10.5281/zenodo.14804046)
+
 This repo contains code to produce and interactively visualize publicly available geospatial data to support trucking fleets in navigating the transition to alternative energy carriers. The Geo-TIDE tool uses data from the "freight analysis framework" (FAF5) database and other public data sources.
 
 ## Pre-requisites

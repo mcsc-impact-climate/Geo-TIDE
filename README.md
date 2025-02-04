@@ -1,6 +1,6 @@
-# MCSC Geospatial Fleet Transition Assessment and Decision Support Tool
+# MCSC Geospatial Trucking Industry Decarbonization Explorer (Geo-TIDE)
 
-This repo contains code to produce and interactively visualize publicly available geospatial data to support trucking fleets in navigating the transition to alternative energy carriers. The tool uses data from the "freight analysis framework" (FAF5) database and other public data sources.
+This repo contains code to produce and interactively visualize publicly available geospatial data to support trucking fleets in navigating the transition to alternative energy carriers. The Geo-TIDE tool uses data from the "freight analysis framework" (FAF5) database and other public data sources.
 
 ## Pre-requisites
 * [pixi](https://pixi.sh/latest/)

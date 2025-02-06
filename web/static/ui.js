@@ -631,8 +631,69 @@ async function showHourlyGridEmissions(zoneName, properties, layerName) {
   content.innerHTML = `
     <span class="close-hourly-grid-emissions">&times;</span>
     <h1>Hourly Grid Emissions for ${zoneName}</h1>
+    <canvas id="emissionsChart"></canvas>
     <p>Explore the hourly grid emission data for <strong>${zoneName}</strong>.</p>
   `;
+  const csvFileName = `${zoneName}_avg_std_dist.csv`
+  try {
+    const response = await fetch(`${CSV_URL_HOURLYEMISSIONS}${csvFileName}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch CSV: ${response.statusText}`);
+    }
+    const csvText = await response.text();
+
+    // Parse CSV data (using PapaParse or manual processing)
+    const data = Papa.parse(csvText, { header: true }).data; // Ensure PapaParse is included in your project
+
+    // Extract relevant data for the graph
+    const labels = data.map(row => row.datetime); // Column for time of day, called datetime in csv
+    const emissions = data.map(row => parseFloat(row.mean)); // Column for mean emissions, called mean in csv
+
+    // Remove the loading indicator
+    content.querySelector('p').remove();
+
+    // Render the chart
+    const ctx = document.getElementById('emissionsChart').getContext('2d');
+    //ctx.canvas.width = 200; // Set width in pixels
+    //ctx.canvas.height = 200;
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: `Emissions for ${zoneName}`,
+          data: emissions,
+          borderColor: 'rgba(75, 192, 192, 1)',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false, //get the graph to fit the popup
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Hour of the Day'
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Emissions (gCO₂e/kWh)' //is this right units
+            },
+            //beginAtZero: true,
+            //ticks: {
+            //  stepSize: 50, // Adjust intervals
+            //},
+          }
+        }
+      }
+    });
+  } catch (error) {
+    content.innerHTML += `<p>Error loading data: ${error.message}</p>`;
+  }
   // Display the modal
   modal.style.display = 'flex';
   // Add event listener for the close button
@@ -673,7 +734,7 @@ async function showStateRegulations(stateAbbreviation, properties, layerName) {
   // Fetch and display additional data from the corresponding CSV file(s)
   for (const csvFileName of csvFileNames) {
     try {
-      const response = await fetch(`${CSV_URL}${csvFileName}`);
+      const response = await fetch(`${CSV_URL_STATEREGULATIONS}${csvFileName}`);
       if (!response.ok) {
         throw new Error(`Network response was not ok: ${response.statusText}`);
       }

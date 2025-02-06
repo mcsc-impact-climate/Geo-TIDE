@@ -643,7 +643,7 @@ function updateLegend() {
   });
 }
 
-async function fetchCSVData(csvFileName) {
+async function fetchCSVData(csvFileName, CSV_URL) {
   const csvUrl = `${CSV_URL}${csvFileName}`;
   console.log(`Fetching CSV from URL: ${csvUrl}`); // Debug logging
   try {

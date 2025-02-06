@@ -160,7 +160,9 @@
   const GET_GEOJSONS = '{% url "get-geojsons" %}';
   const GET_GEOJSON = '{% url "get-geojson" %}';
   const STORAGE_URL = 'https://mcsc-datahub-public.s3.us-west-2.amazonaws.com/';
-  const CSV_URL = 'https://raw.githubusercontent.com/mcsc-impact-climate/FAF5-Analysis/main/data/incentives_and_regulations/state_level/';
+  const CSV_URL_STATEREGULATIONS = 'https://raw.githubusercontent.com/mcsc-impact-climate/FAF5-Analysis/main/data/incentives_and_regulations/state_level/';
+  const CSV_URL_HOURLYEMISSIONS = 'https://raw.githubusercontent.com/mcsc-impact-climate/Geo-TIDE/refs/heads/hourly_emissions_clickfeature/web/data_hourlygridemissions/';
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script type="module"  src='{% static "main.js"%}'></script>

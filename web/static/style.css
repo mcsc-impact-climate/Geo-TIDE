@@ -631,7 +631,24 @@ ul {
   border-radius: 10px; /* Rounded corners */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for better visibility */
   position: relative; /* Relative for positioning the close button */
+  max-height: 600px;
+  overflow: auto;
 }
+/* Container for the chart */
+.chart-container {
+  width: 100%; /* Take up the full width of the modal */
+  max-width: 600px; /* Restrict maximum width */
+  height: 200px; /* Fixed height */
+  margin: 0 auto; /* Center the container */
+  overflow: hidden; /* Prevent overflow issues */
+}
+
+/* Canvas to inherit container size */
+#hourlygridemissionsChart {
+  width: 100%; /* Scale to container width */
+  height: 100%; /* Scale to container height */
+}
+
 
 /* Close Button */
 .close-hourly-grid-emissions {

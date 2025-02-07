@@ -130,6 +130,11 @@ geojsons["Energy Demand from Electrified Trucking"] = os.path.join(
     geojson_directory, "trucking_energy_demand.geojson"
 )
 
+geojsons["National Zero-Emission Freight Corridor Strategy"] = os.path.join(
+    geojson_directory,
+    "ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase1_Corridors.geojson",
+)
+
 
 def auth_required(function):
     @wraps(function)

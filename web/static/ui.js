@@ -1,4 +1,4 @@
-import { geojsonTypes, availableGradientAttributes, selectedGradientAttributes, legendLabels, truckChargingOptions, selectedTruckChargingOptions, stateSupportOptions, selectedStateSupportOptions, tcoOptions, selectedTcoOptions, emissionsOptions, selectedEmissionsOptions, gridEmissionsOptions, hourlyEmissionsOptions, selectedHourlyEmissionsOptions, selectedGridEmissionsOptions, faf5Options, selectedFaf5Options, fuelLabels, dataInfo } from './name_maps.js';
+import { geojsonTypes, availableGradientAttributes, selectedGradientAttributes, legendLabels, truckChargingOptions, selectedTruckChargingOptions, stateSupportOptions, selectedStateSupportOptions, tcoOptions, selectedTcoOptions, emissionsOptions, selectedEmissionsOptions, gridEmissionsOptions, hourlyEmissionsOptions, selectedHourlyEmissionsOptions, selectedGridEmissionsOptions, faf5Options, selectedFaf5Options, zefOptions, selectedZefOptions, fuelLabels, dataInfo } from './name_maps.js';
 import { updateSelectedLayers, updateLegend, updateLayer, data, removeLayer, loadLayer } from './map.js'
 import { geojsonNames } from './main.js'
 
@@ -361,6 +361,10 @@ function createFaf5Filename(selected_options_list) {
   return 'geojsons_simplified/faf5_freight_flows/mode_truck_commodity_' + selected_options_list['Commodity'] + "_origin_all_dest_all.geojson";
 }
 
+function createZefFilename(selected_options_list) {
+  return 'geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase' + selected_options_list['Phase'] + "_Corridors.geojson";
+}
+
 function createChargingDropdowns(key) {
   const rangeDropdownResult = createDropdown("range", "Range", "Truck Range: ", key, truckChargingOptions, selectedTruckChargingOptions, createTruckChargingFilename);
   const chargingTimeDropdownResult = createDropdown("chargingTime", "Charging Time", "Charging Time: ", key, truckChargingOptions, selectedTruckChargingOptions, createTruckChargingFilename);
@@ -394,6 +398,10 @@ function createHourlyEmissionsDropdowns(key) {
 
 function createFaf5Dropdowns(key) {
   const visualizeDropdownResult = createDropdown("commodity", "Commodity", "Commodity: ", key, faf5Options, selectedFaf5Options, createFaf5Filename);
+}
+
+function createZefDropdowns(key) {
+  const visualizeDropdownResult = createDropdown("phase", "Phase", "Phase: ", key, zefOptions, selectedZefOptions, createZefFilename);
 }
 
 document.body.addEventListener('click', function(event) {
@@ -436,11 +444,17 @@ document.body.addEventListener('click', function(event) {
     document.getElementById('details-modal').style.display = 'flex';
 
     // Create a dropdown menu to choose the gradient attribute
-    createAttributeDropdown(key);
+    if (key in availableGradientAttributes) {
+        createAttributeDropdown(key);
+    }
 
     // Create additional dropdown menus for the truck charging layer
     if(key === "Savings from Pooled Charging Infrastructure") {
         createChargingDropdowns(key);
+    }
+      // Create a dropdown to select whether to the national zero-emission freight corridor strategy
+    if(key === "National Zero-Emission Freight Corridor Strategy") {
+        createZefDropdowns(key);
     }
   }
 
@@ -495,8 +509,10 @@ document.getElementById("area-details-button").addEventListener("click", functio
     document.getElementById('details-modal').style.display = 'flex';
 
     // Create a dropdown menu to choose attributes for the area layer
-    createAttributeDropdown(selectedAreaLayerName);
-
+    if (selectedAreaLayerName in availableGradientAttributes) {
+        createAttributeDropdown(selectedAreaLayerName);
+    }
+      
     // Create a dropdown if needed for state-level incentives and support
     if (selectedAreaLayerName === 'State-Level Incentives and Regulations') {
         createStateSupportDropdowns(selectedAreaLayerName)
@@ -519,7 +535,7 @@ document.getElementById("area-details-button").addEventListener("click", functio
     if(selectedAreaLayerName === "Hourly Grid Emissions") {
         createHourlyEmissionsDropdowns(selectedAreaLayerName);
     }
-    // Create a dropdown to select whether to view grid emission by state or balancing authority
+    // Create a dropdown to select whether to view truck imports and exports
     if(selectedAreaLayerName === "Truck Imports and Exports") {
       createFaf5Dropdowns(selectedAreaLayerName);
     }
@@ -622,6 +638,12 @@ function resetModalContent() {
   const chargingPowerDropdownContainer = document.querySelector(".charging-power-dropdown-container");
   if (chargingPowerDropdownContainer) {
     modalContent.removeChild(chargingPowerDropdownContainer);
+  }
+
+  // Remove visualize-by-dropdown-container if it exists
+  const phaseDropdownContainer = document.querySelector(".phase-dropdown-container");
+  if (phaseDropdownContainer) {
+    modalContent.removeChild(phaseDropdownContainer);
   }
 }
 

@@ -130,9 +130,23 @@ geojsons["Energy Demand from Electrified Trucking"] = os.path.join(
     geojson_directory, "trucking_energy_demand.geojson"
 )
 
+for phase in range(1, 5):  # 1,2,3,4
+    geojsons[f"ZEF_Corridor_Strategy_Phase{phase}_Corridors"] = os.path.join(
+        geojson_directory,
+        f"ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase{phase}_Corridors.geojson",
+    )
+    geojsons[f"ZEF_Corridor_Strategy_Phase{phase}_Facilities"] = os.path.join(
+        geojson_directory,
+        f"ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase{phase}_Facilities.geojson",
+    )
+    geojsons[f"ZEF_Corridor_Strategy_Phase{phase}_Hubs"] = os.path.join(
+        geojson_directory,
+        f"ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase{phase}_Hubs.geojson",
+    )
+
 geojsons["National Zero-Emission Freight Corridor Strategy"] = os.path.join(
     geojson_directory,
-    "ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase1_Corridors.geojson",
+    "ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase1_Corridors.geojson"
 )
 
 

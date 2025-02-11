@@ -79,6 +79,9 @@ function populateLayerDropdown(mapping) {
     
   // Add options for area layers
   for (const key in mapping) {
+    if (!geojsonTypes[key]) {
+      continue;
+    }
     if (geojsonTypes[key] === "area") {
       const option = document.createElement("option");
       option.value = mapping[key];
@@ -361,8 +364,23 @@ function createFaf5Filename(selected_options_list) {
   return 'geojsons_simplified/faf5_freight_flows/mode_truck_commodity_' + selected_options_list['Commodity'] + "_origin_all_dest_all.geojson";
 }
 
-function createZefFilename(selected_options_list) {
-  return 'geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase' + selected_options_list['Phase'] + "_Corridors.geojson";
+function createZefFilenames(selected_options_list) {
+  // selected_options_list['Phase'] => '1','2','3','4'
+  // We'll get the sub-layers from selectedZefSubLayers
+  const phaseVal = zefOptions['Phase'][selected_options_list['Phase']];
+  // that is a string like '1','2','3','4'
+
+  let filenames = [];
+  if (selectedZefSubLayers['Corridors']) {
+    filenames.push(`geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phaseVal}_Corridors.geojson`);
+  }
+  if (selectedZefSubLayers['Facilities']) {
+    filenames.push(`geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phaseVal}_Facilities.geojson`);
+  }
+  if (selectedZefSubLayers['Hubs']) {
+    filenames.push(`geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phaseVal}_Hubs.geojson`);
+  }
+  return filenames;
 }
 
 function createChargingDropdowns(key) {
@@ -401,8 +419,69 @@ function createFaf5Dropdowns(key) {
 }
 
 function createZefDropdowns(key) {
-  const visualizeDropdownResult = createDropdown("phase", "Phase", "Phase: ", key, zefOptions, selectedZefOptions, createZefFilename);
+  // 1) The Phase dropdown as you had before
+  createDropdown("phase", "Phase", "Phase: ", key, zefOptions, selectedZefOptions, createZefFilenames);
+
+  // 2) A set of checkboxes for Corridors/Facilities/Hubs
+  createZefSubLayerCheckboxes(key);
 }
+
+function createZefSubLayerCheckboxes(key) {
+  // If it already exists, remove it
+  const existingContainer = document.querySelector(".zef-sub-layers-container");
+  if (existingContainer) {
+    existingContainer.remove();
+  }
+
+  const container = document.createElement("div");
+  container.classList.add("zef-sub-layers-container");
+
+  const label = document.createElement("label");
+  label.textContent = "Show sub-layers:";
+  container.appendChild(label);
+
+  // A helper for building each checkbox
+  function addSubLayerCheckbox(subName) {
+    const checkboxContainer = document.createElement("div");
+    checkboxContainer.style.display = "inline-block";
+    checkboxContainer.style.marginRight = "10px";
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = selectedZefSubLayers[subName];
+    checkbox.id = `zef-${subName}-checkbox`;
+    checkbox.addEventListener("change", () => {
+      // If user tries to uncheck the last one, revert
+      const numChecked = Object.values(selectedZefSubLayers).filter(Boolean).length;
+      if (numChecked === 1 && checkbox.checked === false) {
+        // They are about to turn off the only sub-layer that remains
+        alert("At least one of Corridors/Facilities/Hubs must remain checked.");
+        checkbox.checked = true;
+        return;
+      }
+      selectedZefSubLayers[subName] = checkbox.checked;
+      // Re‐load the ZEF layers
+      reloadZefLayers(key);
+    });
+
+    const cbLabel = document.createElement("label");
+    cbLabel.setAttribute("for", `zef-${subName}-checkbox`);
+    cbLabel.textContent = subName;
+
+    checkboxContainer.appendChild(checkbox);
+    checkboxContainer.appendChild(cbLabel);
+    container.appendChild(checkboxContainer);
+  }
+
+  addSubLayerCheckbox("Corridors");
+  addSubLayerCheckbox("Facilities");
+  addSubLayerCheckbox("Hubs");
+
+  // Add container to the modal content
+  const modalContent = document.querySelector(".modal-content");
+  modalContent.appendChild(container);
+}
+
 
 document.body.addEventListener('click', function(event) {
   // Check if a details button was clicked
@@ -767,6 +846,50 @@ for (const supportType in groupedData) {
     }
   }
 }
+    
+async function reloadZefLayers(key) {
+  // "key" here is "National Zero-Emission Freight Corridor Strategy"
+
+  // 1) Remove any previously loaded ZEF sub-layers from the map
+  //    We'll identify them by a naming convention: "ZEF_Corridor_Strategy_PhaseX_(Corridors|Facilities|Hubs)"
+  for (let phase = 1; phase <= 4; phase++) {
+    removeLayer(`ZEF_Corridor_Strategy_Phase${phase}_Corridors`);
+    removeLayer(`ZEF_Corridor_Strategy_Phase${phase}_Facilities`);
+    removeLayer(`ZEF_Corridor_Strategy_Phase${phase}_Hubs`);
+  }
+
+  // 2) Determine which sub-layers (Corridors, Facilities, Hubs) are turned on
+  //    This is via createZefFilenames(...)
+  const filenames = createZefFilenames(selectedZefOptions);
+
+  // 3) For each chosen sub-layer filename, do loadLayer(...) *but pass in the
+  //    corresponding dictionary key*, e.g. "ZEF_Corridor_Strategy_Phase1_Corridors"
+  //    to match what we put in `views.py`.
+  //
+  //    Actually, we can parse the filename to see if it's Phase1_Corridors, Phase1_Hubs, etc.
+  //    Then we call loadLayer("ZEF_Corridor_Strategy_Phase1_Corridors").
+  //    That function fetches from Django using geojsons["ZEF_Corridor_Strategy_Phase1_Corridors"].
+  for (let filePath of filenames) {
+    // e.g. filePath = "geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase3_Hubs.geojson"
+    // Let's parse out "ZEF_Corridor_Strategy_Phase3_Hubs" to call loadLayer on that key
+    const baseName = filePath
+      .replace("geojsons_simplified/ZEF_Corridor_Strategy/", "")  // "ZEF_Corridor_Strategy_Phase3_Hubs.geojson"
+      .replace(".geojson", "");                                   // "ZEF_Corridor_Strategy_Phase3_Hubs"
+
+    // baseName is "ZEF_Corridor_Strategy_Phase3_Hubs"
+    await loadLayer(baseName);
+    // `loadLayer()` will fetch from your Django `get_geojson` route with that name,
+    // because you have geojsons[...] = path in Python.
+
+    // Then set it visible
+    setLayerVisibility(baseName, true);
+  }
+
+  // 4) Update the map and the legend
+  await updateSelectedLayers();
+  updateLegend();
+}
+
 
 // Set the inner HTML
 content.innerHTML = `

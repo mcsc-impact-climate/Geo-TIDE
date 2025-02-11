@@ -377,6 +377,19 @@ export let selectedZefOptions = {
     'Phase': 'Phase 1'
 };
 
+export const zefSubLayerOptions = {
+  // We’ll just store booleans whether user wants them visible or not
+  'Corridors': true,
+  'Facilities': true,
+  'Hubs': true,
+};
+
+export let selectedZefSubLayers = {
+  'Corridors': true,
+  'Facilities': true,
+  'Hubs': true
+};
+
 // Key: geojson name, Value: color to use
 export const geojsonColors = {
   'Truck Imports and Exports': 'red',

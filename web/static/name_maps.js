@@ -89,6 +89,7 @@ export const legendLabels = {
     'Tot Trips': 'Highway Freight Flows (daily trips/link)'},
   'Highway Flows (SU)': {
     'Tot Tons': 'Single-unit Highway Freight Flows (annual kilo-tons/link)',
+    'Tot Tons': 'Single-unit Highway Freight Flows (annual kilo-tons/link)',
     'Tot Trips': 'Single-unit Highway Freight Flows (daily trips/link)'},
   'Highway Flows (CU)': {
     'Tot Tons': 'Combined-unit Highway Freight Flows (annual kilo-tons/link)',
@@ -276,7 +277,7 @@ export const gridEmissionsOptions = {
 };
 
 export let selectedGridEmissionsOptions = {
-    'Visualize By': 'State'
+    'Visualize By': 'eia2022_state'
 };
 
 export const hourlyEmissionsOptions = {
@@ -361,7 +362,7 @@ export const faf5Options = {
 };
 
 export let selectedFaf5Options = {
-    'Commodity': 'All'
+    'Commodity': 'all'
 };
 
 export const zefOptions = {
@@ -374,7 +375,7 @@ export const zefOptions = {
 };
 
 export let selectedZefOptions = {
-    'Phase': 'Phase 1'
+    'Phase': '1'
 };
 
 export const zefSubLayerOptions = {

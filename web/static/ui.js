@@ -1,5 +1,5 @@
-import { geojsonTypes, availableGradientAttributes, selectedGradientAttributes, legendLabels, truckChargingOptions, selectedTruckChargingOptions, stateSupportOptions, selectedStateSupportOptions, tcoOptions, selectedTcoOptions, emissionsOptions, selectedEmissionsOptions, gridEmissionsOptions, hourlyEmissionsOptions, selectedHourlyEmissionsOptions, selectedGridEmissionsOptions, faf5Options, selectedFaf5Options, zefOptions, selectedZefOptions, fuelLabels, dataInfo } from './name_maps.js';
-import { updateSelectedLayers, updateLegend, updateLayer, data, removeLayer, loadLayer } from './map.js'
+import { geojsonTypes, availableGradientAttributes, selectedGradientAttributes, legendLabels, truckChargingOptions, selectedTruckChargingOptions, stateSupportOptions, selectedStateSupportOptions, tcoOptions, selectedTcoOptions, emissionsOptions, selectedEmissionsOptions, gridEmissionsOptions, hourlyEmissionsOptions, selectedHourlyEmissionsOptions, selectedGridEmissionsOptions, faf5Options, selectedFaf5Options, zefOptions, selectedZefOptions, zefSubLayerOptions, selectedZefSubLayers, fuelLabels, dataInfo } from './name_maps.js';
+import { updateSelectedLayers, updateLegend, updateLayer, data, removeLayer, loadLayer, setLayerVisibility, layerCache, vectorLayers } from './map.js'
 import { geojsonNames } from './main.js'
 
 // Mapping of state abbreviations to full state names
@@ -137,7 +137,9 @@ function addLayerCheckbox(key, value, container) {
 
 function getSelectedLayers() {
   const selectedLayerNames = [];
-  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+  // Select all checkboxes except those created from `addSubLayerCheckbox`
+  const checkboxes = document.querySelectorAll('input[type="checkbox"]:not(.zef-sub-layer-checkbox)');
 
   // Get selected checkboxes
   checkboxes.forEach((checkbox) => {
@@ -148,18 +150,20 @@ function getSelectedLayers() {
 
   // Get the selected area layer from the dropdown
   const areaLayerDropdown = document.getElementById("area-layer-dropdown");
- for (const option of areaLayerDropdown.options) {
-    if (option.selected && option.text !== 'None') {
-      selectedLayerNames.push(option.text); // Push the text of the selected option
+  for (const option of areaLayerDropdown.options) {
+    if (option.selected && option.text !== "None") {
+      selectedLayerNames.push(option.text);
     }
   }
-  
+
   // Get selected uploaded layers
   const userFilesLayerDropdown = document.getElementById("usefiles-data-ajax");
   const uploadedLayers = Array.from(userFilesLayerDropdown.selectedOptions).map(option => option.value);
-  selectedLayerNames.push(...uploadedLayers);  // Add uploaded layers to the selectedLayers array
+  selectedLayerNames.push(...uploadedLayers);
+
   return selectedLayerNames;
 }
+
 
 const areaLayerDropdown = document.getElementById("area-layer-dropdown");
 const details_button = document.getElementById("area-details-button");
@@ -271,7 +275,8 @@ function createAttributeDropdown(key) {
 }
 
 function createDropdown(name, parameter, dropdown_label, key, options_list, selected_options_list, filename_creation_function) {
-  const options = options_list[parameter]
+  const options = options_list[parameter];
+
   // Check if the dropdown already exists
   if (document.getElementById(name + "-dropdown")) {
     return; // Exit the function if it already exists
@@ -290,28 +295,40 @@ function createDropdown(name, parameter, dropdown_label, key, options_list, sele
   // Create and add options to the dropdown
   for (const this_option in options) {
     if (options.hasOwnProperty(this_option)) {
-        const option = document.createElement("option");
-        option.value = options[this_option]; // Use the key as the value
-        option.text = this_option; // Use the corresponding value as the text
-        if (selected_options_list[parameter] === option.value) {
-            option.selected = true;
-        }
-        dropdown.appendChild(option);
+      const option = document.createElement("option");
+      option.value = options[this_option]; // Use the key as the value
+      option.text = this_option; // Use the corresponding value as the text
+      if (selected_options_list[parameter] === option.value) {
+        option.selected = true;
+      }
+      dropdown.appendChild(option);
     }
   }
 
   // Add an event listener to the dropdown to handle attribute selection
   dropdown.addEventListener("change", async function () {
     selected_options_list[parameter] = dropdown.value;
-    //console.log("selected option: ", selected_options_list[parameter])
-    await removeLayer(key);
-    await loadLayer(key, `${STORAGE_URL}${filename_creation_function(selected_options_list)}`);
-    await updateSelectedLayers();
-    if (key === "State-Level Incentives and Regulations") {
-        for (const fuel_type in legendLabels[key]) {
-        legendLabels[key][fuel_type] = convertToTitleCase(selectedStateSupportOptions['Support Target']) + ' ' + convertToTitleCase(selectedStateSupportOptions['Support Type']) + ' (' + fuelLabels[fuel_type] + ')';
-        }
+
+    // Get the filenames or layer details
+    const layerData = filename_creation_function(selected_options_list);
+
+    // Ensure all ZEF layers are removed before loading new ones
+    for (let phase = 1; phase <= 4; phase++) {
+      removeLayer(`ZEF_Corridor_Strategy_Phase${phase}_Corridors`);
+      removeLayer(`ZEF_Corridor_Strategy_Phase${phase}_Facilities`);
+      removeLayer(`ZEF_Corridor_Strategy_Phase${phase}_Hubs`);
     }
+
+    // Load the new layers based on selected options
+    if (Array.isArray(layerData.urls)) {
+      for (let i = 0; i < layerData.names.length; i++) {
+        await loadLayer(layerData.names[i], layerData.urls[i]);
+      }
+    } else {
+      await loadLayer(key, `${STORAGE_URL}${layerData.urls}`);
+    }
+
+    await updateSelectedLayers();
     await updateLegend();
   });
 
@@ -323,6 +340,7 @@ function createDropdown(name, parameter, dropdown_label, key, options_list, sele
   const modalContent = document.querySelector(".modal-content");
   modalContent.appendChild(dropdownContainer);
 }
+
 
 function convertToTitleCase(str) {
   const words = str.split('_');
@@ -365,23 +383,27 @@ function createFaf5Filename(selected_options_list) {
 }
 
 function createZefFilenames(selected_options_list) {
-  // selected_options_list['Phase'] => '1','2','3','4'
-  // We'll get the sub-layers from selectedZefSubLayers
-  const phaseVal = zefOptions['Phase'][selected_options_list['Phase']];
-  // that is a string like '1','2','3','4'
+  const phase = selected_options_list["Phase"];
 
   let filenames = [];
-  if (selectedZefSubLayers['Corridors']) {
-    filenames.push(`geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phaseVal}_Corridors.geojson`);
+  let layerNames = [];
+
+  if (selectedZefSubLayers["Corridors"]) {
+    filenames.push(`${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Corridors.geojson`);
+    layerNames.push(`ZEF_Corridor_Strategy_Phase${phase}_Corridors`);
   }
-  if (selectedZefSubLayers['Facilities']) {
-    filenames.push(`geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phaseVal}_Facilities.geojson`);
+  if (selectedZefSubLayers["Facilities"]) {
+    filenames.push(`${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Facilities.geojson`);
+    layerNames.push(`ZEF_Corridor_Strategy_Phase${phase}_Facilities`);
   }
-  if (selectedZefSubLayers['Hubs']) {
-    filenames.push(`geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phaseVal}_Hubs.geojson`);
+  if (selectedZefSubLayers["Hubs"]) {
+    filenames.push(`${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Hubs.geojson`);
+    layerNames.push(`ZEF_Corridor_Strategy_Phase${phase}_Hubs`);
   }
-  return filenames;
+
+  return { names: layerNames, urls: filenames };
 }
+
 
 function createChargingDropdowns(key) {
   const rangeDropdownResult = createDropdown("range", "Range", "Truck Range: ", key, truckChargingOptions, selectedTruckChargingOptions, createTruckChargingFilename);
@@ -440,7 +462,6 @@ function createZefSubLayerCheckboxes(key) {
   label.textContent = "Show sub-layers:";
   container.appendChild(label);
 
-  // A helper for building each checkbox
   function addSubLayerCheckbox(subName) {
     const checkboxContainer = document.createElement("div");
     checkboxContainer.style.display = "inline-block";
@@ -450,18 +471,42 @@ function createZefSubLayerCheckboxes(key) {
     checkbox.type = "checkbox";
     checkbox.checked = selectedZefSubLayers[subName];
     checkbox.id = `zef-${subName}-checkbox`;
-    checkbox.addEventListener("change", () => {
-      // If user tries to uncheck the last one, revert
+    checkbox.classList.add("zef-sub-layer-checkbox");
+
+    checkbox.addEventListener("change", async () => {
       const numChecked = Object.values(selectedZefSubLayers).filter(Boolean).length;
-      if (numChecked === 1 && checkbox.checked === false) {
-        // They are about to turn off the only sub-layer that remains
+
+      if (numChecked === 1 && !checkbox.checked) {
         alert("At least one of Corridors/Facilities/Hubs must remain checked.");
         checkbox.checked = true;
         return;
       }
+
+      // Update selectedZefSubLayers
       selectedZefSubLayers[subName] = checkbox.checked;
-      // Re‐load the ZEF layers
-      reloadZefLayers(key);
+
+      const layerName = `ZEF_Corridor_Strategy_Phase${selectedZefOptions["Phase"]}_${subName}`;
+      const layerUrl = `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/${layerName}.geojson`;
+
+      if (checkbox.checked) {
+        if (!layerCache[layerName]) {
+          // Load layer if not already loaded
+          await loadLayer(layerName, layerUrl);
+        } else {
+          // Make the layer visible if already loaded
+          setLayerVisibility(layerName, true);
+          if (!vectorLayers.includes(layerCache[layerName])) {
+            vectorLayers.push(layerCache[layerName]);
+            map.addLayer(layerCache[layerName]);
+          }
+        }
+      } else {
+        // Remove the layer when unchecked
+        setLayerVisibility(layerName, false);
+      }
+
+      // Refresh legend
+      updateLegend();
     });
 
     const cbLabel = document.createElement("label");
@@ -481,7 +526,6 @@ function createZefSubLayerCheckboxes(key) {
   const modalContent = document.querySelector(".modal-content");
   modalContent.appendChild(container);
 }
-
 
 document.body.addEventListener('click', function(event) {
   // Check if a details button was clicked
@@ -846,49 +890,6 @@ for (const supportType in groupedData) {
     }
   }
 }
-    
-async function reloadZefLayers(key) {
-  // "key" here is "National Zero-Emission Freight Corridor Strategy"
-
-  // 1) Remove any previously loaded ZEF sub-layers from the map
-  //    We'll identify them by a naming convention: "ZEF_Corridor_Strategy_PhaseX_(Corridors|Facilities|Hubs)"
-  for (let phase = 1; phase <= 4; phase++) {
-    removeLayer(`ZEF_Corridor_Strategy_Phase${phase}_Corridors`);
-    removeLayer(`ZEF_Corridor_Strategy_Phase${phase}_Facilities`);
-    removeLayer(`ZEF_Corridor_Strategy_Phase${phase}_Hubs`);
-  }
-
-  // 2) Determine which sub-layers (Corridors, Facilities, Hubs) are turned on
-  //    This is via createZefFilenames(...)
-  const filenames = createZefFilenames(selectedZefOptions);
-
-  // 3) For each chosen sub-layer filename, do loadLayer(...) *but pass in the
-  //    corresponding dictionary key*, e.g. "ZEF_Corridor_Strategy_Phase1_Corridors"
-  //    to match what we put in `views.py`.
-  //
-  //    Actually, we can parse the filename to see if it's Phase1_Corridors, Phase1_Hubs, etc.
-  //    Then we call loadLayer("ZEF_Corridor_Strategy_Phase1_Corridors").
-  //    That function fetches from Django using geojsons["ZEF_Corridor_Strategy_Phase1_Corridors"].
-  for (let filePath of filenames) {
-    // e.g. filePath = "geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase3_Hubs.geojson"
-    // Let's parse out "ZEF_Corridor_Strategy_Phase3_Hubs" to call loadLayer on that key
-    const baseName = filePath
-      .replace("geojsons_simplified/ZEF_Corridor_Strategy/", "")  // "ZEF_Corridor_Strategy_Phase3_Hubs.geojson"
-      .replace(".geojson", "");                                   // "ZEF_Corridor_Strategy_Phase3_Hubs"
-
-    // baseName is "ZEF_Corridor_Strategy_Phase3_Hubs"
-    await loadLayer(baseName);
-    // `loadLayer()` will fetch from your Django `get_geojson` route with that name,
-    // because you have geojsons[...] = path in Python.
-
-    // Then set it visible
-    setLayerVisibility(baseName, true);
-  }
-
-  // 4) Update the map and the legend
-  await updateSelectedLayers();
-  updateLegend();
-}
 
 
 // Set the inner HTML
@@ -990,4 +991,4 @@ function getSelectedLayerCombinations() {
 
 
 
-export { populateLayerDropdown, getSelectedLayers, getSelectedLayersValues, showStateRegulations, getAreaLayerName};
+export { populateLayerDropdown, getSelectedLayers, getSelectedLayersValues, showStateRegulations, getAreaLayerName, createZefFilenames };

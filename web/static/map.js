@@ -1,6 +1,6 @@
 import { createStyleFunction, isPolygonLayer, isPointLayer, isLineStringLayer, assignColorToLayer } from './styles.js';
-import { getSelectedLayers, getSelectedLayersValues, showStateRegulations, getAreaLayerName } from './ui.js';
-import { legendLabels, selectedGradientAttributes, geojsonColors, selectedGradientTypes, dataInfo } from './name_maps.js';
+import { getSelectedLayers, getSelectedLayersValues, showStateRegulations, getAreaLayerName, createZefFilenames } from './ui.js';
+import { legendLabels, selectedGradientAttributes, geojsonColors, selectedGradientTypes, dataInfo, zefOptions, selectedZefOptions} from './name_maps.js';
 
 var vectorLayers = [];
 var map;
@@ -232,6 +232,7 @@ async function loadLayer(layerName, layerUrl = null) {
   }
 }
 
+
 function removeLayer(layerName) {
   // Find the layer by its name
   const layerIndex = vectorLayers.findIndex(layer => layer.get("key").split(".")[0] === layerName);
@@ -282,57 +283,88 @@ function setLayerVisibility(layerName, isVisible) {
 
 // Function to update the selected layers on the map
 async function updateSelectedLayers() {
-  //console.log("In updateSelectedLayers()")
   const selectedLayers = getSelectedLayers();
-
-  // Create an array of promises for loading layers
   const loadingPromises = [];
 
-  // Iterate through the selected layers
   for (const layerName of selectedLayers) {
-    //console.log("Updating layer ", layerName)
-    if (!layerCache[layerName]) {
-      // Push the promise returned by loadLayer into the array
-      loadingPromises.push(loadLayer(layerName));
+    if (layerName === "National Zero-Emission Freight Corridor Strategy") {
+      // Determine the correct phase number
+      const phase = selectedZefOptions["Phase"] || "1";
+
+      // Define sub-layer names and URLs
+      const subLayers = [
+        {
+          name: `ZEF_Corridor_Strategy_Phase${phase}_Corridors`,
+          url: `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Corridors.geojson`
+        },
+        {
+          name: `ZEF_Corridor_Strategy_Phase${phase}_Facilities`,
+          url: `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Facilities.geojson`
+        },
+        {
+          name: `ZEF_Corridor_Strategy_Phase${phase}_Hubs`,
+          url: `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Hubs.geojson`
+        }
+      ];
+
+      // Load each sub-layer if it hasn't been loaded
+      for (const { name, url } of subLayers) {
+        if (!layerCache[name]) {
+          loadingPromises.push(loadLayer(name, url));
+        } else {
+          setLayerVisibility(name, true);
+        }
+      }
     } else {
-      // Layer is in the cache; update its visibility
-      setLayerVisibility(layerName, true);
+      // Load normal layers
+      if (!layerCache[layerName]) {
+        loadingPromises.push(loadLayer(layerName));
+      } else {
+        setLayerVisibility(layerName, true);
+      }
     }
   }
 
   try {
-    // Wait for all loading promises to complete before proceeding
     await Promise.all(loadingPromises);
-
-    // Reorder selectedLayers based on the associated layers in layerCache
+    
+    // Sort selected layers for correct rendering order
     selectedLayers.sort((a, b) => compareLayers(a, b));
 
-    // Hide layers that are not in the selectedLayers list
+    // Hide any layers not currently selected
     Object.keys(layerCache).forEach(attributeKey => {
-      if (!selectedLayers.includes(attributeKey)) {
+      if (!selectedLayers.includes(attributeKey) && !attributeKey.startsWith("ZEF_Corridor_Strategy_Phase")) {
         setLayerVisibility(attributeKey, false);
       }
     });
   } catch (error) {
-    // Handle errors if any loading promise fails
-    console.error('Error loading layers:', error);
+    console.error("Error loading layers:", error);
   }
 
-  // Clear all layers from the map except for the base layer
-  const baseLayer = map.getLayers().item(0); // Assuming the base layer is the first layer
+  // Clear the map but keep the base layer
+  const baseLayer = map.getLayers().item(0);
   map.getLayers().clear();
-
-  // Re-add the base layer to the map
   if (baseLayer) {
     map.addLayer(baseLayer);
   }
 
-  // Add the selected layers to the map
+  // Add selected layers back to the map
   for (const layerName of selectedLayers) {
-    map.addLayer(layerCache[layerName]);
+    if (layerCache[layerName]) {
+      map.addLayer(layerCache[layerName]);
+    }
   }
-  //console.log("Selected layers:", selectedLayers);
+
+  // Ensure all sub-layers of National ZEF Corridor Strategy are added when it is selected
+  if (selectedLayers.includes("National Zero-Emission Freight Corridor Strategy")) {
+    for (const key in layerCache) {
+      if (key.startsWith("ZEF_Corridor_Strategy_Phase")) {
+        map.addLayer(layerCache[key]);
+      }
+    }
+  }
 }
+
 
 function reverseMapping(originalMap) {
   return Object.fromEntries(
@@ -822,5 +854,4 @@ async function applyLayerOptions(layerName, gradientAttribute) {
     updateLegend(); // Now, call updateLegend after updateSelectedLayers is done
 }
 
-
-export { initMap, updateSelectedLayers, updateLegend, attachEventListeners, updateLayer, attributeBounds, data, removeLayer, loadLayer, handleMapClick, handleMapHover, map, fetchCSVData };
+export { initMap, updateSelectedLayers, updateLegend, attachEventListeners, updateLayer, attributeBounds, data, removeLayer, loadLayer, handleMapClick, handleMapHover, map, fetchCSVData, setLayerVisibility, layerCache, vectorLayers };

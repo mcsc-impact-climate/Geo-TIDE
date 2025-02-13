@@ -25,6 +25,7 @@ function generateDistinctColor() {
 }
 
 function createStyleFunction(layerName, boundaryColor='gray', boundaryWidth=1, isHover = false) {
+  console.log("In createStyleFunction for layer", layerName)
   return function(feature) {
     const attributeKey = layerName;
     const useGradient = layerName in selectedGradientAttributes;
@@ -40,7 +41,7 @@ function createStyleFunction(layerName, boundaryColor='gray', boundaryWidth=1, i
     
     // If the layer is pre-defined, set it to its defined color, or default to yellow
     let layerColor = '';
-    if (layerName in dataInfo) {
+    if (layerName in geojsonColors) {
       layerColor = geojsonColors[layerName] || 'yellow'; // Fetch color from dictionary, or default
     } else {
       // Otherwise, set the color dynamically

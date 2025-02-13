@@ -415,7 +415,21 @@ export const geojsonColors = {
   'LPG Stations': 'cyan',
   'Savings from Pooled Charging Infrastructure': 'red',
   'Principal Ports': 'purple',
-  'National Zero-Emission Freight Corridor Strategy': 'green',
+
+  'ZEF_Corridor_Strategy_Phase1_Hubs': '#FF7F50',       // Dark Red for Hubs
+  'ZEF_Corridor_Strategy_Phase2_Hubs': '#FF7F50',
+  'ZEF_Corridor_Strategy_Phase3_Hubs': '#FF7F50',
+  'ZEF_Corridor_Strategy_Phase4_Hubs': '#FF7F50',
+
+  'ZEF_Corridor_Strategy_Phase1_Corridors': 'DarkBlue',  // Dark Blue for Corridors
+  'ZEF_Corridor_Strategy_Phase2_Corridors': 'DarkBlue',
+  'ZEF_Corridor_Strategy_Phase3_Corridors': 'DarkBlue',
+  'ZEF_Corridor_Strategy_Phase4_Corridors': 'DarkBlue',
+
+  'ZEF_Corridor_Strategy_Phase1_Facilities': 'Green', // Dark Green for Facilities
+  'ZEF_Corridor_Strategy_Phase2_Facilities': 'Green',
+  'ZEF_Corridor_Strategy_Phase3_Facilities': 'Green',
+  'ZEF_Corridor_Strategy_Phase4_Facilities': 'Green',
 };
 
 // Key: geojson name, Value: either 'area' (indicating it's an area feature) or [feature type: category], where each feature type can be divided into several categories
@@ -454,7 +468,7 @@ export const geojsonTypes = {
   'Total Cost of Truck Ownership': 'area',
   'Grid Generation and Capacity': 'area',
   'Energy Demand from Electrified Trucking': 'area',
-  'National Zero-Emission Freight Corridor Strategy': ['highway', 'infra'],
+  'National ZEF Corridor Strategy': ['highway', 'infra'],
 };
 
 export const dataInfo = {
@@ -490,6 +504,7 @@ export const dataInfo = {
   'Total Cost of Truck Ownership': "Estimated lifecycle total cost of ownership per mile for the Tesla Semi due to truck purchase, charging, labor, maintenance, insurance and other operating costs. Charging costs are evaluated using state-level commercial electricity price and demand charge. Costs are calculated using the model developed by <a href='https://chemrxiv.org/engage/chemrxiv/article-details/656e4691cf8b3c3cd7c96810'>Sader et al.</a>, calibrated to <a href='https://runonless.com/run-on-less-electric-depot-reports/'>NACFE Run on Less data</a> for the Tesla Semi from the 2023 PepsiCo Semi pilot.<br><br><a href='https://github.com/mcsc-impact-climate/Green_Trucking_Analysis'>Link to Git repo with code used to produce these layers</a>",
   'Grid Generation and Capacity': "Grid electricity generation and net summer power capacity by state for 2022, along with estimated theoretical maximum generation capacity and its difference and ratio relative to the actual grid electricity generation. Theoretical maximum electricity generation capacity is obtained under the assumption that the grid operates at its net summer power capacity year-round. <br><br>Data is obtained from the EIA's <a href='https://www.eia.gov/electricity/data/state/'>state-level electricity database</a>.<br><a href='https://www.eia.gov/electricity/data/state/annual_generation_state.xls'>Link to download annual generation data</a><br><a href='https://www.eia.gov/electricity/data/state/existcapacity_annual.xlsx'>Link to download net summer power capacity data</a>",
   'Energy Demand from Electrified Trucking': "Total energy demand from electrified trucking (in MWh), assuming all 2022 trucking operations in the state are electrified. This is evaluated using the FAF5 highway flows (see Highway Flows layer for details), along with payload-based energy economy calibrated to the Tesla Semi (code and details for Tesla Semi calibration can be found in the following GitHub repos <a href='https://github.com/mcsc-impact-climate/PepsiCo_NACFE_Analysis'>Repo 1</a>, <a href='https://github.com/mcsc-impact-climate/Green_Trucking_Analysis'>Repo 2</a>).<br><br>To assess the capacity of the grid to support electrified trucking, you can also change the gradient attribute to show the energy demand from electrified trucking as a percent of one of the following measures of grid capacity (see 'Grid Generation and Capacity' layer for details): <ul><li>Total electricity generated in the state in 2022</li><li>Total theoretical generating capacity of the state in 2022 (MWh), assuming the grid ran at its peak summer capacity year-round </li><li>Theoretical excess generating capacity (MWh). This is quantified as the difference between the total theoretical generating capacity and the actual electricity generated in 2022.</li></ul>",
-    'National Zero-Emission Freight Corridor Strategy': "zzz"
+  'National ZEF Corridor Strategy': "This layer visualizes the National Zero-Emission Freight Corridor Strategy, a framework developed by the U.S. Joint Office of Energy and Transportation to support the coordinated deployment of medium- and heavy-duty zero-emission vehicle (ZEV) infrastructure along critical freight corridors. The strategy, outlined in the publication <a href='https://driveelectric.gov/files/zef-corridor-strategy.pdf'>National Zero-Emission Freight Corridor Strategy</a>, identifies priority corridors and infrastructure investment needs to accelerate the transition to zero-emission medium- and heavy-duty vehicles. <br><br>For more details, refer to the official report: <a href='https://driveelectric.gov/files/zef-corridor-strategy.pdf'>National Zero-Emission Freight Corridor Strategy</a> (Joint Office of Energy and Transportation, 2024)."
+
 };
 

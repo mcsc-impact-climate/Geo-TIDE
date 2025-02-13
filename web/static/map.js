@@ -283,87 +283,84 @@ function setLayerVisibility(layerName, isVisible) {
 
 // Function to update the selected layers on the map
 async function updateSelectedLayers() {
-  const selectedLayers = getSelectedLayers();
+  console.log("In updateSelectedLayers");
+  let selectedLayers = getSelectedLayers(); // Get selected layers
   const loadingPromises = [];
 
+  let zefSubLayers = [];
+
+  if (selectedLayers.includes("National ZEF Corridor Strategy")) {
+    const phase = selectedZefOptions["Phase"] || "1";
+
+    // Define sub-layer names and URLs
+    zefSubLayers = [
+      {
+        name: `ZEF_Corridor_Strategy_Phase${phase}_Hubs`,       // Areas
+        url: `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Hubs.geojson`
+      },
+      {
+        name: `ZEF_Corridor_Strategy_Phase${phase}_Corridors`,  // Lines
+        url: `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Corridors.geojson`
+      },
+      {
+        name: `ZEF_Corridor_Strategy_Phase${phase}_Facilities`, // Points
+        url: `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Facilities.geojson`
+      }
+    ];
+
+    // Remove "National ZEF Corridor Strategy" from selectedLayers
+    selectedLayers = selectedLayers.filter(layer => layer !== "National ZEF Corridor Strategy");
+
+    // Add sub-layers
+    selectedLayers.push(...zefSubLayers.map(layer => layer.name));
+
+    // Ensure sub-layers are loaded from AWS
+    for (const { name, url } of zefSubLayers) {
+      console.log("Loading sub-layer", name);
+      if (!layerCache[name]) {
+        loadingPromises.push(loadLayer(name, url));
+      }
+    }
+  }
+
+  // Load all other selected layers, but skip the ZEF sub-layers since they're already handled
   for (const layerName of selectedLayers) {
-    if (layerName === "National Zero-Emission Freight Corridor Strategy") {
-      // Determine the correct phase number
-      const phase = selectedZefOptions["Phase"] || "1";
-
-      // Define sub-layer names and URLs
-      const subLayers = [
-        {
-          name: `ZEF_Corridor_Strategy_Phase${phase}_Corridors`,
-          url: `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Corridors.geojson`
-        },
-        {
-          name: `ZEF_Corridor_Strategy_Phase${phase}_Facilities`,
-          url: `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Facilities.geojson`
-        },
-        {
-          name: `ZEF_Corridor_Strategy_Phase${phase}_Hubs`,
-          url: `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Hubs.geojson`
-        }
-      ];
-
-      // Load each sub-layer if it hasn't been loaded
-      for (const { name, url } of subLayers) {
-        if (!layerCache[name]) {
-          loadingPromises.push(loadLayer(name, url));
-        } else {
-          setLayerVisibility(name, true);
-        }
-      }
-    } else {
-      // Load normal layers
-      if (!layerCache[layerName]) {
-        loadingPromises.push(loadLayer(layerName));
-      } else {
-        setLayerVisibility(layerName, true);
-      }
+    if (!layerCache[layerName] && !zefSubLayers.some(subLayer => subLayer.name === layerName)) {
+      loadingPromises.push(loadLayer(layerName));
     }
   }
 
   try {
     await Promise.all(loadingPromises);
-    
-    // Sort selected layers for correct rendering order
-    selectedLayers.sort((a, b) => compareLayers(a, b));
 
-    // Hide any layers not currently selected
-    Object.keys(layerCache).forEach(attributeKey => {
-      if (!selectedLayers.includes(attributeKey) && !attributeKey.startsWith("ZEF_Corridor_Strategy_Phase")) {
-        setLayerVisibility(attributeKey, false);
-      }
+    // Sort selectedLayers (now including the sub-layers)
+    selectedLayers.sort(compareLayers);
+
+    // Hide any non-selected layers
+    Object.keys(layerCache).forEach(layerName => {
+      setLayerVisibility(layerName, selectedLayers.includes(layerName));
     });
+
   } catch (error) {
     console.error("Error loading layers:", error);
   }
 
-  // Clear the map but keep the base layer
+  // Clear the map while keeping the base layer
   const baseLayer = map.getLayers().item(0);
   map.getLayers().clear();
   if (baseLayer) {
     map.addLayer(baseLayer);
   }
 
-  // Add selected layers back to the map
+  // Add sorted layers to the map
   for (const layerName of selectedLayers) {
     if (layerCache[layerName]) {
       map.addLayer(layerCache[layerName]);
     }
   }
-
-  // Ensure all sub-layers of National ZEF Corridor Strategy are added when it is selected
-  if (selectedLayers.includes("National Zero-Emission Freight Corridor Strategy")) {
-    for (const key in layerCache) {
-      if (key.startsWith("ZEF_Corridor_Strategy_Phase")) {
-        map.addLayer(layerCache[key]);
-      }
-    }
-  }
 }
+
+
 
 
 function reverseMapping(originalMap) {
@@ -396,6 +393,7 @@ function updateLegend() {
     const layerName = layer.get("key"); // Get the key property
 
     // Check if this layer is in the list of selected layers
+    console.log("selectedLayers: ", selectedLayers)
     if (selectedLayers.includes(layerName)) {
       const layerDiv = document.createElement("div");
       layerDiv.style.display = "flex";
@@ -421,7 +419,9 @@ function updateLegend() {
         
       // If the layer is pre-defined, set it to its defined color, or default to yellow
       let layerColor = '';
-      if (layerName in dataInfo) {
+      console.log("Layer name: ", layerName)
+      console.log("GeoJSON colors: ", geojsonColors)
+      if (layerName in geojsonColors) {
           layerColor = geojsonColors[layerName] || 'yellow'; // Fetch color from dictionary, or default to yellow
       }
       // Otherwise, set the color dynamically

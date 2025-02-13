@@ -576,7 +576,7 @@ document.body.addEventListener('click', function(event) {
         createChargingDropdowns(key);
     }
       // Create a dropdown to select whether to the national zero-emission freight corridor strategy
-    if(key === "National Zero-Emission Freight Corridor Strategy") {
+    if(key === "National ZEF Corridor Strategy") {
         createZefDropdowns(key);
     }
   }

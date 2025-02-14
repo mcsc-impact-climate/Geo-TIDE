@@ -431,10 +431,10 @@ export const geojsonColors = {
   'Savings from Pooled Charging Infrastructure': 'red',
   'Principal Ports': 'purple',
 
-  'ZEF Corridor Strategy Phase 1 Hubs': '#FF7F50',       // Dark Red for Hubs
-  'ZEF Corridor Strategy Phase 2 Hubs': '#FF7F50',
-  'ZEF Corridor Strategy Phase 3 Hubs': '#FF7F50',
-  'ZEF Corridor Strategy Phase 4 Hubs': '#FF7F50',
+  'ZEF Corridor Strategy Phase 1 Hubs': '#ffa500',       // Dark Red for Hubs
+  'ZEF Corridor Strategy Phase 2 Hubs': '#ffa500',
+  'ZEF Corridor Strategy Phase 3 Hubs': '#ffa500',
+  'ZEF Corridor Strategy Phase 4 Hubs': '#ffa500',
 
   'ZEF Corridor Strategy Phase 1 Corridors': 'Purple',  // Dark Blue for Corridors
   'ZEF Corridor Strategy Phase 2 Corridors': 'Purple',

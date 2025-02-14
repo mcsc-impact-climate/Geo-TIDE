@@ -335,6 +335,7 @@ async function updateSelectedLayers() {
     await Promise.all(loadingPromises);
 
     // Sort selectedLayers (now including the sub-layers)
+    console.log(selectedLayers)
     selectedLayers.sort(compareLayers);
 
     // Hide any non-selected layers
@@ -360,9 +361,6 @@ async function updateSelectedLayers() {
     }
   }
 }
-
-
-
 
 function reverseMapping(originalMap) {
   return Object.fromEntries(
@@ -857,33 +855,61 @@ async function toggleZefSubLayer(subName, checked) {
   const layerUrl = `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${selectedZefOptions["Phase"]}_${subName}.geojson`;
 
   if (checked) {
-
     if (!layerCache[layerName]) {
       await loadLayer(layerName, layerUrl);
     }
 
-    // Ensure the layer exists in cache before proceeding
     if (layerCache[layerName]) {
-      
-      if (!vectorLayers.includes(layerCache[layerName])) {
-        vectorLayers.push(layerCache[layerName]);
+      const layer = layerCache[layerName];
+
+      // Ensure layer is in vectorLayers
+      if (!vectorLayers.includes(layer)) {
+        vectorLayers.push(layer);
       }
 
-      if (!map.getLayers().getArray().includes(layerCache[layerName])) {
-        map.addLayer(layerCache[layerName]);
-      } else {
-      }
-
+      // Set visibility & re-add to map
       setLayerVisibility(layerName, true);
     } else {
       console.error("Layer failed to load and is missing from cache.");
     }
   } else {
     removeLayer(layerName);
+    vectorLayers = vectorLayers.filter(layer => layer.get("key") !== layerName);
   }
+
+  // **Re-enforce correct order of all active ZEF sub-layers**
+  enforceLayerOrder(
+    vectorLayers
+      .map(layer => layer.get("key")) // Get layer names
+      .filter(name => name.startsWith("ZEF Corridor Strategy Phase")) // Keep only ZEF layers
+  );
 
   updateLegend();
 }
+
+
+
+
+function enforceLayerOrder(layerNames) {
+  // Remove all ZEF layers from the map
+  const existingLayers = map.getLayers().getArray().slice(1); // Exclude base layer
+  existingLayers.forEach(layer => {
+    if (layer && layer.get("key") && layer.get("key").startsWith("ZEF Corridor Strategy Phase")) {
+      map.removeLayer(layer);
+    }
+  });
+
+  // **Sort layers before re-adding**
+  const sortedLayerNames = layerNames.sort(compareLayers);
+
+  // Re-add layers in the correct order
+  sortedLayerNames.forEach(layerName => {
+    if (layerCache[layerName]) {
+      map.addLayer(layerCache[layerName]);
+    }
+  });
+}
+
 
 
 

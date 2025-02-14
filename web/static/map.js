@@ -335,7 +335,6 @@ async function updateSelectedLayers() {
     await Promise.all(loadingPromises);
 
     // Sort selectedLayers (now including the sub-layers)
-    console.log(selectedLayers)
     selectedLayers.sort(compareLayers);
 
     // Hide any non-selected layers

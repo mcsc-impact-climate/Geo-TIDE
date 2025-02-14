@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class GeoFTADSConfig(AppConfig):
+class GeoTIDEConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "geo_ftads"
+    name = "geo_tide"

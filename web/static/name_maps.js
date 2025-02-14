@@ -108,6 +108,21 @@ export const legendLabels = {
     'Propane': 'Incentives and Regulations (Propane)',
     'Renewable': 'Incentives and Regulations (Renewable Diesel)',
 //    'Emissions': 'Incentives and Regulations (Emissions)',
+
+    'ZEF Corridor Strategy Phase 1 Hubs': 'ZEF Hubs (Phase 1)',
+    'ZEF Corridor Strategy Phase 2 Hubs': 'ZEF Hubs (Phase 2)',
+    'ZEF Corridor Strategy Phase 3 Hubs': 'ZEF Hubs (Phase 3)',
+    'ZEF Corridor Strategy Phase 4 Hubs': 'ZEF Hubs (Phase 4)',
+    
+    'ZEF Corridor Strategy Phase 1 Corridors': 'ZEF Corridors (Phase 1)',
+    'ZEF Corridor Strategy Phase 2 Corridors': 'ZEF Corridors (Phase 2)',
+    'ZEF Corridor Strategy Phase 3 Corridors': 'ZEF Corridors (Phase 3)',
+    'ZEF Corridor Strategy Phase 4 Corridors': 'ZEF Corridors (Phase 4)',
+    
+    'ZEF Corridor Strategy Phase 1 Facilities': 'ZEF Facilities (Phase 1)',
+    'ZEF Corridor Strategy Phase 2 Facilities': 'ZEF Facilities (Phase 2)',
+    'ZEF Corridor Strategy Phase 3 Facilities': 'ZEF Facilities (Phase 3)',
+    'ZEF Corridor Strategy Phase 4 Facilities': 'ZEF Facilities (Phase 4)',
  },
     
   'Savings from Pooled Charging Infrastructure': {
@@ -416,20 +431,20 @@ export const geojsonColors = {
   'Savings from Pooled Charging Infrastructure': 'red',
   'Principal Ports': 'purple',
 
-  'ZEF_Corridor_Strategy_Phase1_Hubs': '#FF7F50',       // Dark Red for Hubs
-  'ZEF_Corridor_Strategy_Phase2_Hubs': '#FF7F50',
-  'ZEF_Corridor_Strategy_Phase3_Hubs': '#FF7F50',
-  'ZEF_Corridor_Strategy_Phase4_Hubs': '#FF7F50',
+  'ZEF Corridor Strategy Phase 1 Hubs': '#FF7F50',       // Dark Red for Hubs
+  'ZEF Corridor Strategy Phase 2 Hubs': '#FF7F50',
+  'ZEF Corridor Strategy Phase 3 Hubs': '#FF7F50',
+  'ZEF Corridor Strategy Phase 4 Hubs': '#FF7F50',
 
-  'ZEF_Corridor_Strategy_Phase1_Corridors': 'DarkBlue',  // Dark Blue for Corridors
-  'ZEF_Corridor_Strategy_Phase2_Corridors': 'DarkBlue',
-  'ZEF_Corridor_Strategy_Phase3_Corridors': 'DarkBlue',
-  'ZEF_Corridor_Strategy_Phase4_Corridors': 'DarkBlue',
+  'ZEF Corridor Strategy Phase 1 Corridors': 'DarkBlue',  // Dark Blue for Corridors
+  'ZEF Corridor Strategy Phase 2 Corridors': 'DarkBlue',
+  'ZEF Corridor Strategy Phase 3 Corridors': 'DarkBlue',
+  'ZEF Corridor Strategy Phase 4 Corridors': 'DarkBlue',
 
-  'ZEF_Corridor_Strategy_Phase1_Facilities': 'Green', // Dark Green for Facilities
-  'ZEF_Corridor_Strategy_Phase2_Facilities': 'Green',
-  'ZEF_Corridor_Strategy_Phase3_Facilities': 'Green',
-  'ZEF_Corridor_Strategy_Phase4_Facilities': 'Green',
+  'ZEF Corridor Strategy Phase 1 Facilities': 'Green', // Dark Green for Facilities
+  'ZEF Corridor Strategy Phase 2 Facilities': 'Green',
+  'ZEF Corridor Strategy Phase 3 Facilities': 'Green',
+  'ZEF Corridor Strategy Phase 4 Facilities': 'Green',
 };
 
 // Key: geojson name, Value: either 'area' (indicating it's an area feature) or [feature type: category], where each feature type can be divided into several categories

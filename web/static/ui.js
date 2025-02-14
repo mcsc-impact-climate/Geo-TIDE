@@ -1,5 +1,5 @@
 import { geojsonTypes, availableGradientAttributes, selectedGradientAttributes, legendLabels, truckChargingOptions, selectedTruckChargingOptions, stateSupportOptions, selectedStateSupportOptions, tcoOptions, selectedTcoOptions, emissionsOptions, selectedEmissionsOptions, gridEmissionsOptions, hourlyEmissionsOptions, selectedHourlyEmissionsOptions, selectedGridEmissionsOptions, faf5Options, selectedFaf5Options, zefOptions, selectedZefOptions, zefSubLayerOptions, selectedZefSubLayers, fuelLabels, dataInfo } from './name_maps.js';
-import { updateSelectedLayers, updateLegend, updateLayer, data, removeLayer, loadLayer, setLayerVisibility, layerCache, vectorLayers } from './map.js'
+import { updateSelectedLayers, updateLegend, updateLayer, data, removeLayer, loadLayer, toggleZefSubLayer } from './map.js'
 import { geojsonNames } from './main.js'
 
 // Mapping of state abbreviations to full state names
@@ -314,9 +314,9 @@ function createDropdown(name, parameter, dropdown_label, key, options_list, sele
 
     // Ensure all ZEF layers are removed before loading new ones
     for (let phase = 1; phase <= 4; phase++) {
-      removeLayer(`ZEF_Corridor_Strategy_Phase${phase}_Corridors`);
-      removeLayer(`ZEF_Corridor_Strategy_Phase${phase}_Facilities`);
-      removeLayer(`ZEF_Corridor_Strategy_Phase${phase}_Hubs`);
+      removeLayer(`ZEF Corridor Strategy Phase ${phase} Corridors`);
+      removeLayer(`ZEF Corridor Strategy Phase ${phase} Facilities`);
+      removeLayer(`ZEF Corridor Strategy Phase ${phase} Hubs`);
     }
 
     // Load the new layers based on selected options
@@ -390,15 +390,15 @@ function createZefFilenames(selected_options_list) {
 
   if (selectedZefSubLayers["Corridors"]) {
     filenames.push(`${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Corridors.geojson`);
-    layerNames.push(`ZEF_Corridor_Strategy_Phase${phase}_Corridors`);
+    layerNames.push(`ZEF Corridor Strategy Phase ${phase} Corridors`);
   }
   if (selectedZefSubLayers["Facilities"]) {
     filenames.push(`${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Facilities.geojson`);
-    layerNames.push(`ZEF_Corridor_Strategy_Phase${phase}_Facilities`);
+    layerNames.push(`ZEF Corridor Strategy Phase ${phase} Facilities`);
   }
   if (selectedZefSubLayers["Hubs"]) {
     filenames.push(`${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Hubs.geojson`);
-    layerNames.push(`ZEF_Corridor_Strategy_Phase${phase}_Hubs`);
+    layerNames.push(`ZEF Corridor Strategy Phase ${phase} Hubs`);
   }
 
   return { names: layerNames, urls: filenames };
@@ -449,7 +449,6 @@ function createZefDropdowns(key) {
 }
 
 function createZefSubLayerCheckboxes(key) {
-  // If it already exists, remove it
   const existingContainer = document.querySelector(".zef-sub-layers-container");
   if (existingContainer) {
     existingContainer.remove();
@@ -482,31 +481,10 @@ function createZefSubLayerCheckboxes(key) {
         return;
       }
 
-      // Update selectedZefSubLayers
       selectedZefSubLayers[subName] = checkbox.checked;
 
-      const layerName = `ZEF_Corridor_Strategy_Phase${selectedZefOptions["Phase"]}_${subName}`;
-      const layerUrl = `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/${layerName}.geojson`;
-
-      if (checkbox.checked) {
-        if (!layerCache[layerName]) {
-          // Load layer if not already loaded
-          await loadLayer(layerName, layerUrl);
-        } else {
-          // Make the layer visible if already loaded
-          setLayerVisibility(layerName, true);
-          if (!vectorLayers.includes(layerCache[layerName])) {
-            vectorLayers.push(layerCache[layerName]);
-            map.addLayer(layerCache[layerName]);
-          }
-        }
-      } else {
-        // Remove the layer when unchecked
-        setLayerVisibility(layerName, false);
-      }
-
-      // Refresh legend
-      updateLegend();
+      // Call function from map.js to update the layers
+      await toggleZefSubLayer(subName, checkbox.checked);
     });
 
     const cbLabel = document.createElement("label");
@@ -522,7 +500,6 @@ function createZefSubLayerCheckboxes(key) {
   addSubLayerCheckbox("Facilities");
   addSubLayerCheckbox("Hubs");
 
-  // Add container to the modal content
   const modalContent = document.querySelector(".modal-content");
   modalContent.appendChild(container);
 }

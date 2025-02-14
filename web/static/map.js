@@ -234,20 +234,23 @@ async function loadLayer(layerName, layerUrl = null) {
 
 
 function removeLayer(layerName) {
-  // Find the layer by its name
-  const layerIndex = vectorLayers.findIndex(layer => layer.get("key").split(".")[0] === layerName);
 
+  const layerIndex = vectorLayers.findIndex(layer => layer.get("key") === layerName);
+  
   if (layerIndex !== -1) {
-    // Remove the layer from the map
-    map.removeLayer(vectorLayers[layerIndex]);
+    const layer = vectorLayers[layerIndex];
 
-    // Remove the layer from the vectorLayers array
+    // Remove from OpenLayers map
+    map.removeLayer(layer);
+
+    // Remove from vectorLayers and cache
     vectorLayers.splice(layerIndex, 1);
-
-    // Remove the layer from the cache
     delete layerCache[layerName];
+  } else {
+    console.warn("Layer not found in vectorLayers:", layerName);
   }
 }
+
 
 // Function to update a specific layer with a new attributeName
 async function updateLayer(layerName, attributeName) {
@@ -283,7 +286,6 @@ function setLayerVisibility(layerName, isVisible) {
 
 // Function to update the selected layers on the map
 async function updateSelectedLayers() {
-  console.log("In updateSelectedLayers");
   let selectedLayers = getSelectedLayers(); // Get selected layers
   const loadingPromises = [];
 
@@ -295,15 +297,15 @@ async function updateSelectedLayers() {
     // Define sub-layer names and URLs
     zefSubLayers = [
       {
-        name: `ZEF_Corridor_Strategy_Phase${phase}_Hubs`,       // Areas
+        name: `ZEF Corridor Strategy Phase ${phase} Hubs`,       // Areas
         url: `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Hubs.geojson`
       },
       {
-        name: `ZEF_Corridor_Strategy_Phase${phase}_Corridors`,  // Lines
+        name: `ZEF Corridor Strategy Phase ${phase} Corridors`,  // Lines
         url: `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Corridors.geojson`
       },
       {
-        name: `ZEF_Corridor_Strategy_Phase${phase}_Facilities`, // Points
+        name: `ZEF Corridor Strategy Phase ${phase} Facilities`, // Points
         url: `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Facilities.geojson`
       }
     ];
@@ -316,7 +318,6 @@ async function updateSelectedLayers() {
 
     // Ensure sub-layers are loaded from AWS
     for (const { name, url } of zefSubLayers) {
-      console.log("Loading sub-layer", name);
       if (!layerCache[name]) {
         loadingPromises.push(loadLayer(name, url));
       }
@@ -391,10 +392,9 @@ function updateLegend() {
   // Iterate through the vectorLayers and update the legend
   vectorLayers.forEach((layer) => {
     const layerName = layer.get("key"); // Get the key property
-
     // Check if this layer is in the list of selected layers
-    console.log("selectedLayers: ", selectedLayers)
-    if (selectedLayers.includes(layerName)) {
+    if (selectedLayers.includes(layerName) ||
+        (selectedLayers.includes("National ZEF Corridor Strategy") && layerName.startsWith("ZEF Corridor Strategy Phase"))) {
       const layerDiv = document.createElement("div");
       layerDiv.style.display = "flex";
       layerDiv.style.alignItems = "center";
@@ -419,8 +419,6 @@ function updateLegend() {
         
       // If the layer is pre-defined, set it to its defined color, or default to yellow
       let layerColor = '';
-      console.log("Layer name: ", layerName)
-      console.log("GeoJSON colors: ", geojsonColors)
       if (layerName in geojsonColors) {
           layerColor = geojsonColors[layerName] || 'yellow'; // Fetch color from dictionary, or default to yellow
       }
@@ -854,4 +852,41 @@ async function applyLayerOptions(layerName, gradientAttribute) {
     updateLegend(); // Now, call updateLegend after updateSelectedLayers is done
 }
 
-export { initMap, updateSelectedLayers, updateLegend, attachEventListeners, updateLayer, attributeBounds, data, removeLayer, loadLayer, handleMapClick, handleMapHover, map, fetchCSVData, setLayerVisibility, layerCache, vectorLayers };
+async function toggleZefSubLayer(subName, checked) {
+  const layerName = `ZEF Corridor Strategy Phase ${selectedZefOptions["Phase"]} ${subName}`;
+  const layerUrl = `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${selectedZefOptions["Phase"]}_${subName}.geojson`;
+
+  if (checked) {
+
+    if (!layerCache[layerName]) {
+      await loadLayer(layerName, layerUrl);
+    }
+
+    // Ensure the layer exists in cache before proceeding
+    if (layerCache[layerName]) {
+      
+      if (!vectorLayers.includes(layerCache[layerName])) {
+        vectorLayers.push(layerCache[layerName]);
+      }
+
+      if (!map.getLayers().getArray().includes(layerCache[layerName])) {
+        map.addLayer(layerCache[layerName]);
+      } else {
+      }
+
+      setLayerVisibility(layerName, true);
+    } else {
+      console.error("Layer failed to load and is missing from cache.");
+    }
+  } else {
+    removeLayer(layerName);
+  }
+
+  updateLegend();
+}
+
+
+
+
+
+export { initMap, updateSelectedLayers, updateLegend, attachEventListeners, updateLayer, attributeBounds, data, removeLayer, loadLayer, handleMapClick, handleMapHover, map, fetchCSVData, toggleZefSubLayer };

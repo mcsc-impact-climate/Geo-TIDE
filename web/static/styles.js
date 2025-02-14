@@ -25,7 +25,6 @@ function generateDistinctColor() {
 }
 
 function createStyleFunction(layerName, boundaryColor='gray', boundaryWidth=1, isHover = false) {
-  console.log("In createStyleFunction for layer", layerName)
   return function(feature) {
     const attributeKey = layerName;
     const useGradient = layerName in selectedGradientAttributes;
@@ -97,8 +96,8 @@ function createStyleFunction(layerName, boundaryColor='gray', boundaryWidth=1, i
 
     // ---- 2) POLYGONS ----
     else if (geometryType === 'Polygon' || geometryType === 'MultiPolygon') {
-      // Check if this is a "_Hubs" layer so that we can do alpha=0.5
-      const isHubs = layerName.includes('_Hubs');
+      // Check if this is a "Hubs" layer so that we can do alpha=0.5
+      const isHubs = layerName.startsWith("ZEF Corridor Strategy Phase") && layerName.includes("Hubs");
 
       if (useGradient && bounds) {
         // We'll apply a simple red/white gradient to the polygon, but for Hubs,

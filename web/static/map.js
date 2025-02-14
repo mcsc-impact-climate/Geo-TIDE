@@ -445,8 +445,8 @@ function updateLegend() {
           symbolContainer.style.marginRight = "40px";
 
           const gradient = ctx.createLinearGradient(0, 0, 50, 0);
-          gradient.addColorStop(0, "rgb(255, 255, 255)");
-          gradient.addColorStop(1, `rgb(255, 0, 0)`);
+          gradient.addColorStop(0, "rgb(255, 255, 255)"); // White for low values
+          gradient.addColorStop(1, `rgb(0, 0, 255)`); // Blue for high values
           ctx.fillStyle = gradient;
           ctx.fillRect(0, 0, 50, 10);
           symbolContainer.appendChild(canvas);
@@ -577,8 +577,8 @@ function updateLegend() {
               symbolContainer.appendChild(minDiv);
 
               // Canvas to draw points
-              const minPointColor = 'blue';  // Color for minimum value
-              const maxPointColor = 'red'; // Color for maximum value
+              const minPointColor = 'lightblue';  // Light blue for minimum value
+              const maxPointColor = 'blue'; // Dark blue for maximum value
 
               // Create canvas for the minimum point size
               const minPointCanvas = document.createElement("canvas");

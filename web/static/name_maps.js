@@ -436,10 +436,10 @@ export const geojsonColors = {
   'ZEF Corridor Strategy Phase 3 Hubs': '#FF7F50',
   'ZEF Corridor Strategy Phase 4 Hubs': '#FF7F50',
 
-  'ZEF Corridor Strategy Phase 1 Corridors': 'DarkBlue',  // Dark Blue for Corridors
-  'ZEF Corridor Strategy Phase 2 Corridors': 'DarkBlue',
-  'ZEF Corridor Strategy Phase 3 Corridors': 'DarkBlue',
-  'ZEF Corridor Strategy Phase 4 Corridors': 'DarkBlue',
+  'ZEF Corridor Strategy Phase 1 Corridors': 'Purple',  // Dark Blue for Corridors
+  'ZEF Corridor Strategy Phase 2 Corridors': 'Purple',
+  'ZEF Corridor Strategy Phase 3 Corridors': 'Purple',
+  'ZEF Corridor Strategy Phase 4 Corridors': 'Purple',
 
   'ZEF Corridor Strategy Phase 1 Facilities': 'Green', // Dark Green for Facilities
   'ZEF Corridor Strategy Phase 2 Facilities': 'Green',

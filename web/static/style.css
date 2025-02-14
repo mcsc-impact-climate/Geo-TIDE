@@ -451,6 +451,23 @@ body {
   font-size: 14px; /* Adjust the font size as needed */
 }
 
+/* Keep checkboxes in one row with proper spacing */
+.zef-sub-layers-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center; /* Ensures checkboxes align with the label */
+  margin-top: 20px; /* Increase spacing between checkboxes */
+  margin-right: 30px; /* Increase spacing between checkboxes */
+}
+
+/* Ensure the label and checkboxes are aligned properly */
+.zef-sub-layers-container label,
+.zef-sub-layers-container input[type="checkbox"] {
+  vertical-align: middle; /* Aligns checkboxes with the label */
+  margin-right: 10px; /* Add right margin for spacing */
+}
+
+
 .lds-default {
   display: inline-block;
   position: relative;

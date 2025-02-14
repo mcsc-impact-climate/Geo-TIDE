@@ -441,17 +441,26 @@ function createFaf5Dropdowns(key) {
 }
 
 function createZefDropdowns(key) {
-  // 1) The Phase dropdown as you had before
+  // Ensure the dropdowns are only created for the National ZEF Corridor Strategy layer
+  if (key !== "National ZEF Corridor Strategy") {
+    return;
+  }
+
+  // Create the Phase dropdown as before
   createDropdown("phase", "Phase", "Phase: ", key, zefOptions, selectedZefOptions, createZefFilenames);
 
-  // 2) A set of checkboxes for Corridors/Facilities/Hubs
+  // Create checkboxes for Corridors/Facilities/Hubs
   createZefSubLayerCheckboxes(key);
 }
 
+
 function createZefSubLayerCheckboxes(key) {
-  const existingContainer = document.querySelector(".zef-sub-layers-container");
+  // First, check if the modal is already displaying sub-layer checkboxes
+  let existingContainer = document.querySelector(".zef-sub-layers-container");
+
+  // If the sub-layer checkboxes already exist, **do not create them again**
   if (existingContainer) {
-    existingContainer.remove();
+    return;
   }
 
   const container = document.createElement("div");
@@ -500,9 +509,12 @@ function createZefSubLayerCheckboxes(key) {
   addSubLayerCheckbox("Facilities");
   addSubLayerCheckbox("Hubs");
 
+  // Append the container ONLY when necessary
   const modalContent = document.querySelector(".modal-content");
   modalContent.appendChild(container);
 }
+
+
 
 document.body.addEventListener('click', function(event) {
   // Check if a details button was clicked
@@ -740,10 +752,16 @@ function resetModalContent() {
     modalContent.removeChild(chargingPowerDropdownContainer);
   }
 
-  // Remove visualize-by-dropdown-container if it exists
+  // Remove phase dropdown container if it exists
   const phaseDropdownContainer = document.querySelector(".phase-dropdown-container");
   if (phaseDropdownContainer) {
     modalContent.removeChild(phaseDropdownContainer);
+  }
+  
+  // Remove ZEF sub-layer checkboxes container if it exists
+  const zefSubLayerContainer = document.querySelector(".zef-sub-layers-container");
+  if (zefSubLayerContainer) {
+    modalContent.removeChild(zefSubLayerContainer);
   }
 }
 

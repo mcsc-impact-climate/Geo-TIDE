@@ -89,6 +89,7 @@ export const legendLabels = {
     'Tot Trips': 'Highway Freight Flows (daily trips/link)'},
   'Highway Flows (SU)': {
     'Tot Tons': 'Single-unit Highway Freight Flows (annual kilo-tons/link)',
+    'Tot Tons': 'Single-unit Highway Freight Flows (annual kilo-tons/link)',
     'Tot Trips': 'Single-unit Highway Freight Flows (daily trips/link)'},
   'Highway Flows (CU)': {
     'Tot Tons': 'Combined-unit Highway Freight Flows (annual kilo-tons/link)',
@@ -107,6 +108,21 @@ export const legendLabels = {
     'Propane': 'Incentives and Regulations (Propane)',
     'Renewable': 'Incentives and Regulations (Renewable Diesel)',
 //    'Emissions': 'Incentives and Regulations (Emissions)',
+
+    'ZEF Corridor Strategy Phase 1 Hubs': 'ZEF Hubs (Phase 1)',
+    'ZEF Corridor Strategy Phase 2 Hubs': 'ZEF Hubs (Phase 2)',
+    'ZEF Corridor Strategy Phase 3 Hubs': 'ZEF Hubs (Phase 3)',
+    'ZEF Corridor Strategy Phase 4 Hubs': 'ZEF Hubs (Phase 4)',
+    
+    'ZEF Corridor Strategy Phase 1 Corridors': 'ZEF Corridors (Phase 1)',
+    'ZEF Corridor Strategy Phase 2 Corridors': 'ZEF Corridors (Phase 2)',
+    'ZEF Corridor Strategy Phase 3 Corridors': 'ZEF Corridors (Phase 3)',
+    'ZEF Corridor Strategy Phase 4 Corridors': 'ZEF Corridors (Phase 4)',
+    
+    'ZEF Corridor Strategy Phase 1 Facilities': 'ZEF Facilities (Phase 1)',
+    'ZEF Corridor Strategy Phase 2 Facilities': 'ZEF Facilities (Phase 2)',
+    'ZEF Corridor Strategy Phase 3 Facilities': 'ZEF Facilities (Phase 3)',
+    'ZEF Corridor Strategy Phase 4 Facilities': 'ZEF Facilities (Phase 4)',
  },
     
   'Savings from Pooled Charging Infrastructure': {
@@ -276,7 +292,7 @@ export const gridEmissionsOptions = {
 };
 
 export let selectedGridEmissionsOptions = {
-    'Visualize By': 'State'
+    'Visualize By': 'eia2022_state'
 };
 
 export const hourlyEmissionsOptions = {
@@ -361,7 +377,33 @@ export const faf5Options = {
 };
 
 export let selectedFaf5Options = {
-    'Commodity': 'All'
+    'Commodity': 'all'
+};
+
+export const zefOptions = {
+  'Phase': {
+    'Phase 1': '1',
+    'Phase 2': '2',
+    'Phase 3': '3',
+    'Phase 4': '4'
+    },
+};
+
+export let selectedZefOptions = {
+    'Phase': '1'
+};
+
+export const zefSubLayerOptions = {
+  // We’ll just store booleans whether user wants them visible or not
+  'Corridors': true,
+  'Facilities': true,
+  'Hubs': true,
+};
+
+export let selectedZefSubLayers = {
+  'Corridors': true,
+  'Facilities': true,
+  'Hubs': true
 };
 
 // Key: geojson name, Value: color to use
@@ -388,6 +430,21 @@ export const geojsonColors = {
   'LPG Stations': 'cyan',
   'Savings from Pooled Charging Infrastructure': 'red',
   'Principal Ports': 'purple',
+
+  'ZEF Corridor Strategy Phase 1 Hubs': '#ffa500',       // Dark Red for Hubs
+  'ZEF Corridor Strategy Phase 2 Hubs': '#ffa500',
+  'ZEF Corridor Strategy Phase 3 Hubs': '#ffa500',
+  'ZEF Corridor Strategy Phase 4 Hubs': '#ffa500',
+
+  'ZEF Corridor Strategy Phase 1 Corridors': 'Purple',  // Dark Blue for Corridors
+  'ZEF Corridor Strategy Phase 2 Corridors': 'Purple',
+  'ZEF Corridor Strategy Phase 3 Corridors': 'Purple',
+  'ZEF Corridor Strategy Phase 4 Corridors': 'Purple',
+
+  'ZEF Corridor Strategy Phase 1 Facilities': 'Green', // Dark Green for Facilities
+  'ZEF Corridor Strategy Phase 2 Facilities': 'Green',
+  'ZEF Corridor Strategy Phase 3 Facilities': 'Green',
+  'ZEF Corridor Strategy Phase 4 Facilities': 'Green',
 };
 
 // Key: geojson name, Value: either 'area' (indicating it's an area feature) or [feature type: category], where each feature type can be divided into several categories
@@ -426,6 +483,7 @@ export const geojsonTypes = {
   'Total Cost of Truck Ownership': 'area',
   'Grid Generation and Capacity': 'area',
   'Energy Demand from Electrified Trucking': 'area',
+  'National ZEF Corridor Strategy': ['highway', 'infra'],
 };
 
 export const dataInfo = {
@@ -461,5 +519,7 @@ export const dataInfo = {
   'Total Cost of Truck Ownership': "Estimated lifecycle total cost of ownership per mile for the Tesla Semi due to truck purchase, charging, labor, maintenance, insurance and other operating costs. Charging costs are evaluated using state-level commercial electricity price and demand charge. Costs are calculated using the model developed by <a href='https://chemrxiv.org/engage/chemrxiv/article-details/656e4691cf8b3c3cd7c96810'>Sader et al.</a>, calibrated to <a href='https://runonless.com/run-on-less-electric-depot-reports/'>NACFE Run on Less data</a> for the Tesla Semi from the 2023 PepsiCo Semi pilot.<br><br><a href='https://github.com/mcsc-impact-climate/Green_Trucking_Analysis'>Link to Git repo with code used to produce these layers</a>",
   'Grid Generation and Capacity': "Grid electricity generation and net summer power capacity by state for 2022, along with estimated theoretical maximum generation capacity and its difference and ratio relative to the actual grid electricity generation. Theoretical maximum electricity generation capacity is obtained under the assumption that the grid operates at its net summer power capacity year-round. <br><br>Data is obtained from the EIA's <a href='https://www.eia.gov/electricity/data/state/'>state-level electricity database</a>.<br><a href='https://www.eia.gov/electricity/data/state/annual_generation_state.xls'>Link to download annual generation data</a><br><a href='https://www.eia.gov/electricity/data/state/existcapacity_annual.xlsx'>Link to download net summer power capacity data</a>",
   'Energy Demand from Electrified Trucking': "Total energy demand from electrified trucking (in MWh), assuming all 2022 trucking operations in the state are electrified. This is evaluated using the FAF5 highway flows (see Highway Flows layer for details), along with payload-based energy economy calibrated to the Tesla Semi (code and details for Tesla Semi calibration can be found in the following GitHub repos <a href='https://github.com/mcsc-impact-climate/PepsiCo_NACFE_Analysis'>Repo 1</a>, <a href='https://github.com/mcsc-impact-climate/Green_Trucking_Analysis'>Repo 2</a>).<br><br>To assess the capacity of the grid to support electrified trucking, you can also change the gradient attribute to show the energy demand from electrified trucking as a percent of one of the following measures of grid capacity (see 'Grid Generation and Capacity' layer for details): <ul><li>Total electricity generated in the state in 2022</li><li>Total theoretical generating capacity of the state in 2022 (MWh), assuming the grid ran at its peak summer capacity year-round </li><li>Theoretical excess generating capacity (MWh). This is quantified as the difference between the total theoretical generating capacity and the actual electricity generated in 2022.</li></ul>",
+  'National ZEF Corridor Strategy': "This layer visualizes the National Zero-Emission Freight Corridor Strategy, a framework developed by the U.S. Joint Office of Energy and Transportation to support the coordinated deployment of medium- and heavy-duty zero-emission vehicle (ZEV) infrastructure along critical freight corridors. The strategy, outlined in the publication <a href='https://driveelectric.gov/files/zef-corridor-strategy.pdf'>National Zero-Emission Freight Corridor Strategy</a>, identifies priority corridors and infrastructure investment needs to accelerate the transition to zero-emission medium- and heavy-duty vehicles. <br><br>For more details, refer to the official report: <a href='https://driveelectric.gov/files/zef-corridor-strategy.pdf'>National Zero-Emission Freight Corridor Strategy</a> (Joint Office of Energy and Transportation, 2024)."
+
 };
 

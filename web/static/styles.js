@@ -24,149 +24,141 @@ function generateDistinctColor() {
   return `hsl(${hue}, 100%, 50%)`;
 }
 
-function createStyleFunction(layerName, boundaryColor='gray', boundaryWidth=1, isHover = false) {
-  //console.log('print');
+function createStyleFunction(layerName, boundaryColor = 'gray', boundaryWidth = 1, isHover = false) {
   return function(feature) {
     const attributeKey = layerName;
     const useGradient = layerName in selectedGradientAttributes;
     let attributeName = '';
     let gradientType = '';
     let attributeValue = '';
-    if (useGradient) {
-        attributeName = selectedGradientAttributes[layerName];
-        gradientType = selectedGradientTypes[layerName];
-        attributeValue = feature.get(attributeName);
-    }
-    const bounds = attributeBounds[layerName]; // Get the bounds for this specific geojson
     
-    // If the layer is pre-defined, set it to its defined color, or default to yellow
-    let layerColor = '';
-    if (layerName in dataInfo) {
-      layerColor = geojsonColors[layerName] || 'yellow'; // Fetch color from dictionary, or default to yellow
+    if (useGradient) {
+      attributeName = selectedGradientAttributes[layerName];
+      gradientType = selectedGradientTypes[layerName];
+      attributeValue = feature.get(attributeName);
     }
-    // Otherwise, set the color dynamically
-    else {
-      layerColor = assignColorToLayer(layerName);
-    }
-    //console.log(geojsonColors[layerName]);
+    
+    const bounds = attributeBounds[layerName];
+
+    // Assign layer color dynamically or from predefined settings
+    let layerColor = layerName in geojsonColors ? geojsonColors[layerName] || 'yellow' : assignColorToLayer(layerName);
+
     const geometryType = feature.getGeometry().getType();
 
-    
+    // ---- 1) POINTS ----
     if (geometryType === 'Point' || geometryType === 'MultiPoint') {
-      const fillColor = 'green';
       if (useGradient && bounds) {
         if (gradientType === 'size') {
-            const minSize = 2; // Minimum point size
-            const maxSize = 10; // Maximum point size
-
-            // Calculate the point size based on the attribute value and bounds
-            const pointSize = minSize + ((maxSize - minSize) * (attributeValue - bounds.min) / (bounds.max - bounds.min));
-
-            return new ol.style.Style({
-              image: new ol.style.Circle({
-                radius: pointSize,
-                fill: new ol.style.Fill({
-                  color: layerColor,
-                }),
-              }),
-              zIndex: 10, // Higher zIndex so points appear above polygons
-            });
-          }
-        else if (gradientType === 'color') {
-            const component = Math.floor(255 * (attributeValue - bounds.min) / (bounds.max - bounds.min));
-            const pointColor = `rgb(${component}, 0, ${255 - component})`;
-
-           return new ol.style.Style({
-              image: new ol.style.Circle({
-                radius: 3,
-                fill: new ol.style.Fill({
-                  color: pointColor,
-                }),
-              }),
-              zIndex: 10, // Higher zIndex so points appear above polygons
-            });
+          const minSize = 2;
+          const maxSize = 10;
+          const pointSize = minSize + ((maxSize - minSize) * (attributeValue - bounds.min) / (bounds.max - bounds.min));
+          return new ol.style.Style({
+            image: new ol.style.Circle({
+              radius: pointSize,
+              fill: new ol.style.Fill({ color: layerColor }),
+            }),
+            zIndex: 10,
+          });
+        } else if (gradientType === 'color') {
+          const component = Math.floor(255 * (attributeValue - bounds.min) / (bounds.max - bounds.min));
+          const pointColor = `rgb(0, ${component}, 255)`; // Light blue to dark blue gradient
+          return new ol.style.Style({
+            image: new ol.style.Circle({
+              radius: 3,
+              fill: new ol.style.Fill({ color: pointColor }),
+            }),
+            zIndex: 10,
+          });
         }
       }
-      else {
-            // Use a default point style if no gradient or bounds are available
-            return new ol.style.Style({
-              image: new ol.style.Circle({
-                radius: 3, // Default point size
-                fill: new ol.style.Fill({
-                  color: layerColor,
-                }),
-              }),
-              zIndex: 10, // Higher zIndex so points appear above polygons
-            });
-          }
-    } else if (geometryType === 'Polygon' || geometryType === 'MultiPolygon') {
-      if (useGradient && bounds) {
-        const component = Math.floor(255 - (255 * (attributeValue - bounds.min) / (bounds.max - bounds.min)));
-        const fillColor = `rgb(255, ${component}, ${component})`;
-
       return new ol.style.Style({
-        stroke: new ol.style.Stroke({
-          color: boundaryColor,
-          width: boundaryWidth,
+        image: new ol.style.Circle({
+          radius: 3,
+          fill: new ol.style.Fill({ color: layerColor }),
         }),
-        fill: new ol.style.Fill({
-          color: fillColor,
-        }),
-        zIndex: 1 // Lower zIndex so polygons appear below points
-      });
-    } else {
-        return new ol.style.Style({
-          stroke: new ol.style.Stroke({
-          color: boundaryColor,
-          width: boundaryWidth,
-        }),
-        fill: new ol.style.Fill({
-          color: layerColor,
-        }),
-        zIndex: 1 // Lower zIndex so polygons appear below points
+        zIndex: 10,
       });
     }
 
-  }  else if (geometryType === 'LineString' || geometryType === 'MultiLineString') {
-      if (useGradient && bounds) {  // Apply varying width only if gradientFlags is true and bounds are defined
-        // Normalize within range 1 to 10
-        const normalizedWidth = 1 + 9 * ((attributeValue - bounds.min) / (bounds.max - bounds.min));
+    // ---- 2) POLYGONS ----
+    else if (geometryType === 'Polygon' || geometryType === 'MultiPolygon') {
+      const isHubs = layerName.startsWith("ZEF Corridor Strategy Phase") && layerName.includes("Hubs");
 
+      if (useGradient && bounds) {
+        const component = Math.floor(255 - (255 * (attributeValue - bounds.min) / (bounds.max - bounds.min)));
+        let fillColor = isHubs ? `rgba(${component}, ${component}, 255, 0.5)` : `rgb(${component}, ${component}, 255)`; // White to blue gradient
+
+        return new ol.style.Style({
+          stroke: new ol.style.Stroke({ color: boundaryColor, width: boundaryWidth }),
+          fill: new ol.style.Fill({ color: fillColor }),
+          zIndex: 1
+        });
+      } else {
+        let fillColor = isHubs ? convertRgbToRgba(layerColor, 0.5) : layerColor;
+
+        return new ol.style.Style({
+          stroke: new ol.style.Stroke({ color: boundaryColor, width: boundaryWidth }),
+          fill: new ol.style.Fill({ color: fillColor }),
+          zIndex: 1
+        });
+      }
+    }
+
+    // ---- 3) LINESTRINGS ----
+    else if (geometryType === 'LineString' || geometryType === 'MultiLineString') {
+      if (useGradient && bounds) {
+        const normalizedWidth = 1 + 9 * ((attributeValue - bounds.min) / (bounds.max - bounds.min));
         return new ol.style.Style({
           stroke: new ol.style.Stroke({
             color: layerColor,
             width: normalizedWidth,
           }),
-          zIndex: 5  // zIndex between points and polygons
+          zIndex: 5
         });
       } else {
-        // Add default line styling here if you want
         return new ol.style.Style({
           stroke: new ol.style.Stroke({
             color: layerColor,
             width: 3,
           }),
-          zIndex: 5  // zIndex between points and polygons
+          zIndex: 5
         });
       }
-       }
-
-    if (attributeValue === null || attributeValue === undefined) {
-      return null;  // Skip features with undefined or null values
     }
 
-    // For any other geometry type, use default styling
+    if (attributeValue === null || attributeValue === undefined) return null;
     return null;
   };
+}
+
+/**
+ * Helper that, given a color like "rgb(255, 0, 0)" or "#ff0000",
+ * returns an "rgba(r, g, b, alpha)" string for partial transparency.
+ */
+function convertRgbToRgba(rgbStr, alpha) {
+  // If user gave something like "#RRGGBB"
+  if (rgbStr.startsWith('#') && rgbStr.length === 7) {
+    const r = parseInt(rgbStr.slice(1, 3), 16);
+    const g = parseInt(rgbStr.slice(3, 5), 16);
+    const b = parseInt(rgbStr.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+  // If it's "rgb(r,g,b)" we can do a quick parse
+  if (rgbStr.startsWith('rgb(')) {
+    // e.g. rgb(255, 100, 50)
+    const nums = rgbStr.match(/\d+/g);
+    const [r, g, b] = nums;
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+  // Otherwise just return something default
+  return `rgba(255, 255, 255, ${alpha})`;
 }
 
 function isPolygonLayer(layer) {
   const source = layer.getSource();
   let features = source.getFeatures();
-  if (features.length === 0) return false;  // Empty layer
+  if (features.length === 0) return false;
 
-  // Check the first feature as a sample to determine the type of layer.
-  // This assumes that all features in the layer have the same geometry type.
   const geometryType = features[0].getGeometry().getType();
   return geometryType === 'Polygon' || geometryType === 'MultiPolygon';
 }
@@ -174,10 +166,8 @@ function isPolygonLayer(layer) {
 function isPointLayer(layer) {
   const source = layer.getSource();
   let features = source.getFeatures();
-  if (features.length === 0) return false;  // Empty layer
+  if (features.length === 0) return false;
 
-  // Check the first feature as a sample to determine the type of layer.
-  // This assumes that all features in the layer have the same geometry type.
   const geometryType = features[0].getGeometry().getType();
   return geometryType === 'Point' || geometryType === 'MultiPoint';
 }
@@ -191,6 +181,10 @@ function isLineStringLayer(layer) {
   return geometryType === 'LineString' || geometryType === 'MultiLineString';
 }
 
-
-
-export { createStyleFunction, isPolygonLayer, isPointLayer, isLineStringLayer, assignColorToLayer };
+export {
+  createStyleFunction,
+  isPolygonLayer,
+  isPointLayer,
+  isLineStringLayer,
+  assignColorToLayer
+};

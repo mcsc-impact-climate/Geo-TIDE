@@ -1,5 +1,5 @@
-import { geojsonTypes, availableGradientAttributes, selectedGradientAttributes, legendLabels, truckChargingOptions, selectedTruckChargingOptions, stateSupportOptions, selectedStateSupportOptions, tcoOptions, selectedTcoOptions, emissionsOptions, selectedEmissionsOptions, gridEmissionsOptions, hourlyEmissionsOptions, selectedHourlyEmissionsOptions, selectedGridEmissionsOptions, faf5Options, selectedFaf5Options, fuelLabels, dataInfo } from './name_maps.js';
-import { updateSelectedLayers, updateLegend, updateLayer, data, removeLayer, loadLayer } from './map.js'
+import { geojsonTypes, availableGradientAttributes, selectedGradientAttributes, legendLabels, truckChargingOptions, selectedTruckChargingOptions, stateSupportOptions, selectedStateSupportOptions, tcoOptions, selectedTcoOptions, emissionsOptions, selectedEmissionsOptions, gridEmissionsOptions, hourlyEmissionsOptions, selectedHourlyEmissionsOptions, selectedGridEmissionsOptions, faf5Options, selectedFaf5Options, zefOptions, selectedZefOptions, zefSubLayerOptions, selectedZefSubLayers, fuelLabels, dataInfo } from './name_maps.js';
+import { updateSelectedLayers, updateLegend, updateLayer, data, removeLayer, loadLayer, toggleZefSubLayer } from './map.js'
 import { geojsonNames } from './main.js'
 
 // Mapping of state abbreviations to full state names
@@ -79,6 +79,9 @@ function populateLayerDropdown(mapping) {
     
   // Add options for area layers
   for (const key in mapping) {
+    if (!geojsonTypes[key]) {
+      continue;
+    }
     if (geojsonTypes[key] === "area") {
       const option = document.createElement("option");
       option.value = mapping[key];
@@ -134,7 +137,9 @@ function addLayerCheckbox(key, value, container) {
 
 function getSelectedLayers() {
   const selectedLayerNames = [];
-  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+  // Select all checkboxes except those created from `addSubLayerCheckbox`
+  const checkboxes = document.querySelectorAll('input[type="checkbox"]:not(.zef-sub-layer-checkbox)');
 
   // Get selected checkboxes
   checkboxes.forEach((checkbox) => {
@@ -145,18 +150,20 @@ function getSelectedLayers() {
 
   // Get the selected area layer from the dropdown
   const areaLayerDropdown = document.getElementById("area-layer-dropdown");
- for (const option of areaLayerDropdown.options) {
-    if (option.selected && option.text !== 'None') {
-      selectedLayerNames.push(option.text); // Push the text of the selected option
+  for (const option of areaLayerDropdown.options) {
+    if (option.selected && option.text !== "None") {
+      selectedLayerNames.push(option.text);
     }
   }
-  
+
   // Get selected uploaded layers
   const userFilesLayerDropdown = document.getElementById("usefiles-data-ajax");
   const uploadedLayers = Array.from(userFilesLayerDropdown.selectedOptions).map(option => option.value);
-  selectedLayerNames.push(...uploadedLayers);  // Add uploaded layers to the selectedLayers array
+  selectedLayerNames.push(...uploadedLayers);
+
   return selectedLayerNames;
 }
+
 
 const areaLayerDropdown = document.getElementById("area-layer-dropdown");
 const details_button = document.getElementById("area-details-button");
@@ -268,7 +275,8 @@ function createAttributeDropdown(key) {
 }
 
 function createDropdown(name, parameter, dropdown_label, key, options_list, selected_options_list, filename_creation_function) {
-  const options = options_list[parameter]
+  const options = options_list[parameter];
+
   // Check if the dropdown already exists
   if (document.getElementById(name + "-dropdown")) {
     return; // Exit the function if it already exists
@@ -287,28 +295,40 @@ function createDropdown(name, parameter, dropdown_label, key, options_list, sele
   // Create and add options to the dropdown
   for (const this_option in options) {
     if (options.hasOwnProperty(this_option)) {
-        const option = document.createElement("option");
-        option.value = options[this_option]; // Use the key as the value
-        option.text = this_option; // Use the corresponding value as the text
-        if (selected_options_list[parameter] === option.value) {
-            option.selected = true;
-        }
-        dropdown.appendChild(option);
+      const option = document.createElement("option");
+      option.value = options[this_option]; // Use the key as the value
+      option.text = this_option; // Use the corresponding value as the text
+      if (selected_options_list[parameter] === option.value) {
+        option.selected = true;
+      }
+      dropdown.appendChild(option);
     }
   }
 
   // Add an event listener to the dropdown to handle attribute selection
   dropdown.addEventListener("change", async function () {
     selected_options_list[parameter] = dropdown.value;
-    //console.log("selected option: ", selected_options_list[parameter])
-    await removeLayer(key);
-    await loadLayer(key, `${STORAGE_URL}${filename_creation_function(selected_options_list)}`);
-    await updateSelectedLayers();
-    if (key === "State-Level Incentives and Regulations") {
-        for (const fuel_type in legendLabels[key]) {
-        legendLabels[key][fuel_type] = convertToTitleCase(selectedStateSupportOptions['Support Target']) + ' ' + convertToTitleCase(selectedStateSupportOptions['Support Type']) + ' (' + fuelLabels[fuel_type] + ')';
-        }
+
+    // Get the filenames or layer details
+    const layerData = filename_creation_function(selected_options_list);
+
+    // Ensure all ZEF layers are removed before loading new ones
+    for (let phase = 1; phase <= 4; phase++) {
+      removeLayer(`ZEF Corridor Strategy Phase ${phase} Corridors`);
+      removeLayer(`ZEF Corridor Strategy Phase ${phase} Facilities`);
+      removeLayer(`ZEF Corridor Strategy Phase ${phase} Hubs`);
     }
+
+    // Load the new layers based on selected options
+    if (Array.isArray(layerData.urls)) {
+      for (let i = 0; i < layerData.names.length; i++) {
+        await loadLayer(layerData.names[i], layerData.urls[i]);
+      }
+    } else {
+      await loadLayer(key, `${STORAGE_URL}${layerData.urls}`);
+    }
+
+    await updateSelectedLayers();
     await updateLegend();
   });
 
@@ -320,6 +340,7 @@ function createDropdown(name, parameter, dropdown_label, key, options_list, sele
   const modalContent = document.querySelector(".modal-content");
   modalContent.appendChild(dropdownContainer);
 }
+
 
 function convertToTitleCase(str) {
   const words = str.split('_');
@@ -361,6 +382,29 @@ function createFaf5Filename(selected_options_list) {
   return 'geojsons_simplified/faf5_freight_flows/mode_truck_commodity_' + selected_options_list['Commodity'] + "_origin_all_dest_all.geojson";
 }
 
+function createZefFilenames(selected_options_list) {
+  const phase = selected_options_list["Phase"];
+
+  let filenames = [];
+  let layerNames = [];
+
+  if (selectedZefSubLayers["Corridors"]) {
+    filenames.push(`${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Corridors.geojson`);
+    layerNames.push(`ZEF Corridor Strategy Phase ${phase} Corridors`);
+  }
+  if (selectedZefSubLayers["Facilities"]) {
+    filenames.push(`${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Facilities.geojson`);
+    layerNames.push(`ZEF Corridor Strategy Phase ${phase} Facilities`);
+  }
+  if (selectedZefSubLayers["Hubs"]) {
+    filenames.push(`${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Hubs.geojson`);
+    layerNames.push(`ZEF Corridor Strategy Phase ${phase} Hubs`);
+  }
+
+  return { names: layerNames, urls: filenames };
+}
+
+
 function createChargingDropdowns(key) {
   const rangeDropdownResult = createDropdown("range", "Range", "Truck Range: ", key, truckChargingOptions, selectedTruckChargingOptions, createTruckChargingFilename);
   const chargingTimeDropdownResult = createDropdown("chargingTime", "Charging Time", "Charging Time: ", key, truckChargingOptions, selectedTruckChargingOptions, createTruckChargingFilename);
@@ -395,6 +439,82 @@ function createHourlyEmissionsDropdowns(key) {
 function createFaf5Dropdowns(key) {
   const visualizeDropdownResult = createDropdown("commodity", "Commodity", "Commodity: ", key, faf5Options, selectedFaf5Options, createFaf5Filename);
 }
+
+function createZefDropdowns(key) {
+  // Ensure the dropdowns are only created for the National ZEF Corridor Strategy layer
+  if (key !== "National ZEF Corridor Strategy") {
+    return;
+  }
+
+  // Create the Phase dropdown as before
+  createDropdown("phase", "Phase", "Phase: ", key, zefOptions, selectedZefOptions, createZefFilenames);
+
+  // Create checkboxes for Corridors/Facilities/Hubs
+  createZefSubLayerCheckboxes(key);
+}
+
+
+function createZefSubLayerCheckboxes(key) {
+  // First, check if the modal is already displaying sub-layer checkboxes
+  let existingContainer = document.querySelector(".zef-sub-layers-container");
+
+  // If the sub-layer checkboxes already exist, **do not create them again**
+  if (existingContainer) {
+    return;
+  }
+
+  const container = document.createElement("div");
+  container.classList.add("zef-sub-layers-container");
+
+  const label = document.createElement("label");
+  label.textContent = "Show sub-layers:";
+  container.appendChild(label);
+
+  function addSubLayerCheckbox(subName) {
+    const checkboxContainer = document.createElement("div");
+    checkboxContainer.style.display = "inline-block";
+    checkboxContainer.style.marginRight = "10px";
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = selectedZefSubLayers[subName];
+    checkbox.id = `zef-${subName}-checkbox`;
+    checkbox.classList.add("zef-sub-layer-checkbox");
+
+    checkbox.addEventListener("change", async () => {
+      const numChecked = Object.values(selectedZefSubLayers).filter(Boolean).length;
+
+      if (numChecked === 1 && !checkbox.checked) {
+        alert("At least one of Corridors/Facilities/Hubs must remain checked.");
+        checkbox.checked = true;
+        return;
+      }
+
+      selectedZefSubLayers[subName] = checkbox.checked;
+
+      // Call function from map.js to update the layers
+      await toggleZefSubLayer(subName, checkbox.checked);
+    });
+
+    const cbLabel = document.createElement("label");
+    cbLabel.setAttribute("for", `zef-${subName}-checkbox`);
+    cbLabel.textContent = subName;
+
+    checkboxContainer.appendChild(checkbox);
+    checkboxContainer.appendChild(cbLabel);
+    container.appendChild(checkboxContainer);
+  }
+
+  addSubLayerCheckbox("Corridors");
+  addSubLayerCheckbox("Facilities");
+  addSubLayerCheckbox("Hubs");
+
+  // Append the container ONLY when necessary
+  const modalContent = document.querySelector(".modal-content");
+  modalContent.appendChild(container);
+}
+
+
 
 document.body.addEventListener('click', function(event) {
   // Check if a details button was clicked
@@ -436,11 +556,17 @@ document.body.addEventListener('click', function(event) {
     document.getElementById('details-modal').style.display = 'flex';
 
     // Create a dropdown menu to choose the gradient attribute
-    createAttributeDropdown(key);
+    if (key in availableGradientAttributes) {
+        createAttributeDropdown(key);
+    }
 
     // Create additional dropdown menus for the truck charging layer
     if(key === "Savings from Pooled Charging Infrastructure") {
         createChargingDropdowns(key);
+    }
+      // Create a dropdown to select whether to the national zero-emission freight corridor strategy
+    if(key === "National ZEF Corridor Strategy") {
+        createZefDropdowns(key);
     }
   }
 
@@ -495,8 +621,10 @@ document.getElementById("area-details-button").addEventListener("click", functio
     document.getElementById('details-modal').style.display = 'flex';
 
     // Create a dropdown menu to choose attributes for the area layer
-    createAttributeDropdown(selectedAreaLayerName);
-
+    if (selectedAreaLayerName in availableGradientAttributes) {
+        createAttributeDropdown(selectedAreaLayerName);
+    }
+      
     // Create a dropdown if needed for state-level incentives and support
     if (selectedAreaLayerName === 'State-Level Incentives and Regulations') {
         createStateSupportDropdowns(selectedAreaLayerName)
@@ -519,7 +647,7 @@ document.getElementById("area-details-button").addEventListener("click", functio
     if(selectedAreaLayerName === "Hourly Grid Emissions") {
         createHourlyEmissionsDropdowns(selectedAreaLayerName);
     }
-    // Create a dropdown to select whether to view grid emission by state or balancing authority
+    // Create a dropdown to select whether to view truck imports and exports
     if(selectedAreaLayerName === "Truck Imports and Exports") {
       createFaf5Dropdowns(selectedAreaLayerName);
     }
@@ -622,6 +750,18 @@ function resetModalContent() {
   const chargingPowerDropdownContainer = document.querySelector(".charging-power-dropdown-container");
   if (chargingPowerDropdownContainer) {
     modalContent.removeChild(chargingPowerDropdownContainer);
+  }
+
+  // Remove phase dropdown container if it exists
+  const phaseDropdownContainer = document.querySelector(".phase-dropdown-container");
+  if (phaseDropdownContainer) {
+    modalContent.removeChild(phaseDropdownContainer);
+  }
+  
+  // Remove ZEF sub-layer checkboxes container if it exists
+  const zefSubLayerContainer = document.querySelector(".zef-sub-layers-container");
+  if (zefSubLayerContainer) {
+    modalContent.removeChild(zefSubLayerContainer);
   }
 }
 
@@ -746,6 +886,7 @@ for (const supportType in groupedData) {
   }
 }
 
+
 // Set the inner HTML
 content.innerHTML = `
   <span class="close-regulations">&times;</span>
@@ -845,4 +986,4 @@ function getSelectedLayerCombinations() {
 
 
 
-export { populateLayerDropdown, getSelectedLayers, getSelectedLayersValues, showStateRegulations, getAreaLayerName};
+export { populateLayerDropdown, getSelectedLayers, getSelectedLayersValues, showStateRegulations, getAreaLayerName, createZefFilenames };

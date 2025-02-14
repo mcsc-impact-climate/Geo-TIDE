@@ -130,6 +130,26 @@ geojsons["Energy Demand from Electrified Trucking"] = os.path.join(
     geojson_directory, "trucking_energy_demand.geojson"
 )
 
+for phase in range(1, 5):  # 1,2,3,4
+    geojsons[f"ZEF Corridor Strategy Phase {phase} Corridors"] = os.path.join(
+        geojson_directory,
+        f"ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase{phase}_Corridors.geojson",
+    )
+    geojsons[f"ZEF Corridor Strategy Phase {phase} Facilities"] = os.path.join(
+        geojson_directory,
+        f"ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase{phase}_Facilities.geojson",
+    )
+    geojsons[f"ZEF Corridor Strategy Phase {phase} Hubs"] = os.path.join(
+        geojson_directory,
+        f"ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase{phase}_Hubs.geojson",
+    )
+
+geojsons["National ZEF Corridor Strategy"] = [
+    os.path.join(geojson_directory, "ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase1_Corridors.geojson"),
+    os.path.join(geojson_directory, "ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase1_Facilities.geojson"),
+    os.path.join(geojson_directory, "ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase1_Hubs.geojson")
+]
+
 
 def auth_required(function):
     @wraps(function)

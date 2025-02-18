@@ -82,7 +82,7 @@ function createStyleFunction(layerName, boundaryColor = 'gray', boundaryWidth = 
 
     // ---- 2) POLYGONS ----
     else if (geometryType === 'Polygon' || geometryType === 'MultiPolygon') {
-      const isHubs = layerName.startsWith("ZEF Corridor Strategy Phase") && layerName.includes("Hubs");
+      const isHubs = typeof layerName === "string" && layerName.startsWith("ZEF Corridor Strategy Phase") && layerName.includes("Hubs");
 
       if (useGradient && bounds) {
         const component = Math.floor(255 - (255 * (attributeValue - bounds.min) / (bounds.max - bounds.min)));

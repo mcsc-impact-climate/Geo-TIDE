@@ -310,22 +310,35 @@ function createDropdown(name, parameter, dropdown_label, key, options_list, sele
     selected_options_list[parameter] = dropdown.value;
 
     // Get the filenames or layer details
-    const layerData = filename_creation_function(selected_options_list);
 
-    // Ensure all ZEF layers are removed before loading new ones
-    for (let phase = 1; phase <= 4; phase++) {
-      removeLayer(`ZEF Corridor Strategy Phase ${phase} Corridors`);
-      removeLayer(`ZEF Corridor Strategy Phase ${phase} Facilities`);
-      removeLayer(`ZEF Corridor Strategy Phase ${phase} Hubs`);
+    if(key === "National ZEF Corridor Strategy") {
+        const layerData = filename_creation_function(selected_options_list);
+        // Ensure all ZEF layers are removed before loading new ones
+        for (let phase = 1; phase <= 4; phase++) {
+            removeLayer(`ZEF Corridor Strategy Phase ${phase} Corridors`);
+            removeLayer(`ZEF Corridor Strategy Phase ${phase} Facilities`);
+            removeLayer(`ZEF Corridor Strategy Phase ${phase} Hubs`);
+        }
+          
+        // Load the new layers based on selected options
+        if (Array.isArray(layerData.urls)) {
+            for (let i = 0; i < layerData.names.length; i++) {
+                await loadLayer(layerData.names[i], layerData.urls[i]);
+            }
+        } else {
+            await loadLayer(key, `${STORAGE_URL}${layerData.urls}`);
+        }
     }
-
-    // Load the new layers based on selected options
-    if (Array.isArray(layerData.urls)) {
-      for (let i = 0; i < layerData.names.length; i++) {
-        await loadLayer(layerData.names[i], layerData.urls[i]);
+    
+    else {
+      await removeLayer(key);
+      await loadLayer(key, `${STORAGE_URL}${filename_creation_function(selected_options_list)}`);
+      await updateSelectedLayers();
+      if (key === "State-Level Incentives and Regulations") {
+        for (const fuel_type in legendLabels[key]) {
+          legendLabels[key][fuel_type] = convertToTitleCase(selectedStateSupportOptions['Support Target']) + ' ' + convertToTitleCase(selectedStateSupportOptions['Support Type']) + ' (' + fuelLabels[fuel_type] + ')';
+        }
       }
-    } else {
-      await loadLayer(key, `${STORAGE_URL}${layerData.urls}`);
     }
 
     await updateSelectedLayers();

@@ -132,6 +132,8 @@
 <div id="hourly-grid-emissions-modal" class="modal">
   <div id="hourly-grid-emissions-content" class="modal-content">
     <span class="close-hourly-grid-emissions">&times;</span>
+    <h1 id="emissions-title">Hourly & Daily Grid Emissions</h1>
+
   </div>
 </div>
 
@@ -161,7 +163,10 @@
   const GET_GEOJSON = '{% url "get-geojson" %}';
   const STORAGE_URL = 'https://mcsc-datahub-public.s3.us-west-2.amazonaws.com/';
   const CSV_URL_STATEREGULATIONS = 'https://raw.githubusercontent.com/mcsc-impact-climate/FAF5-Analysis/main/data/incentives_and_regulations/state_level/';
-  const CSV_URL_HOURLYEMISSIONS = 'https://raw.githubusercontent.com/mcsc-impact-climate/Geo-TIDE/refs/heads/hourly_emissions_clickfeature/web/data_hourlygridemissions/';
+  const CSV_URL_HOURLYEMISSIONS = 'https://mcsc-datahub-public.s3.us-west-2.amazonaws.com/hourly_grid_emissions/'
+  const CSV_URL_HOURLYEMISSIONS_GITHUB = 'https://raw.githubusercontent.com/mcsc-impact-climate/Geo-TIDE/refs/heads/hourly_emissions_clickfeature/web/data_hourlygridemissions/';
+  const CSV_URL_DAILYEMISSIONS ='https://mcsc-datahub-public.s3.us-west-2.amazonaws.com/weekly_grid_emissions/'
+  const CSV_URL_DAILYEMISSIONS_GITHUB = 'https://raw.githubusercontent.com/mcsc-impact-climate/Geo-TIDE/refs/heads/hourly_emissions_clickfeature/web/daily_rates/';
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

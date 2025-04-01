@@ -620,27 +620,38 @@ ul {
   overflow: auto; /* Enable scrolling if needed */
   background-color: rgba(0, 0, 0, 0.4); /* Black background with opacity */
 }
-
 /* Modal Content */
 #hourly-grid-emissions-content {
-  background-color: #fefefe;
-  margin: 15% auto; /* Centered vertically and horizontally */
-  padding: 20px;
-  border: 1px solid #888;
-  width: 60%; /* Adjust width as needed */
-  border-radius: 10px; /* Rounded corners */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for better visibility */
-  position: relative; /* Relative for positioning the close button */
-  max-height: 600px;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  /*gap: 0px;  Ensures no extra space between elements */
+  height: 90vh; /* Modal takes 90% of screen height */
+  width: 80vw; /* Modal width adjusts with screen */
 }
+#hourly-grid-emissions-content h1 {
+  margin-bottom: 10px; /* Reduce title spacing */
+  padding-bottom: 0;
+}
+
+#hourly-grid-emissions-content p {
+  margin-top: 5px;
+  margin-bottom: 0;
+}
+
+.graph-wrapper {
+  margin-top: 5px; /* Reduce space between the title and graphs */
+  padding-top: 0;
+}
+
+
 /* Container for the chart */
 .chart-container {
-  width: 100%; /* Take up the full width of the modal */
-  max-width: 600px; /* Restrict maximum width */
-  height: 200px; /* Fixed height */
-  margin: 0 auto; /* Center the container */
-  overflow: hidden; /* Prevent overflow issues */
+  width: 48%; /* Each graph takes ~half the modal width */
+  height: 100%; /* Makes the graphs take up the full allocated height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Canvas to inherit container size */
@@ -690,3 +701,18 @@ ul {
   padding: 10px 15px;
   background-color: #f9f9f9;
 }
+.charts-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px; /* Space between the two graphs */
+  flex-wrap: wrap; /* Ensures responsiveness on smaller screens */
+}
+
+.graph-wrapper {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 80%; /* Ensures the graphs take up 80% of the modal height */
+}
+

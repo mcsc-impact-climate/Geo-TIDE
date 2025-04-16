@@ -1,5 +1,5 @@
 export const predefinedColors = [
-    '#ff5733', '#ff33a1', '#ffcc00', '#ffbf33', '#009e73'
+    '#ff33a1', '#ffcc00', '#ffbf33', '#009e73'
   ];
 
 export let selectedGradientTypes = {

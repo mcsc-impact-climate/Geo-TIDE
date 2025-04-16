@@ -49,8 +49,16 @@ function createStyleFunction(layerName, boundaryColor = 'gray', boundaryWidth = 
     if (geometryType === 'Point' || geometryType === 'MultiPoint') {
       if (useGradient && bounds) {
         if (gradientType === 'size') {
-          const minSize = 2;
-          const maxSize = 10;
+          // This is a little bit hacky - I want to make the point sizes bigger for user-uploaded data, so I'm flagging a layer as user-uploaded if it doesn't have a defined color.
+          let minSize, maxSize;
+          if(layerName in geojsonColors) {
+              minSize = 2;
+              maxSize = 10;
+          }
+          else {
+              minSize = 4;
+              maxSize = 15;
+          }
           const pointSize = minSize + ((maxSize - minSize) * (attributeValue - bounds.min) / (bounds.max - bounds.min));
           return new ol.style.Style({
             image: new ol.style.Circle({
@@ -70,6 +78,16 @@ function createStyleFunction(layerName, boundaryColor = 'gray', boundaryWidth = 
             zIndex: 10,
           });
         }
+      }
+      // This is a little bit hacky - I want to make the point sizes bigger for user-uploaded data, so I'm flagging a layer as user-uploaded if it doesn't have a defined color.
+      else if(!(layerName in geojsonColors)) {
+          return new ol.style.Style({
+            image: new ol.style.Circle({
+              radius: 8,
+              fill: new ol.style.Fill({ color: layerColor }),
+            }),
+            zIndex: 10,
+          });
       }
       return new ol.style.Style({
         image: new ol.style.Circle({

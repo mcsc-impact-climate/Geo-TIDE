@@ -163,36 +163,30 @@ function compareLayers(a, b) {
 
 // Function to load a specific layer from the server
 async function loadLayer(layerName, layerUrl = null) {
-  //console.log("In loadLayer()")
-  const layerMap=getSelectedLayersValues();
-//  console.log(layerMap.get(layerName))
-
-  // Construct the URL based on the second argument or fallback logic
+  const layerMap = getSelectedLayersValues();
   let url = layerUrl && layerUrl.startsWith('https://')
     ? layerUrl
     : `${STORAGE_URL}${layerMap.get(layerName)}`;
 
-  //console.log("Layer Name: ", layerName)
-  if(layerName.startsWith('https://')) {
-    url = layerName
+  if (layerName.startsWith('https://')) {
+    url = layerName;
   }
 
-  // If the layer name isn't in the data info, assume it's user uploaded and construct the url accordingly
-  // if (!(layerName in dataInfo)) {
-  //   const lastSlashIndex = url.lastIndexOf('/');
-  //   const dir = url.substring(0, lastSlashIndex + 1);
-  //   url = dir + layerName;
-  // }
-    
   console.log("Layer Name: ", layerName);
   console.log("Download url: ", url);
 
-  let spinner = document.getElementById('lds-spinner')
+  // Spinner and Apply button elements
+  let applyButton = document.getElementById('apply-button');
+  let spinner = document.getElementById('lds-spinner');
+
   try {
-    spinner.style.visibility= "visible"
+    // Show spinner and disable Apply button
+    applyButton.classList.add('disabled');
+    applyButton.disabled = true;
+    spinner.style.visibility = "visible";
+
     const response = await fetch(url);
     if (!response.ok) {
-      spinner.style.visibility= "hidden"
       throw new Error('Network response was not ok');
     }
 
@@ -201,36 +195,40 @@ async function loadLayer(layerName, layerUrl = null) {
       dataProjection: 'EPSG:3857',
       featureProjection: 'EPSG:3857',
     });
-    
+
     const attributeKey = layerName;
     let attributeName = '';
     if (layerName in selectedGradientAttributes) {
-        attributeName = selectedGradientAttributes[attributeKey];
-        const minVal = Math.min(...features.map(f => f.get(attributeName) || Infinity));
-        const maxVal = Math.max(...features.map(f => f.get(attributeName) || -Infinity));
-
-        attributeBounds[layerName] = { min: minVal, max: maxVal };
+      attributeName = selectedGradientAttributes[attributeKey];
+      const minVal = Math.min(...features.map(f => f.get(attributeName) || Infinity));
+      const maxVal = Math.max(...features.map(f => f.get(attributeName) || -Infinity));
+      attributeBounds[layerName] = { min: minVal, max: maxVal };
     }
 
-    // Create a vector layer for the selected layer and add it to the map
+    // Create vector layer and add to map
     const vectorLayer = new ol.layer.Vector({
       source: new ol.source.Vector({
         features: features,
       }),
       style: createStyleFunction(layerName),
-      key: layerName//.split(".")[0], // Set the key property with the geojson name without extension
+      key: layerName,
     });
 
-    // Add the layer to the map and cache it
+    // Cache and store layer
     layerCache[layerName] = vectorLayer;
     vectorLayers.push(vectorLayer);
-    spinner.style.visibility= "hidden"
+
   } catch (error) {
-    console.log('Fetch Error:', error);
-    spinner.style.visibility= "hidden"
-    throw error; // Propagate the error
+    console.error('Fetch Error:', error);
+    throw error; // Propagate error
+  } finally {
+    // Hide spinner and enable Apply button
+    spinner.style.visibility = "hidden";
+    applyButton.classList.remove('disabled');
+    applyButton.disabled = false;
   }
 }
+
 
 
 function removeLayer(layerName) {

@@ -185,7 +185,7 @@ body {
 /* Style for the 'Details' button */
 
 .details-btn {
-  background-color: #007bff; /* Blue color for the button */
+  background-color: blue; /* Blue color for the button */
   color: #fff;  /* White color for the text on the button */
   font-size: 14px; /* Font size */
   border: 1px solid black; /* Remove any default border */

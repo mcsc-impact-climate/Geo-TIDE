@@ -65,10 +65,29 @@ async function attachEventListeners() {
 
     // Use select2's specific events for handling changes
     uploadedLayerDropdown.on('select2:select', async (e) => {
-      console.log('Uploaded layer dropdown change detected via select2');
-      uploadedGeojsonNames[e.params.data.id] = e.params.data.text
-      await updateSelectedLayers(); // Call function to update layers based on uploaded files
-      updateLegend(); // Update the legend to include uploaded layers
+        console.log('Uploaded layer dropdown change detected via select2');
+        uploadedGeojsonNames[e.params.data.id] = e.params.data.text;
+
+        const optionsButton = document.getElementById('options-button');
+        const optionsSpinner = document.getElementById('options-spinner');
+
+        try {
+          // Show spinner and disable Options button
+          optionsButton.classList.add('disabled');
+          optionsButton.disabled = true;
+          optionsSpinner.style.visibility = "visible";
+
+          // Load the uploaded layers
+          await updateSelectedLayers();
+          updateLegend();
+        } catch (error) {
+          console.error('Error loading uploaded layers:', error);
+        } finally {
+          // Hide spinner and enable Options button
+          optionsSpinner.style.visibility = "hidden";
+          optionsButton.classList.remove('disabled');
+          optionsButton.disabled = false;
+        }
     });
 
     uploadedLayerDropdown.on('select2:unselect', async (e) => {
@@ -162,7 +181,7 @@ function compareLayers(a, b) {
 }
 
 // Function to load a specific layer from the server
-async function loadLayer(layerName, layerUrl = null) {
+async function loadLayer(layerName, layerUrl = null, showApplySpinner = true) {
   const layerMap = getSelectedLayersValues();
   let url = layerUrl && layerUrl.startsWith('https://')
     ? layerUrl
@@ -178,13 +197,14 @@ async function loadLayer(layerName, layerUrl = null) {
   // Spinner and Apply button elements
   let applyButton = document.getElementById('apply-button');
   let spinner = document.getElementById('lds-spinner');
+    
+  if (showApplySpinner) {
+      applyButton.classList.add('disabled');
+      applyButton.disabled = true;
+      spinner.style.visibility = "visible";
+  }
 
   try {
-    // Show spinner and disable Apply button
-    applyButton.classList.add('disabled');
-    applyButton.disabled = true;
-    spinner.style.visibility = "visible";
-
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error('Network response was not ok');
@@ -222,10 +242,12 @@ async function loadLayer(layerName, layerUrl = null) {
     console.error('Fetch Error:', error);
     throw error; // Propagate error
   } finally {
-    // Hide spinner and enable Apply button
-    spinner.style.visibility = "hidden";
-    applyButton.classList.remove('disabled');
-    applyButton.disabled = false;
+      if (showApplySpinner) {
+          // Hide spinner and enable Apply button
+          spinner.style.visibility = "hidden";
+          applyButton.classList.remove('disabled');
+          applyButton.disabled = false;
+      }
   }
 }
 
@@ -324,9 +346,10 @@ async function updateSelectedLayers() {
 
   // Load all other selected layers, but skip the ZEF sub-layers since they're already handled
   for (const layerName of selectedLayers) {
-    if (!layerCache[layerName] && !zefSubLayers.some(subLayer => subLayer.name === layerName)) {
-      loadingPromises.push(loadLayer(layerName));
-    }
+      if (!layerCache[layerName] && !zefSubLayers.some(subLayer => subLayer.name === layerName)) {
+        const isUploadedLayer = uploadedGeojsonNames.hasOwnProperty(layerName);
+        loadingPromises.push(loadLayer(layerName, null, !isUploadedLayer));
+      }
   }
 
   try {
@@ -906,10 +929,6 @@ function enforceLayerOrder(layerNames) {
     }
   });
 }
-
-
-
-
 
 
 export { initMap, updateSelectedLayers, updateLegend, attachEventListeners, updateLayer, attributeBounds, data, removeLayer, loadLayer, handleMapClick, handleMapHover, map, fetchCSVData, toggleZefSubLayer };

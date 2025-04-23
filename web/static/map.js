@@ -931,4 +931,4 @@ function enforceLayerOrder(layerNames) {
 }
 
 
-export { initMap, updateSelectedLayers, updateLegend, attachEventListeners, updateLayer, attributeBounds, data, removeLayer, loadLayer, handleMapClick, handleMapHover, map, fetchCSVData, toggleZefSubLayer };
+export { initMap, updateSelectedLayers, updateLegend, attachEventListeners, updateLayer, attributeBounds, data, removeLayer, loadLayer, handleMapClick, handleMapHover, map, fetchCSVData, toggleZefSubLayer, layerCache };

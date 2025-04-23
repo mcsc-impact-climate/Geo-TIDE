@@ -1,6 +1,6 @@
 import { createStyleFunction, isPolygonLayer, isPointLayer, isLineStringLayer, assignColorToLayer } from './styles.js';
 import { getSelectedLayers, getSelectedLayersValues, showStateRegulations, getAreaLayerName, createZefFilenames } from './ui.js';
-import { legendLabels, selectedGradientAttributes, geojsonColors, selectedGradientTypes, dataInfo, zefOptions, selectedZefOptions} from './name_maps.js';
+import { legendLabels, selectedGradientAttributes, geojsonColors, selectedGradientTypes, dataInfo, zefOptions, selectedZefOptions, selectedZefSubLayers} from './name_maps.js';
 
 var vectorLayers = [];
 var map;
@@ -65,10 +65,29 @@ async function attachEventListeners() {
 
     // Use select2's specific events for handling changes
     uploadedLayerDropdown.on('select2:select', async (e) => {
-      console.log('Uploaded layer dropdown change detected via select2');
-      uploadedGeojsonNames[e.params.data.id] = e.params.data.text
-      await updateSelectedLayers(); // Call function to update layers based on uploaded files
-      updateLegend(); // Update the legend to include uploaded layers
+        console.log('Uploaded layer dropdown change detected via select2');
+        uploadedGeojsonNames[e.params.data.id] = e.params.data.text;
+
+        const optionsButton = document.getElementById('options-button');
+        const optionsSpinner = document.getElementById('options-spinner');
+
+        try {
+          // Show spinner and disable Options button
+          optionsButton.classList.add('disabled');
+          optionsButton.disabled = true;
+          optionsSpinner.style.visibility = "visible";
+
+          // Load the uploaded layers
+          await updateSelectedLayers();
+          updateLegend();
+        } catch (error) {
+          console.error('Error loading uploaded layers:', error);
+        } finally {
+          // Hide spinner and enable Options button
+          optionsSpinner.style.visibility = "hidden";
+          optionsButton.classList.remove('disabled');
+          optionsButton.disabled = false;
+        }
     });
 
     uploadedLayerDropdown.on('select2:unselect', async (e) => {
@@ -162,37 +181,32 @@ function compareLayers(a, b) {
 }
 
 // Function to load a specific layer from the server
-async function loadLayer(layerName, layerUrl = null) {
-  //console.log("In loadLayer()")
-  const layerMap=getSelectedLayersValues();
-//  console.log(layerMap.get(layerName))
-
-  // Construct the URL based on the second argument or fallback logic
+async function loadLayer(layerName, layerUrl = null, showApplySpinner = true) {
+  const layerMap = getSelectedLayersValues();
   let url = layerUrl && layerUrl.startsWith('https://')
     ? layerUrl
     : `${STORAGE_URL}${layerMap.get(layerName)}`;
 
-  //console.log("Layer Name: ", layerName)
-  if(layerName.startsWith('https://')) {
-    url = layerName
+  if (layerName.startsWith('https://')) {
+    url = layerName;
   }
 
-  // If the layer name isn't in the data info, assume it's user uploaded and construct the url accordingly
-  // if (!(layerName in dataInfo)) {
-  //   const lastSlashIndex = url.lastIndexOf('/');
-  //   const dir = url.substring(0, lastSlashIndex + 1);
-  //   url = dir + layerName;
-  // }
-    
   console.log("Layer Name: ", layerName);
   console.log("Download url: ", url);
 
-  let spinner = document.getElementById('lds-spinner')
+  // Spinner and Apply button elements
+  let applyButton = document.getElementById('apply-button');
+  let spinner = document.getElementById('lds-spinner');
+    
+  if (showApplySpinner) {
+      applyButton.classList.add('disabled');
+      applyButton.disabled = true;
+      spinner.style.visibility = "visible";
+  }
+
   try {
-    spinner.style.visibility= "visible"
     const response = await fetch(url);
     if (!response.ok) {
-      spinner.style.visibility= "hidden"
       throw new Error('Network response was not ok');
     }
 
@@ -201,36 +215,42 @@ async function loadLayer(layerName, layerUrl = null) {
       dataProjection: 'EPSG:3857',
       featureProjection: 'EPSG:3857',
     });
-    
+
     const attributeKey = layerName;
     let attributeName = '';
     if (layerName in selectedGradientAttributes) {
-        attributeName = selectedGradientAttributes[attributeKey];
-        const minVal = Math.min(...features.map(f => f.get(attributeName) || Infinity));
-        const maxVal = Math.max(...features.map(f => f.get(attributeName) || -Infinity));
-
-        attributeBounds[layerName] = { min: minVal, max: maxVal };
+      attributeName = selectedGradientAttributes[attributeKey];
+      const minVal = Math.min(...features.map(f => f.get(attributeName) || Infinity));
+      const maxVal = Math.max(...features.map(f => f.get(attributeName) || -Infinity));
+      attributeBounds[layerName] = { min: minVal, max: maxVal };
     }
 
-    // Create a vector layer for the selected layer and add it to the map
+    // Create vector layer and add to map
     const vectorLayer = new ol.layer.Vector({
       source: new ol.source.Vector({
         features: features,
       }),
       style: createStyleFunction(layerName),
-      key: layerName//.split(".")[0], // Set the key property with the geojson name without extension
+      key: layerName,
     });
 
-    // Add the layer to the map and cache it
+    // Cache and store layer
     layerCache[layerName] = vectorLayer;
     vectorLayers.push(vectorLayer);
-    spinner.style.visibility= "hidden"
+
   } catch (error) {
-    console.log('Fetch Error:', error);
-    spinner.style.visibility= "hidden"
-    throw error; // Propagate the error
+    console.error('Fetch Error:', error);
+    throw error; // Propagate error
+  } finally {
+      if (showApplySpinner) {
+          // Hide spinner and enable Apply button
+          spinner.style.visibility = "hidden";
+          applyButton.classList.remove('disabled');
+          applyButton.disabled = false;
+      }
   }
 }
+
 
 
 function removeLayer(layerName) {
@@ -294,21 +314,29 @@ async function updateSelectedLayers() {
   if (selectedLayers.includes("National ZEF Corridor Strategy")) {
     const phase = selectedZefOptions["Phase"] || "1";
 
-    // Define sub-layer names and URLs
-    zefSubLayers = [
-      {
-        name: `ZEF Corridor Strategy Phase ${phase} Hubs`,       // Areas
-        url: `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Hubs.geojson`
-      },
-      {
-        name: `ZEF Corridor Strategy Phase ${phase} Corridors`,  // Lines
-        url: `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Corridors.geojson`
-      },
-      {
-        name: `ZEF Corridor Strategy Phase ${phase} Facilities`, // Points
-        url: `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Facilities.geojson`
-      }
-    ];
+    // Respect checkbox state for ZEF sublayers
+    zefSubLayers = [];
+
+    if (selectedZefSubLayers["Hubs"]) {
+        zefSubLayers.push({
+          name: `ZEF Corridor Strategy Phase ${phase} Hubs`,
+          url: `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Hubs.geojson`
+        });
+    }
+
+    if (selectedZefSubLayers["Corridors"]) {
+        zefSubLayers.push({
+          name: `ZEF Corridor Strategy Phase ${phase} Corridors`,
+          url: `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Corridors.geojson`
+        });
+    }
+
+    if (selectedZefSubLayers["Facilities"]) {
+        zefSubLayers.push({
+          name: `ZEF Corridor Strategy Phase ${phase} Facilities`,
+          url: `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Facilities.geojson`
+      });
+    }
 
     // Remove "National ZEF Corridor Strategy" from selectedLayers
     selectedLayers = selectedLayers.filter(layer => layer !== "National ZEF Corridor Strategy");
@@ -326,9 +354,10 @@ async function updateSelectedLayers() {
 
   // Load all other selected layers, but skip the ZEF sub-layers since they're already handled
   for (const layerName of selectedLayers) {
-    if (!layerCache[layerName] && !zefSubLayers.some(subLayer => subLayer.name === layerName)) {
-      loadingPromises.push(loadLayer(layerName));
-    }
+      if (!layerCache[layerName] && !zefSubLayers.some(subLayer => subLayer.name === layerName)) {
+        const isUploadedLayer = uploadedGeojsonNames.hasOwnProperty(layerName);
+        loadingPromises.push(loadLayer(layerName, null, !isUploadedLayer));
+      }
   }
 
   try {
@@ -389,275 +418,279 @@ function updateLegend() {
   // Iterate through the vectorLayers and update the legend
   vectorLayers.forEach((layer) => {
     const layerName = layer.get("key"); // Get the key property
-    // Check if this layer is in the list of selected layers
-    if (selectedLayers.includes(layerName) ||
-        (selectedLayers.includes("National ZEF Corridor Strategy") && layerName.startsWith("ZEF Corridor Strategy Phase"))) {
-      const layerDiv = document.createElement("div");
-      layerDiv.style.display = "flex";
-      layerDiv.style.alignItems = "center";
+    const isLayerVisible = layer.getVisible();
 
-      const symbolLabelContainer = document.createElement("div");
-      symbolLabelContainer.style.display = "flex";
-      symbolLabelContainer.style.width = "150px";  // Setting fixed width to ensure alignment
-      symbolLabelContainer.style.alignItems = "center";
-      symbolLabelContainer.style.justifyContent = "center";
-
-      const symbolContainer = document.createElement("div");
-      symbolContainer.style.display = "flex";
-      symbolContainer.style.alignItems = "center";
-      symbolContainer.style.width = "120px"; // fixed width
-
-      const canvas = document.createElement("canvas");
-      canvas.width = 50;
-      canvas.height = 10;
-      const ctx = canvas.getContext("2d");
-
-      const useGradient = layerName in selectedGradientAttributes;
-        
-      // If the layer is pre-defined, set it to its defined color, or default to yellow
-      let layerColor = '';
-      if (layerName in geojsonColors) {
-          layerColor = geojsonColors[layerName] || 'yellow'; // Fetch color from dictionary, or default to yellow
-      }
-      // Otherwise, set the color dynamically
-      else {
-          layerColor = assignColorToLayer(layerName);
-      }
-      let attributeName = '';
-      let gradientType = '';
-      if (useGradient) {
-          attributeName = selectedGradientAttributes[layerName];
-          gradientType = selectedGradientTypes[layerName];
-      }
-      const bounds = attributeBounds[layerName];
-
-      // Add legend entry only for visible layers
-      if (isPolygonLayer(layer)) {
-        if (useGradient ) {
-          const minVal = bounds.min < 0.01 ? bounds.min.toExponential(1) : (bounds.min > 100 ? bounds.min.toExponential(1) : bounds.min.toFixed(1));
-          const minDiv = document.createElement("div");
-          minDiv.innerText = minVal.toString();
-          minDiv.style.marginRight = "5px";
-          symbolContainer.appendChild(minDiv);
-          symbolContainer.style.marginRight = "40px";
-
-          const gradient = ctx.createLinearGradient(0, 0, 50, 0);
-          gradient.addColorStop(0, "rgb(255, 255, 255)"); // White for low values
-          gradient.addColorStop(1, `rgb(0, 0, 255)`); // Blue for high values
-          ctx.fillStyle = gradient;
-          ctx.fillRect(0, 0, 50, 10);
-          symbolContainer.appendChild(canvas);
-          symbolContainer.style.marginRight = "40px";
-
-          const maxVal = bounds.max < 0.01 ? bounds.max.toExponential(1) : (bounds.max > 100 ? bounds.max.toExponential(1) : bounds.max.toFixed(1));
-          const maxDiv = document.createElement("div");
-          maxDiv.innerText = maxVal.toString();
-          maxDiv.style.marginLeft = "5px";
-          symbolContainer.appendChild(maxDiv);
-          symbolContainer.style.marginRight = "40px";
-        } else {
-          // Solid color rectangle
-          ctx.fillStyle = layerColor;
-          ctx.fillRect(0, 0, 50, 10);
-          symbolContainer.appendChild(canvas);
-          symbolContainer.style.marginRight = "40px";
-        }
-      } else if (isLineStringLayer(layer)) {
-        if (useGradient && bounds) { // Check to make sure bounds are actually defined
-          const minVal = bounds.min < 0.01 ? bounds.min.toExponential(1) : (bounds.min > 100 ? bounds.min.toExponential(1) : bounds.min.toFixed(1));
-          const minDiv = document.createElement("div");
-          minDiv.innerText = minVal.toString(); // Minimum attribute value
-          minDiv.style.marginRight = "5px";
-          symbolContainer.appendChild(minDiv);
-          symbolContainer.style.marginRight = "40px";
-
-          // New canvas for line width
-          const canvas = document.createElement("canvas");
-          canvas.width = 50;
-          canvas.height = 20; // Increased height to make space for the varying line width
-          const ctx = canvas.getContext("2d");
-
-          // Draw a line segment that gradually increases in width from 1 to 10
-          let yPosition = 10; // vertical position for the line
-
-          for (let x = 0; x <= 50; x++) {
-            let lineWidth = 1 + (x / 50) * 9; // lineWidth will vary between 1 and 10
-            ctx.strokeStyle = layerColor;
-            ctx.lineWidth = lineWidth;
-
-            ctx.beginPath();
-            ctx.moveTo(x, yPosition - lineWidth / 2);
-            ctx.lineTo(x, yPosition + lineWidth / 2);
-            ctx.stroke();
+    if (isLayerVisible) {
+          // Check if this layer is in the list of selected layers
+          if (selectedLayers.includes(layerName) ||
+              (selectedLayers.includes("National ZEF Corridor Strategy") && layerName.startsWith("ZEF Corridor Strategy Phase"))) {
+              const layerDiv = document.createElement("div");
+              layerDiv.style.display = "flex";
+              layerDiv.style.alignItems = "center";
+              
+              const symbolLabelContainer = document.createElement("div");
+              symbolLabelContainer.style.display = "flex";
+              symbolLabelContainer.style.width = "150px";  // Setting fixed width to ensure alignment
+              symbolLabelContainer.style.alignItems = "center";
+              symbolLabelContainer.style.justifyContent = "center";
+              
+              const symbolContainer = document.createElement("div");
+              symbolContainer.style.display = "flex";
+              symbolContainer.style.alignItems = "center";
+              symbolContainer.style.width = "120px"; // fixed width
+              
+              const canvas = document.createElement("canvas");
+              canvas.width = 50;
+              canvas.height = 10;
+              const ctx = canvas.getContext("2d");
+              
+              const useGradient = layerName in selectedGradientAttributes;
+              
+              // If the layer is pre-defined, set it to its defined color, or default to yellow
+              let layerColor = '';
+              if (layerName in geojsonColors) {
+                  layerColor = geojsonColors[layerName] || 'yellow'; // Fetch color from dictionary, or default to yellow
+              }
+              // Otherwise, set the color dynamically
+              else {
+                  layerColor = assignColorToLayer(layerName);
+              }
+              let attributeName = '';
+              let gradientType = '';
+              if (useGradient) {
+                  attributeName = selectedGradientAttributes[layerName];
+                  gradientType = selectedGradientTypes[layerName];
+              }
+              const bounds = attributeBounds[layerName];
+              
+              // Add legend entry only for visible layers
+              if (isPolygonLayer(layer)) {
+                  if (useGradient ) {
+                      const minVal = bounds.min < 0.01 ? bounds.min.toExponential(1) : (bounds.min > 100 ? bounds.min.toExponential(1) : bounds.min.toFixed(1));
+                      const minDiv = document.createElement("div");
+                      minDiv.innerText = minVal.toString();
+                      minDiv.style.marginRight = "5px";
+                      symbolContainer.appendChild(minDiv);
+                      symbolContainer.style.marginRight = "40px";
+                      
+                      const gradient = ctx.createLinearGradient(0, 0, 50, 0);
+                      gradient.addColorStop(0, "rgb(255, 255, 255)"); // White for low values
+                      gradient.addColorStop(1, `rgb(0, 0, 255)`); // Blue for high values
+                      ctx.fillStyle = gradient;
+                      ctx.fillRect(0, 0, 50, 10);
+                      symbolContainer.appendChild(canvas);
+                      symbolContainer.style.marginRight = "40px";
+                      
+                      const maxVal = bounds.max < 0.01 ? bounds.max.toExponential(1) : (bounds.max > 100 ? bounds.max.toExponential(1) : bounds.max.toFixed(1));
+                      const maxDiv = document.createElement("div");
+                      maxDiv.innerText = maxVal.toString();
+                      maxDiv.style.marginLeft = "5px";
+                      symbolContainer.appendChild(maxDiv);
+                      symbolContainer.style.marginRight = "40px";
+                  } else {
+                      // Solid color rectangle
+                      ctx.fillStyle = layerColor;
+                      ctx.fillRect(0, 0, 50, 10);
+                      symbolContainer.appendChild(canvas);
+                      symbolContainer.style.marginRight = "40px";
+                  }
+              } else if (isLineStringLayer(layer)) {
+                  if (useGradient && bounds) { // Check to make sure bounds are actually defined
+                      const minVal = bounds.min < 0.01 ? bounds.min.toExponential(1) : (bounds.min > 100 ? bounds.min.toExponential(1) : bounds.min.toFixed(1));
+                      const minDiv = document.createElement("div");
+                      minDiv.innerText = minVal.toString(); // Minimum attribute value
+                      minDiv.style.marginRight = "5px";
+                      symbolContainer.appendChild(minDiv);
+                      symbolContainer.style.marginRight = "40px";
+                      
+                      // New canvas for line width
+                      const canvas = document.createElement("canvas");
+                      canvas.width = 50;
+                      canvas.height = 20; // Increased height to make space for the varying line width
+                      const ctx = canvas.getContext("2d");
+                      
+                      // Draw a line segment that gradually increases in width from 1 to 10
+                      let yPosition = 10; // vertical position for the line
+                      
+                      for (let x = 0; x <= 50; x++) {
+                          let lineWidth = 1 + (x / 50) * 9; // lineWidth will vary between 1 and 10
+                          ctx.strokeStyle = layerColor;
+                          ctx.lineWidth = lineWidth;
+                          
+                          ctx.beginPath();
+                          ctx.moveTo(x, yPosition - lineWidth / 2);
+                          ctx.lineTo(x, yPosition + lineWidth / 2);
+                          ctx.stroke();
+                      }
+                      
+                      symbolContainer.appendChild(canvas);
+                      symbolContainer.style.marginRight = "40px";
+                      
+                      // Check to make sure bounds are actually defined
+                      const maxVal = bounds.max < 0.01 ? bounds.max.toExponential(1) : (bounds.max > 100 ? bounds.max.toExponential(1) : bounds.max.toFixed(1));
+                      const maxDiv = document.createElement("div");
+                      maxDiv.innerText = maxVal.toString(); // Maximum attribute value
+                      maxDiv.style.marginLeft = "5px";
+                      symbolContainer.appendChild(maxDiv);
+                      symbolContainer.style.marginRight = "40px";
+                  } else {
+                      // New canvas for constant width line
+                      const constantCanvas = document.createElement("canvas");
+                      constantCanvas.width = 50;
+                      constantCanvas.height = 10;  // Set height to 10 for constant line width
+                      const constantCtx = constantCanvas.getContext("2d");
+                      
+                      constantCtx.strokeStyle = layerColor;
+                      constantCtx.lineWidth = 3;
+                      
+                      constantCtx.beginPath();
+                      constantCtx.moveTo(0, 5);
+                      constantCtx.lineTo(50, 5);
+                      constantCtx.stroke();
+                      
+                      symbolContainer.appendChild(constantCanvas);
+                      symbolContainer.style.marginRight = "40px";
+                  }
+              } else if (isPointLayer(layer)) { // this block is for point-like geometries
+                  // check if gradient should be used for points
+                  if (useGradient && bounds) {
+                      if (gradientType === 'size') {
+                          // Minimum value and minimum point size
+                          const minVal = bounds.min < 0.01 ? bounds.min.toExponential(1) : (bounds.min > 100 ? bounds.min.toExponential(1) : bounds.min.toFixed(1));
+                          const minDiv = document.createElement("div");
+                          minDiv.innerText = minVal.toString();
+                          minDiv.style.marginRight = "5px";
+                          symbolContainer.appendChild(minDiv);
+                          
+                          // Canvas to draw points
+                          const minPointSize = 2;  // Minimum size (can set according to your needs)
+                          const maxPointSize = 10; // Maximum size (can set according to your needs)
+                          
+                          // Create canvas for the minimum point size
+                          const minPointCanvas = document.createElement("canvas");
+                          minPointCanvas.width = 20;
+                          minPointCanvas.height = 20;
+                          const minCtx = minPointCanvas.getContext("2d");
+                          
+                          minCtx.fillStyle = layerColor;
+                          minCtx.beginPath();
+                          minCtx.arc(10, 10, minPointSize, 0, Math.PI * 2);
+                          minCtx.fill();
+                          symbolContainer.appendChild(minPointCanvas);
+                          
+                          // Create canvas for the maximum point size
+                          const maxPointCanvas = document.createElement("canvas");
+                          maxPointCanvas.width = 20;
+                          maxPointCanvas.height = 20;
+                          const maxCtx = maxPointCanvas.getContext("2d");
+                          
+                          maxCtx.fillStyle = layerColor;
+                          maxCtx.beginPath();
+                          maxCtx.arc(10, 10, maxPointSize, 0, Math.PI * 2);
+                          maxCtx.fill();
+                          symbolContainer.appendChild(maxPointCanvas);
+                          
+                          // Maximum value
+                          const maxVal = bounds.max < 0.01 ? bounds.max.toExponential(1) : (bounds.max > 100 ? bounds.max.toExponential(1) : bounds.max.toFixed(1));
+                          const maxDiv = document.createElement("div");
+                          maxDiv.innerText = maxVal.toString();
+                          maxDiv.style.marginLeft = "5px";
+                          symbolContainer.appendChild(maxDiv);
+                      }
+                      else if (gradientType === 'color') {
+                          // Minimum value and minimum point size
+                          const minVal = bounds.min < 0.01 ? bounds.min.toExponential(1) : (bounds.min > 100 ? bounds.min.toExponential(1) : bounds.min.toFixed(1));
+                          const minDiv = document.createElement("div");
+                          minDiv.innerText = minVal.toString();
+                          minDiv.style.marginRight = "5px";
+                          symbolContainer.appendChild(minDiv);
+                          
+                          // Canvas to draw points
+                          const minPointColor = 'lightblue';  // Light blue for minimum value
+                          const maxPointColor = 'blue'; // Dark blue for maximum value
+                          
+                          // Create canvas for the minimum point size
+                          const minPointCanvas = document.createElement("canvas");
+                          minPointCanvas.width = 20;
+                          minPointCanvas.height = 20;
+                          const minCtx = minPointCanvas.getContext("2d");
+                          
+                          minCtx.fillStyle = minPointColor;
+                          minCtx.beginPath();
+                          minCtx.arc(10, 10, 3, 0, Math.PI * 2);
+                          minCtx.fill();
+                          symbolContainer.appendChild(minPointCanvas);
+                          
+                          // Create canvas for the maximum point size
+                          const maxPointCanvas = document.createElement("canvas");
+                          maxPointCanvas.width = 20;
+                          maxPointCanvas.height = 20;
+                          const maxCtx = maxPointCanvas.getContext("2d");
+                          
+                          maxCtx.fillStyle = maxPointColor;
+                          maxCtx.beginPath();
+                          maxCtx.arc(10, 10, 3, 0, Math.PI * 2);
+                          maxCtx.fill();
+                          symbolContainer.appendChild(maxPointCanvas);
+                          
+                          // Maximum value
+                          const maxVal = bounds.max < 0.01 ? bounds.max.toExponential(1) : (bounds.max > 100 ? bounds.max.toExponential(1) : bounds.max.toFixed(1));
+                          const maxDiv = document.createElement("div");
+                          maxDiv.innerText = maxVal.toString();
+                          maxDiv.style.marginLeft = "5px";
+                          symbolContainer.appendChild(maxDiv);
+                      }
+                  } else {
+                      // code for constant size points
+                      ctx.fillStyle = layerColor;
+                      ctx.beginPath();
+                      ctx.arc(25, 5, 3, 0, Math.PI * 2);
+                      ctx.fill();
+                      canvas.style.marginLeft = "30px";  // Shift canvas to align the center
+                      symbolContainer.appendChild(canvas);
+                  }
+                  
+                  symbolContainer.style.marginRight = "40px";
+              }
+              
+              layerDiv.appendChild(symbolContainer);
+              
+              symbolLabelContainer.appendChild(symbolContainer);  // Append symbolContainer to symbolLabelContainer
+              
+              // Make a title for the legend entry
+              const title = document.createElement("div");
+              
+              // First, check if the layer is included in the pre-defined legend labels
+              if (layerName in legendLabels) {
+                  if (typeof legendLabels[layerName] === 'string') {
+                      title.innerText = legendLabels[layerName];
+                  }
+                  else if (isDictionary(legendLabels[layerName])) {
+                      title.innerText = legendLabels[layerName][selectedGradientAttributes[layerName]];
+                  }
+              }
+              // Next, check if it's included the uploaded layers
+              else if (layerName in uploadedGeojsonNames) {
+                  // Check if a gradient attribute is selected for the layer
+                  if (layerName in selectedGradientAttributes && selectedGradientAttributes[layerName]) {
+                      // Set the legend label to the name of the selected gradient attribute
+                      title.innerText = uploadedGeojsonNames[layerName] + ": " + selectedGradientAttributes[layerName];
+                  } else {
+                      // Default to the GeoJSON file name
+                      title.innerText = uploadedGeojsonNames[layerName];
+                  }
+              }
+              // Otherwise, just use the layer name directly
+              else {
+                  title.innerText = layerName;
+              }
+              title.style.marginLeft = "20px";
+              
+              layerDiv.appendChild(symbolLabelContainer);  // Append symbolLabelContainer to layerDiv
+              layerDiv.appendChild(title);
+              legendDiv.appendChild(layerDiv);
           }
-
-          symbolContainer.appendChild(canvas);
-          symbolContainer.style.marginRight = "40px";
-
-          // Check to make sure bounds are actually defined
-          const maxVal = bounds.max < 0.01 ? bounds.max.toExponential(1) : (bounds.max > 100 ? bounds.max.toExponential(1) : bounds.max.toFixed(1));
-          const maxDiv = document.createElement("div");
-          maxDiv.innerText = maxVal.toString(); // Maximum attribute value
-          maxDiv.style.marginLeft = "5px";
-          symbolContainer.appendChild(maxDiv);
-          symbolContainer.style.marginRight = "40px";
-        } else {
-          // New canvas for constant width line
-          const constantCanvas = document.createElement("canvas");
-          constantCanvas.width = 50;
-          constantCanvas.height = 10;  // Set height to 10 for constant line width
-          const constantCtx = constantCanvas.getContext("2d");
-
-          constantCtx.strokeStyle = layerColor;
-          constantCtx.lineWidth = 3;
-
-          constantCtx.beginPath();
-          constantCtx.moveTo(0, 5);
-          constantCtx.lineTo(50, 5);
-          constantCtx.stroke();
-
-          symbolContainer.appendChild(constantCanvas);
-          symbolContainer.style.marginRight = "40px";
-        }
-      } else if (isPointLayer(layer)) { // this block is for point-like geometries
-        // check if gradient should be used for points
-        if (useGradient && bounds) {
-          if (gradientType === 'size') {
-              // Minimum value and minimum point size
-              const minVal = bounds.min < 0.01 ? bounds.min.toExponential(1) : (bounds.min > 100 ? bounds.min.toExponential(1) : bounds.min.toFixed(1));
-              const minDiv = document.createElement("div");
-              minDiv.innerText = minVal.toString();
-              minDiv.style.marginRight = "5px";
-              symbolContainer.appendChild(minDiv);
-
-              // Canvas to draw points
-              const minPointSize = 2;  // Minimum size (can set according to your needs)
-              const maxPointSize = 10; // Maximum size (can set according to your needs)
-
-              // Create canvas for the minimum point size
-              const minPointCanvas = document.createElement("canvas");
-              minPointCanvas.width = 20;
-              minPointCanvas.height = 20;
-              const minCtx = minPointCanvas.getContext("2d");
-
-              minCtx.fillStyle = layerColor;
-              minCtx.beginPath();
-              minCtx.arc(10, 10, minPointSize, 0, Math.PI * 2);
-              minCtx.fill();
-              symbolContainer.appendChild(minPointCanvas);
-
-              // Create canvas for the maximum point size
-              const maxPointCanvas = document.createElement("canvas");
-              maxPointCanvas.width = 20;
-              maxPointCanvas.height = 20;
-              const maxCtx = maxPointCanvas.getContext("2d");
-
-              maxCtx.fillStyle = layerColor;
-              maxCtx.beginPath();
-              maxCtx.arc(10, 10, maxPointSize, 0, Math.PI * 2);
-              maxCtx.fill();
-              symbolContainer.appendChild(maxPointCanvas);
-
-              // Maximum value
-              const maxVal = bounds.max < 0.01 ? bounds.max.toExponential(1) : (bounds.max > 100 ? bounds.max.toExponential(1) : bounds.max.toFixed(1));
-              const maxDiv = document.createElement("div");
-              maxDiv.innerText = maxVal.toString();
-              maxDiv.style.marginLeft = "5px";
-              symbolContainer.appendChild(maxDiv);
-          }
-          else if (gradientType === 'color') {
-              // Minimum value and minimum point size
-              const minVal = bounds.min < 0.01 ? bounds.min.toExponential(1) : (bounds.min > 100 ? bounds.min.toExponential(1) : bounds.min.toFixed(1));
-              const minDiv = document.createElement("div");
-              minDiv.innerText = minVal.toString();
-              minDiv.style.marginRight = "5px";
-              symbolContainer.appendChild(minDiv);
-
-              // Canvas to draw points
-              const minPointColor = 'lightblue';  // Light blue for minimum value
-              const maxPointColor = 'blue'; // Dark blue for maximum value
-
-              // Create canvas for the minimum point size
-              const minPointCanvas = document.createElement("canvas");
-              minPointCanvas.width = 20;
-              minPointCanvas.height = 20;
-              const minCtx = minPointCanvas.getContext("2d");
-
-              minCtx.fillStyle = minPointColor;
-              minCtx.beginPath();
-              minCtx.arc(10, 10, 3, 0, Math.PI * 2);
-              minCtx.fill();
-              symbolContainer.appendChild(minPointCanvas);
-
-              // Create canvas for the maximum point size
-              const maxPointCanvas = document.createElement("canvas");
-              maxPointCanvas.width = 20;
-              maxPointCanvas.height = 20;
-              const maxCtx = maxPointCanvas.getContext("2d");
-
-              maxCtx.fillStyle = maxPointColor;
-              maxCtx.beginPath();
-              maxCtx.arc(10, 10, 3, 0, Math.PI * 2);
-              maxCtx.fill();
-              symbolContainer.appendChild(maxPointCanvas);
-
-              // Maximum value
-              const maxVal = bounds.max < 0.01 ? bounds.max.toExponential(1) : (bounds.max > 100 ? bounds.max.toExponential(1) : bounds.max.toFixed(1));
-              const maxDiv = document.createElement("div");
-              maxDiv.innerText = maxVal.toString();
-              maxDiv.style.marginLeft = "5px";
-              symbolContainer.appendChild(maxDiv);
-          }
-        } else {
-          // code for constant size points
-          ctx.fillStyle = layerColor;
-          ctx.beginPath();
-          ctx.arc(25, 5, 3, 0, Math.PI * 2);
-          ctx.fill();
-          canvas.style.marginLeft = "30px";  // Shift canvas to align the center
-          symbolContainer.appendChild(canvas);
-        }
-
-        symbolContainer.style.marginRight = "40px";
       }
-
-      layerDiv.appendChild(symbolContainer);
-
-      symbolLabelContainer.appendChild(symbolContainer);  // Append symbolContainer to symbolLabelContainer
-
-      // Make a title for the legend entry
-      const title = document.createElement("div");
-
-      // First, check if the layer is included in the pre-defined legend labels
-      if (layerName in legendLabels) {
-        if (typeof legendLabels[layerName] === 'string') {
-          title.innerText = legendLabels[layerName];
-        }
-        else if (isDictionary(legendLabels[layerName])) {
-          title.innerText = legendLabels[layerName][selectedGradientAttributes[layerName]];
-        }
-      }
-      // Next, check if it's included the uploaded layers
-      else if (layerName in uploadedGeojsonNames) {
-          // Check if a gradient attribute is selected for the layer
-          if (layerName in selectedGradientAttributes && selectedGradientAttributes[layerName]) {
-              // Set the legend label to the name of the selected gradient attribute
-              title.innerText = uploadedGeojsonNames[layerName] + ": " + selectedGradientAttributes[layerName];
-          } else {
-              // Default to the GeoJSON file name
-              title.innerText = uploadedGeojsonNames[layerName];
-          }
-      }
-      // Otherwise, just use the layer name directly
-      else {
-        title.innerText = layerName;
-        }
-      title.style.marginLeft = "20px";
-
-      layerDiv.appendChild(symbolLabelContainer);  // Append symbolLabelContainer to layerDiv
-      layerDiv.appendChild(title);
-      legendDiv.appendChild(layerDiv);
-    }
   });
 }
 
@@ -853,6 +886,17 @@ async function toggleZefSubLayer(subName, checked) {
   const layerName = `ZEF Corridor Strategy Phase ${selectedZefOptions["Phase"]} ${subName}`;
   const layerUrl = `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${selectedZefOptions["Phase"]}_${subName}.geojson`;
 
+  // **Check if National ZEF Corridor Strategy is visible on the map**
+  const parentLayerVisible = Object.keys(layerCache).some(layerKey =>
+    layerKey.startsWith("ZEF Corridor Strategy Phase") && layerCache[layerKey].getVisible()
+  );
+
+  if (!parentLayerVisible) {
+    console.log(`Skipping sub-layer toggle for ${layerName} because National ZEF Corridor Strategy is not active`);
+    return; // Exit early if no ZEF layers are visible
+  }
+
+  // Proceed as normal
   if (checked) {
     if (!layerCache[layerName]) {
       await loadLayer(layerName, layerUrl);
@@ -887,8 +931,6 @@ async function toggleZefSubLayer(subName, checked) {
 }
 
 
-
-
 function enforceLayerOrder(layerNames) {
   // Remove all ZEF layers from the map
   const existingLayers = map.getLayers().getArray().slice(1); // Exclude base layer
@@ -910,8 +952,4 @@ function enforceLayerOrder(layerNames) {
 }
 
 
-
-
-
-
-export { initMap, updateSelectedLayers, updateLegend, attachEventListeners, updateLayer, attributeBounds, data, removeLayer, loadLayer, handleMapClick, handleMapHover, map, fetchCSVData, toggleZefSubLayer };
+export { initMap, updateSelectedLayers, updateLegend, attachEventListeners, updateLayer, attributeBounds, data, removeLayer, loadLayer, handleMapClick, handleMapHover, map, fetchCSVData, toggleZefSubLayer, layerCache };

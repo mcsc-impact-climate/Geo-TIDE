@@ -1,5 +1,5 @@
 import { geojsonTypes, availableGradientAttributes, selectedGradientAttributes, legendLabels, truckChargingOptions, selectedTruckChargingOptions, stateSupportOptions, selectedStateSupportOptions, tcoOptions, selectedTcoOptions, emissionsOptions, selectedEmissionsOptions, gridEmissionsOptions, hourlyEmissionsOptions, selectedHourlyEmissionsOptions, selectedGridEmissionsOptions, faf5Options, selectedFaf5Options, zefOptions, selectedZefOptions, zefSubLayerOptions, selectedZefSubLayers, fuelLabels, dataInfo } from './name_maps.js';
-import { updateSelectedLayers, updateLegend, updateLayer, data, removeLayer, loadLayer, toggleZefSubLayer } from './map.js'
+import { updateSelectedLayers, updateLegend, updateLayer, data, removeLayer, loadLayer, toggleZefSubLayer, layerCache } from './map.js'
 import { geojsonNames } from './main.js'
 
 // Mapping of state abbreviations to full state names
@@ -133,6 +133,18 @@ function addLayerCheckbox(key, value, container) {
   detailsButton.setAttribute("data-key", key);
   detailsButton.classList.add("details-btn");
   checkboxContainer.appendChild(detailsButton);
+}
+
+function isCheckboxLayerVisible(layerName) {
+  // Find the checkbox by its label (the text next to the checkbox)
+  const checkboxes = document.querySelectorAll('input[type="checkbox"]:not(.zef-sub-layer-checkbox)');
+  for (const checkbox of checkboxes) {
+    const label = checkbox.nextSibling.textContent;
+    if (label === layerName) {
+      return checkbox.checked; // Return true if checked
+    }
+  }
+  return false; // Not found or not checked
 }
 
 function getSelectedLayers() {
@@ -306,44 +318,59 @@ function createDropdown(name, parameter, dropdown_label, key, options_list, sele
   }
 
   // Add an event listener to the dropdown to handle attribute selection
-  dropdown.addEventListener("change", async function () {
-    selected_options_list[parameter] = dropdown.value;
+    dropdown.addEventListener("change", async function () {
+      selected_options_list[parameter] = dropdown.value;
 
-    // Get the filenames or layer details
+      // Check if the layer is visible on the map
+      const layerObj = layerCache[key];
+      if (!layerObj || !layerObj.getVisible()) {
+        console.log("Exiting early as the layer isn't yet visible on the map")
+        return; // Exit early if the layer isn't visible
+      }
 
-    if(key === "National ZEF Corridor Strategy") {
+      // Proceed with reloading or updating layers
+
+      if (key === "National ZEF Corridor Strategy") {
         const layerData = filename_creation_function(selected_options_list);
-        // Ensure all ZEF layers are removed before loading new ones
+
+        // Remove all ZEF layers across all phases (1-4)
         for (let phase = 1; phase <= 4; phase++) {
-            removeLayer(`ZEF Corridor Strategy Phase ${phase} Corridors`);
-            removeLayer(`ZEF Corridor Strategy Phase ${phase} Facilities`);
-            removeLayer(`ZEF Corridor Strategy Phase ${phase} Hubs`);
+          removeLayer(`ZEF Corridor Strategy Phase ${phase} Corridors`);
+          removeLayer(`ZEF Corridor Strategy Phase ${phase} Facilities`);
+          removeLayer(`ZEF Corridor Strategy Phase ${phase} Hubs`);
         }
-          
-        // Load the new layers based on selected options
+
+        // Load new ZEF layers based on selected options
         if (Array.isArray(layerData.urls)) {
-            for (let i = 0; i < layerData.names.length; i++) {
-                await loadLayer(layerData.names[i], layerData.urls[i]);
-            }
+          for (let i = 0; i < layerData.names.length; i++) {
+            await loadLayer(layerData.names[i], layerData.urls[i]);
+          }
         } else {
-            await loadLayer(key, `${STORAGE_URL}${layerData.urls}`);
+          await loadLayer(key, `${STORAGE_URL}${layerData.urls}`);
         }
-    }
-    
-    else {
-      await removeLayer(key);
-      await loadLayer(key, `${STORAGE_URL}${filename_creation_function(selected_options_list)}`);
-      await updateSelectedLayers();
-      if (key === "State-Level Incentives and Regulations") {
-        for (const fuel_type in legendLabels[key]) {
-          legendLabels[key][fuel_type] = convertToTitleCase(selectedStateSupportOptions['Support Target']) + ' ' + convertToTitleCase(selectedStateSupportOptions['Support Type']) + ' (' + fuelLabels[fuel_type] + ')';
+      } else {
+        // Non-ZEF layers
+        await removeLayer(key);
+        await loadLayer(key, `${STORAGE_URL}${filename_creation_function(selected_options_list)}`);
+        await updateSelectedLayers();
+
+        // For State-Level Incentives, update legend labels
+        if (key === "State-Level Incentives and Regulations") {
+          for (const fuel_type in legendLabels[key]) {
+            legendLabels[key][fuel_type] =
+              convertToTitleCase(selectedStateSupportOptions["Support Target"]) +
+              " " +
+              convertToTitleCase(selectedStateSupportOptions["Support Type"]) +
+              " (" +
+              fuelLabels[fuel_type] +
+              ")";
+          }
         }
       }
-    }
 
-    await updateSelectedLayers();
-    await updateLegend();
-  });
+      await updateSelectedLayers();
+      await updateLegend();
+    });
 
   // Append the label and dropdown to the container
   dropdownContainer.appendChild(label);

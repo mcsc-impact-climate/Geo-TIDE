@@ -1,6 +1,8 @@
-import { geojsonTypes, availableGradientAttributes, selectedGradientAttributes, legendLabels, truckChargingOptions, selectedTruckChargingOptions, stateSupportOptions, selectedStateSupportOptions, tcoOptions, selectedTcoOptions, emissionsOptions, selectedEmissionsOptions, gridEmissionsOptions, hourlyEmissionsOptions, selectedHourlyEmissionsOptions, selectedGridEmissionsOptions, faf5Options, selectedFaf5Options, zefOptions, selectedZefOptions, zefSubLayerOptions, selectedZefSubLayers, fuelLabels, dataInfo } from './name_maps.js';
+import { geojsonTypes, availableGradientAttributes, selectedGradientAttributes, legendLabels, truckChargingOptions, selectedTruckChargingOptions, stateSupportOptions, selectedStateSupportOptions, tcoOptions, selectedTcoOptions, emissionsOptions, selectedEmissionsOptions, gridEmissionsOptions, hourlyEmissionsOptions, selectedHourlyEmissionsOptions, selectedGridEmissionsOptions, faf5Options, selectedFaf5Options, zefOptions, selectedZefOptions, zefSubLayerOptions, selectedZefSubLayers, fuelLabels, dataInfo, selectedGradientTypes } from './name_maps.js';
 import { updateSelectedLayers, updateLegend, updateLayer, data, removeLayer, loadLayer, toggleZefSubLayer, layerCache, getAttributesForLayer } from './map.js'
 import { geojsonNames } from './main.js'
+import { isPointLayer, isLineStringLayer, isPolygonLayer } from './styles.js';
+
 
 // Mapping of state abbreviations to full state names
 const stateNames = {
@@ -300,10 +302,24 @@ async function createAttributeDropdown(key) {
     attributeDropdown.appendChild(option);
   });
 
-  attributeDropdown.addEventListener("change", function () {
-    selectedGradientAttributes[layerKey] = attributeDropdown.value;
-    updatePlotAndLegend(layerKey);
-  });
+    attributeDropdown.addEventListener("change", async function () {
+      selectedGradientAttributes[layerKey] = attributeDropdown.value;
+
+      // Assign gradient type based on geometry
+      const layer = layerCache[layerKey];
+      if (layer) {
+        if (isPolygonLayer(layer)) {
+          selectedGradientTypes[layerKey] = 'color';
+        } else if (isLineStringLayer(layer)) {
+          selectedGradientTypes[layerKey] = 'size';
+        } else if (isPointLayer(layer)) {
+          selectedGradientTypes[layerKey] = 'size';
+        }
+      }
+
+      await updateLayer(layerKey, selectedGradientAttributes[layerKey]);
+      updateLegend();
+    });
     
     console.log("Resolved layerKey:", layerKey);
     console.log("Attribute names:", attributeNames);

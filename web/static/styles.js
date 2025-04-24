@@ -25,6 +25,7 @@ function generateDistinctColor() {
 }
 
 function createStyleFunction(layerName, boundaryColor = 'gray', boundaryWidth = 1, isHover = false) {
+  console.log(`Layer: ${layerName}, Gradient Type: ${selectedGradientTypes[layerName]}, Attribute: ${selectedGradientAttributes[layerName]}`);
   return function(feature) {
     const attributeKey = layerName;
     const useGradient = layerName in selectedGradientAttributes;
@@ -143,11 +144,10 @@ function createStyleFunction(layerName, boundaryColor = 'gray', boundaryWidth = 
         });
       }
     }
-
+    console.log(`Layer: ${layerName}, Use Gradient: ${useGradient}, Attribute: ${attributeName}, Bounds:`, bounds);
     if (attributeValue === null || attributeValue === undefined) return null;
     return null;
   };
-  console.log(`Layer: ${layerName}, Use Gradient: ${useGradient}, Attribute: ${attributeName}, Bounds:`, bounds);
 }
 
 /**

@@ -430,6 +430,7 @@ export const geojsonColors = {
   'LPG Stations': 'cyan',
   'Savings from Pooled Charging Infrastructure': 'red',
   'Principal Ports': 'purple',
+  'Truck Stop Locations': 'green',
 
   'ZEF Corridor Strategy Phase 1 Hubs': '#ffa500',       // Dark Red for Hubs
   'ZEF Corridor Strategy Phase 2 Hubs': '#ffa500',

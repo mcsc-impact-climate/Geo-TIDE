@@ -6,6 +6,9 @@ var vectorLayers = [];
 var map;
 var attributeBounds = {}; // Object to store min and max attribute values for each geojson
 
+// Declare the data variable in a higher scope
+let data;
+
 function initMap() {
   map = new ol.Map({
     target: 'map',

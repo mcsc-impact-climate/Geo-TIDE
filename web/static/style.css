@@ -127,18 +127,6 @@ body {
   margin-top: 20px;
 }
 
-/* Additional styles for the "Options" button (you can customize these styles) */
-#options-button {
-  display: block; /* Always on its own line */
-  background-color: blue; /* background color */
-  color: white; /* White text color */
-  padding: 5px 5px; /* Padding to make it bigger */
-  font-size: 14px; /* Font size */
-  border: 2px solid black; /* Remove border */
-  cursor: pointer; /* Add a pointer cursor on hover */
-  margin-top: 20px;
-}
-
 .modal {
   font-size: 14px;
   display: none;
@@ -490,32 +478,6 @@ body {
 .zef-sub-layers-container input[type="checkbox"] {
   vertical-align: middle; /* Aligns checkboxes with the label */
   margin-right: 10px; /* Add right margin for spacing */
-}
-
-.options-button-wrapper {
-  position: relative;
-  display: inline-block;
-}
-
-.options-button-wrapper .spinner-circle {
-  position: absolute;
-  top: 60%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 20px;
-  height: 20px;
-  border: 3px solid rgba(255, 255, 255, 0.6);
-  border-top: 3px solid white;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  visibility: hidden;
-  opacity: 0.9;
-}
-
-.options-button.disabled {
-  background-color: #555 !important;
-  cursor: not-allowed !important;
-  opacity: 0.6;
 }
 
 .spinner-circle {

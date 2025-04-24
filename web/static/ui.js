@@ -58,6 +58,9 @@ const stateNames = {
   'WY': 'Wyoming'
 };
 
+// Add this line near the top of ui.js
+window.lastClickWasMoreButton = false;
+
 function populateLayerDropdown(mapping) {
   const areaLayerDropdown = document.getElementById("area-layer-dropdown");
   const highwayFlowContainer = document.getElementById("highway-flow-checkboxes");
@@ -246,15 +249,11 @@ async function createAttributeDropdown(key) {
   if (document.getElementById("attribute-dropdown")) return;
 
   let layerKey = key;
-    
-    console.log("createAttributeDropdown: initial layerKey:", layerKey);
-    console.log("UploadedGeojsonNames:", uploadedGeojsonNames);
 
-    // Map display name back to URL for uploaded layers
-    if (Object.values(uploadedGeojsonNames).includes(layerKey)) {
+  // Map display name back to URL for uploaded layers
+  if (Object.values(uploadedGeojsonNames).includes(layerKey)) {
       layerKey = Object.keys(uploadedGeojsonNames).find(url => uploadedGeojsonNames[url] === layerKey);
-      console.log("Mapped display name back to URL:", layerKey);
-    }
+  }
 
   // If uploaded, resolve the actual URL from uploadedGeojsonNames
   if (uploadedGeojsonNames.hasOwnProperty(key)) {
@@ -320,9 +319,6 @@ async function createAttributeDropdown(key) {
       await updateLayer(layerKey, selectedGradientAttributes[layerKey]);
       updateLegend();
     });
-    
-    console.log("Resolved layerKey:", layerKey);
-    console.log("Attribute names:", attributeNames);
 
   attributeDropdownContainer.appendChild(label);
   attributeDropdownContainer.appendChild(attributeDropdown);
@@ -599,11 +595,17 @@ function createZefSubLayerCheckboxes(key) {
   modalContent.appendChild(container);
 }
 
-
+document.body.addEventListener('mousedown', function(event) {
+  if (event.target.classList.contains("details-btn") && event.target.hasAttribute("data-key")) {
+    window.lastClickWasMoreButton = true;
+    event.stopPropagation();    // Stop bubbling
+    event.preventDefault();     // Prevent default behavior (this helps with dropdown focus)
+  }
+});
 
 document.body.addEventListener('click', function(event) {
-  // Check if a details button was clicked
   if (event.target.classList.contains("details-btn") && event.target.hasAttribute("data-key")) {
+    event.stopPropagation();  // Prevent dropdown toggle
     const key = event.target.getAttribute("data-key");
 
     // Reset the content of the modal
@@ -612,8 +614,6 @@ document.body.addEventListener('click', function(event) {
     // Add a link for the user to download the geojson file
       let details_content = '';
       if (Object.values(uploadedGeojsonNames).includes(key)) {
-          console.log("Clicked More for key:", key);
-          console.log("Uploaded keys:", Object.keys(uploadedGeojsonNames));
         document.getElementById('details-content').innerHTML = '';
         document.getElementById('details-title').innerText = `${key} Details`;
 

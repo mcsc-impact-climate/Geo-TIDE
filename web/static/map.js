@@ -6,9 +6,6 @@ var vectorLayers = [];
 var map;
 var attributeBounds = {}; // Object to store min and max attribute values for each geojson
 
-// Declare the data variable in a higher scope
-let data;
-
 function initMap() {
   map = new ol.Map({
     target: 'map',
@@ -36,20 +33,6 @@ function initMap() {
   let lastFeature = null;
 }
 
-// Function to show/hide uploaded-layer-selection based on uploaded layers
-function toggleUploadedLayerSelection() {
-  // const uploadedLayerDropdown = document.getElementById("usefiles-data-ajax");
-
-  // // Check if there are any uploaded layers in the dropdown
-  // if (uploadedLayerDropdown && uploadedLayerDropdown.options.length > 1) {
-  //   // Show the div if there are options other than the placeholder "Select Layer"
-  //   document.getElementById("uploaded-layer-selection").style.display = 'block';
-  // } else {
-  //   // Hide the div if there are no uploaded layers
-  //   document.getElementById("uploaded-layer-selection").style.display = 'none';
-  // }
-}
-
 // Attach the updateSelectedLayers function to the button click event
 async function attachEventListeners() {
   const applyButton = document.getElementById("apply-button");
@@ -62,6 +45,13 @@ async function attachEventListeners() {
   const uploadedLayerDropdown = $('#usefiles-data-ajax');
   //console.log(uploadedLayerDropdown); // This should not be null or undefined
   if (uploadedLayerDropdown.length > 0) {
+      
+    uploadedLayerDropdown.on('select2:opening', function(e) {
+        if (window.lastClickWasMoreButton) {
+          e.preventDefault();               // Block dropdown from opening
+          window.lastClickWasMoreButton = false;  // Reset the flag
+        }
+    });
 
     // Use select2's specific events for handling changes
     uploadedLayerDropdown.on('select2:select', async (e) => {
@@ -83,8 +73,6 @@ async function attachEventListeners() {
       await updateSelectedLayers(); // Call function to update layers based on uploaded files
       updateLegend(); // Update the legend to include uploaded layers
     });
-    // Call this function initially to check if there are layers on page load
-    toggleUploadedLayerSelection();
   } else {
     console.error('usefiles-data-ajax not found in the DOM');
   }
@@ -178,8 +166,7 @@ async function loadLayer(layerName, layerUrl = null, showApplySpinner = true) {
     url = layerName;
   }
 
-  console.log("Layer Name: ", layerName);
-  console.log("Download url: ", url);
+  // console.log("Layer loaded:", layerName);
 
   // Spinner and Apply button elements
   let applyButton = document.getElementById('apply-button');
@@ -765,8 +752,6 @@ function getAttributesForLayer(layerName) {
     // Remove geometry-related properties if needed (since we only want non-geometry attributes)
     delete properties.geometry; // Optionally delete the geometry attribute
     
-    console.log("Properties of first feature:", properties);
-
     // Return the attribute names (keys of the properties object)
     return Object.keys(properties);
 }

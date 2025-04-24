@@ -764,6 +764,8 @@ function getAttributesForLayer(layerName) {
 
     // Remove geometry-related properties if needed (since we only want non-geometry attributes)
     delete properties.geometry; // Optionally delete the geometry attribute
+    
+    console.log("Properties of first feature:", properties);
 
     // Return the attribute names (keys of the properties object)
     return Object.keys(properties);
@@ -865,4 +867,4 @@ function enforceLayerOrder(layerNames) {
 }
 
 
-export { initMap, updateSelectedLayers, updateLegend, attachEventListeners, updateLayer, attributeBounds, data, removeLayer, loadLayer, handleMapClick, handleMapHover, map, fetchCSVData, toggleZefSubLayer, layerCache };
+export { initMap, updateSelectedLayers, updateLegend, attachEventListeners, updateLayer, attributeBounds, data, removeLayer, loadLayer, handleMapClick, handleMapHover, map, fetchCSVData, toggleZefSubLayer, layerCache, getAttributesForLayer };

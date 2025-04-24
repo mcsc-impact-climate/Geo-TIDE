@@ -147,6 +147,7 @@ function createStyleFunction(layerName, boundaryColor = 'gray', boundaryWidth = 
     if (attributeValue === null || attributeValue === undefined) return null;
     return null;
   };
+  console.log(`Layer: ${layerName}, Use Gradient: ${useGradient}, Attribute: ${attributeName}, Bounds:`, bounds);
 }
 
 /**

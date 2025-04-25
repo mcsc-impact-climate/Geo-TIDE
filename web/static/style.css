@@ -127,18 +127,6 @@ body {
   margin-top: 20px;
 }
 
-/* Additional styles for the "Options" button (you can customize these styles) */
-#options-button {
-  display: block; /* Always on its own line */
-  background-color: blue; /* background color */
-  color: white; /* White text color */
-  padding: 5px 5px; /* Padding to make it bigger */
-  font-size: 14px; /* Font size */
-  border: 2px solid black; /* Remove border */
-  cursor: pointer; /* Add a pointer cursor on hover */
-  margin-top: 20px;
-}
-
 .modal {
   font-size: 14px;
   display: none;
@@ -185,18 +173,20 @@ body {
 /* Style for the 'Details' button */
 
 .details-btn {
-  background-color: #007bff; /* Blue color for the button */
-  color: #fff;  /* White color for the text on the button */
-  font-size: 14px; /* Font size */
-  border: 1px solid black; /* Remove any default border */
-  padding-left: 5px; /* Add some padding around the text */
-  padding-right: 5px; /* Add some padding around the text */
+  background-color: blue;
+  color: #fff;
+  font-size: 14px;
+  border: 1px solid black;
+  padding-left: 5px;
+  padding-right: 5px;
   padding-top: 0px;
   padding-bottom: 0px;
-  margin-left: 5px; /* Add some space to the left of the button */
-  cursor: pointer; /* Change the cursor on hover over the button */
-  flex-shrink: 0;  /* prevent shrinking */
+  margin-left: 5px;
+  cursor: pointer;
+  flex-shrink: 0;
   margin-left: auto;
+  height: 22px;
+  line-height: 20px;  /* Vertically center text */
 }
 
 .details-btn:hover {
@@ -490,32 +480,6 @@ body {
   margin-right: 10px; /* Add right margin for spacing */
 }
 
-.options-button-wrapper {
-  position: relative;
-  display: inline-block;
-}
-
-.options-button-wrapper .spinner-circle {
-  position: absolute;
-  top: 60%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 20px;
-  height: 20px;
-  border: 3px solid rgba(255, 255, 255, 0.6);
-  border-top: 3px solid white;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  visibility: hidden;
-  opacity: 0.9;
-}
-
-.options-button.disabled {
-  background-color: #555 !important;
-  cursor: not-allowed !important;
-  opacity: 0.6;
-}
-
 .spinner-circle {
   position: absolute;
   top: 63%;
@@ -660,4 +624,57 @@ ul {
   display: none;
   padding: 10px 15px;
   background-color: #f9f9f9;
+}
+
+#uploaded-layer-selection .select2-selection--multiple {
+  line-height: 0.9 !important;         /* Adjust line-height explicitly */
+}
+
+#uploaded-layer-selection .select2-selection__rendered {
+  line-height: 1.4 !important;         /* Match line-height */
+  display: flex !important;
+  flex-direction: column !important; /* Stack pills and placeholder vertically */
+  align-items: flex-start !important; /* Align items to the left */
+  white-space: normal !important; /* Allow wrapping */
+}
+
+.uploaded-layer-pill {
+  background-color: #e4e4e4;
+  border-radius: 3px;
+  padding: 1px 4px;                /* Tighten horizontal padding */
+  margin: 5px 2px;                 /* Adjust spacing between pills */
+  display: inline-flex;
+  align-items: center;           /* Vertically center contents */
+  font-size: 14px;
+  height: 24px;                  /* Fixed height for the pill */
+  line-height: 1;                /* Remove extra line height */
+  box-sizing: border-box;        /* Ensure padding doesn't add height */
+}
+
+#uploaded-layer-selection .select2-selection--multiple {
+  min-height: 35px !important;       /* Tighten container height */
+  height: auto !important;           /* Allow content to define height */
+  padding: 2px 4px !important;       /* Minimize padding */
+  box-sizing: border-box !important;
+}
+
+#uploaded-layer-selection .select2-selection__choice {
+  height: 30px !important;            /* Force exact height */
+  line-height: 24px !important;       /* Align text vertically */
+  padding: 1px 20px !important;           /* Control horizontal padding */
+  display: inline-flex !important;     /* Match your flex layout */
+  align-items: center !important;      /* Vertical centering */
+  box-sizing: border-box !important;   /* Prevent padding from adding height */
+}
+
+#uploaded-layer-selection .select2-container {
+  min-width: 350px !important;  /* Set your desired minimum */
+  width: auto !important;       /* Allow it to expand beyond the minimum */
+  max-width: 100%;              /* Prevent overflow beyond parent container */
+}
+
+#uploaded-layer-selection .select2-search__field {
+  min-width: 100% !important;  /* Ensure it expands fully */
+  width: 100% !important;
+  box-sizing: border-box;      /* Prevent overflow */
 }

@@ -36,20 +36,6 @@ function initMap() {
   let lastFeature = null;
 }
 
-// Function to show/hide uploaded-layer-selection based on uploaded layers
-function toggleUploadedLayerSelection() {
-  // const uploadedLayerDropdown = document.getElementById("usefiles-data-ajax");
-
-  // // Check if there are any uploaded layers in the dropdown
-  // if (uploadedLayerDropdown && uploadedLayerDropdown.options.length > 1) {
-  //   // Show the div if there are options other than the placeholder "Select Layer"
-  //   document.getElementById("uploaded-layer-selection").style.display = 'block';
-  // } else {
-  //   // Hide the div if there are no uploaded layers
-  //   document.getElementById("uploaded-layer-selection").style.display = 'none';
-  // }
-}
-
 // Attach the updateSelectedLayers function to the button click event
 async function attachEventListeners() {
   const applyButton = document.getElementById("apply-button");
@@ -62,31 +48,25 @@ async function attachEventListeners() {
   const uploadedLayerDropdown = $('#usefiles-data-ajax');
   //console.log(uploadedLayerDropdown); // This should not be null or undefined
   if (uploadedLayerDropdown.length > 0) {
+      
+    uploadedLayerDropdown.on('select2:opening', function(e) {
+        if (window.lastClickWasMoreButton) {
+          e.preventDefault();               // Block dropdown from opening
+          window.lastClickWasMoreButton = false;  // Reset the flag
+        }
+    });
 
     // Use select2's specific events for handling changes
     uploadedLayerDropdown.on('select2:select', async (e) => {
         console.log('Uploaded layer dropdown change detected via select2');
         uploadedGeojsonNames[e.params.data.id] = e.params.data.text;
 
-        const optionsButton = document.getElementById('options-button');
-        const optionsSpinner = document.getElementById('options-spinner');
-
         try {
-          // Show spinner and disable Options button
-          optionsButton.classList.add('disabled');
-          optionsButton.disabled = true;
-          optionsSpinner.style.visibility = "visible";
-
           // Load the uploaded layers
           await updateSelectedLayers();
           updateLegend();
         } catch (error) {
           console.error('Error loading uploaded layers:', error);
-        } finally {
-          // Hide spinner and enable Options button
-          optionsSpinner.style.visibility = "hidden";
-          optionsButton.classList.remove('disabled');
-          optionsButton.disabled = false;
         }
     });
 
@@ -96,8 +76,6 @@ async function attachEventListeners() {
       await updateSelectedLayers(); // Call function to update layers based on uploaded files
       updateLegend(); // Update the legend to include uploaded layers
     });
-    // Call this function initially to check if there are layers on page load
-    toggleUploadedLayerSelection();
   } else {
     console.error('usefiles-data-ajax not found in the DOM');
   }
@@ -191,8 +169,7 @@ async function loadLayer(layerName, layerUrl = null, showApplySpinner = true) {
     url = layerName;
   }
 
-  console.log("Layer Name: ", layerName);
-  console.log("Download url: ", url);
+  // console.log("Layer loaded:", layerName);
 
   // Spinner and Apply button elements
   let applyButton = document.getElementById('apply-button');
@@ -754,80 +731,6 @@ function clearLayerSelections() {
   updateLegend();
 }
 
-// Event listener for the "Options" button
-document.getElementById('options-button').addEventListener('click', function() {
-    // If no layers are selected, show a message
-    if (Object.keys(uploadedGeojsonNames).length  === 0) {
-        alert("Please select at least one uploaded layer.");
-        return;
-    }
-
-    // Populate the layer-dropdown in the modal with the selected layers
-    const layerDropdown = document.getElementById('layer-dropdown');
-    layerDropdown.innerHTML = ''; // Clear previous options
-
-    // Always add the "Select uploaded layer" option first
-    const defaultOption = document.createElement('option');
-    defaultOption.value = '';
-    defaultOption.textContent = 'Select uploaded layer';
-    layerDropdown.appendChild(defaultOption);
-
-    // Populate with the selected layers
-    for (const [key, value] of Object.entries(uploadedGeojsonNames)){
-      const option = document.createElement('option');
-      option.value = key;
-      option.textContent = value; // Layer name as option text
-      layerDropdown.appendChild(option);
-    }
-
-    // Set the first option as the default selection (prompt the user to select a layer)
-    layerDropdown.value = '';
-
-    // Show the options modal
-    document.getElementById('options-modal').style.display = 'block';
-});
-
-// Event listener for applying options in the modal
-document.getElementById('apply-options').addEventListener('click', function() {
-
-    const selectedLayer = document.getElementById('layer-dropdown').value;
-    const selectedGradient = document.getElementById('gradient-dropdown').value;
-
-    if (selectedLayer && selectedGradient) {
-        // You can use a function to apply the selected options (e.g., update the map layer with new gradient)
-        applyLayerOptions(selectedLayer, selectedGradient);
-        
-    } else {
-        alert("Please select both a layer and an attribute.");
-    }
-
-    // Close the modal after applying
-    document.getElementById('options-modal').style.display = 'none';
-});
-
-// Event listener for closing the modal
-document.getElementById('close-modal').addEventListener('click', function() {
-    document.getElementById('options-modal').style.display = 'none';
-});
-
-document.getElementById('layer-dropdown').addEventListener('change', function() {
-    const selectedLayer = this.value;
-
-    // Populate the gradient-dropdown based on the selected layer's available attributes
-    const gradientDropdown = document.getElementById('gradient-dropdown');
-    gradientDropdown.innerHTML = ''; // Clear previous options
-
-    // Assuming you have a function getAttributesForLayer to fetch the available attributes for a given layer
-    const attributes = getAttributesForLayer(selectedLayer);
-
-    attributes.forEach(attribute => {
-        const option = document.createElement('option');
-        option.value = attribute;
-        option.textContent = attribute;
-        gradientDropdown.appendChild(option);
-    });
-});
-
 function getAttributesForLayer(layerName) {
     // Check if the layer is available in the cache
     if (!layerCache[layerName]) {
@@ -851,7 +754,7 @@ function getAttributesForLayer(layerName) {
 
     // Remove geometry-related properties if needed (since we only want non-geometry attributes)
     delete properties.geometry; // Optionally delete the geometry attribute
-
+    
     // Return the attribute names (keys of the properties object)
     return Object.keys(properties);
 }
@@ -952,4 +855,4 @@ function enforceLayerOrder(layerNames) {
 }
 
 
-export { initMap, updateSelectedLayers, updateLegend, attachEventListeners, updateLayer, attributeBounds, data, removeLayer, loadLayer, handleMapClick, handleMapHover, map, fetchCSVData, toggleZefSubLayer, layerCache };
+export { initMap, updateSelectedLayers, updateLegend, attachEventListeners, updateLayer, attributeBounds, data, removeLayer, loadLayer, handleMapClick, handleMapHover, map, fetchCSVData, toggleZefSubLayer, layerCache, getAttributesForLayer };

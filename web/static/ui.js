@@ -1,6 +1,8 @@
-import { geojsonTypes, availableGradientAttributes, selectedGradientAttributes, legendLabels, truckChargingOptions, selectedTruckChargingOptions, stateSupportOptions, selectedStateSupportOptions, tcoOptions, selectedTcoOptions, emissionsOptions, selectedEmissionsOptions, gridEmissionsOptions, hourlyEmissionsOptions, selectedHourlyEmissionsOptions, selectedGridEmissionsOptions, faf5Options, selectedFaf5Options, zefOptions, selectedZefOptions, zefSubLayerOptions, selectedZefSubLayers, fuelLabels, dataInfo } from './name_maps.js';
-import { updateSelectedLayers, updateLegend, updateLayer, data, removeLayer, loadLayer, toggleZefSubLayer, layerCache } from './map.js'
+import { geojsonTypes, availableGradientAttributes, selectedGradientAttributes, legendLabels, truckChargingOptions, selectedTruckChargingOptions, stateSupportOptions, selectedStateSupportOptions, tcoOptions, selectedTcoOptions, emissionsOptions, selectedEmissionsOptions, gridEmissionsOptions, hourlyEmissionsOptions, selectedHourlyEmissionsOptions, selectedGridEmissionsOptions, faf5Options, selectedFaf5Options, zefOptions, selectedZefOptions, zefSubLayerOptions, selectedZefSubLayers, fuelLabels, dataInfo, selectedGradientTypes } from './name_maps.js';
+import { updateSelectedLayers, updateLegend, updateLayer, data, removeLayer, loadLayer, toggleZefSubLayer, layerCache, getAttributesForLayer } from './map.js'
 import { geojsonNames } from './main.js'
+import { isPointLayer, isLineStringLayer, isPolygonLayer } from './styles.js';
+
 
 // Mapping of state abbreviations to full state names
 const stateNames = {
@@ -55,6 +57,9 @@ const stateNames = {
   'WI': 'Wisconsin',
   'WY': 'Wyoming'
 };
+
+// Add this line near the top of ui.js
+window.lastClickWasMoreButton = false;
 
 function populateLayerDropdown(mapping) {
   const areaLayerDropdown = document.getElementById("area-layer-dropdown");
@@ -240,10 +245,25 @@ function getAreaLayerDetails(layerName) {
   return `Details about ${layerName}`;
 }
 
-function createAttributeDropdown(key) {
-  // Check if the attribute-dropdown already exists
-  if (document.getElementById("attribute-dropdown")) {
-    return; // Exit the function if it already exists
+async function createAttributeDropdown(key) {
+  if (document.getElementById("attribute-dropdown")) return;
+
+  let layerKey = key;
+
+  // Map display name back to URL for uploaded layers
+  if (Object.values(uploadedGeojsonNames).includes(layerKey)) {
+      layerKey = Object.keys(uploadedGeojsonNames).find(url => uploadedGeojsonNames[url] === layerKey);
+  }
+
+  // If uploaded, resolve the actual URL from uploadedGeojsonNames
+  if (uploadedGeojsonNames.hasOwnProperty(key)) {
+    // Search uploadedGeojsonNames for matching display name
+    for (const [url, name] of Object.entries(uploadedGeojsonNames)) {
+      if (name === key) {
+        layerKey = url;  // Use the actual URL as the key
+        break;
+      }
+    }
   }
 
   const attributeDropdownContainer = document.createElement("div");
@@ -256,35 +276,56 @@ function createAttributeDropdown(key) {
   const attributeDropdown = document.createElement("select");
   attributeDropdown.id = "attribute-dropdown";
 
-  // Assuming you have an array of attribute names for the current feature
-  const attributeNames = getAttributeNamesForFeature(key);
+  let attributeNames = [];
+  const cachedKey = Object.keys(layerCache).find(cacheKey => cacheKey.startsWith(layerKey.split('?')[0]));
+  if (layerKey in availableGradientAttributes) {
+    // Persistent layer
+    attributeNames = availableGradientAttributes[layerKey];
+  } else if (cachedKey) {
+      layerKey = cachedKey;  // Use the cached key
+      attributeNames = getAttributesForLayer(layerKey);
+  } else {
+    console.log(`Layer ${layerKey} not loaded. Loading now...`);
+    await loadLayer(layerKey);  // Load uploaded layer
+    attributeNames = getAttributesForLayer(layerKey);  // Fetch attributes
+  }
 
-  // Create and add options to the dropdown
+  // Populate dropdown
   attributeNames.forEach((attributeName) => {
     const option = document.createElement("option");
     option.value = attributeName;
-    option.text = legendLabels[key][attributeName];
-    if (selectedGradientAttributes[key] === attributeName) {
+    option.text = (layerKey in availableGradientAttributes) ? legendLabels[layerKey][attributeName] : attributeName;
+    if (selectedGradientAttributes[layerKey] === attributeName) {
       option.selected = true;
     }
     attributeDropdown.appendChild(option);
   });
 
-  // Add an event listener to the dropdown to handle attribute selection
-  attributeDropdown.addEventListener("change", function () {
-    selectedGradientAttributes[key] = attributeDropdown.value;
-    // Call a function to update the plot and legend with the selected attribute
-    updatePlotAndLegend(key);
-  });
+    attributeDropdown.addEventListener("change", async function () {
+      selectedGradientAttributes[layerKey] = attributeDropdown.value;
 
-  // Append the label and dropdown to the container
+      // Assign gradient type based on geometry
+      const layer = layerCache[layerKey];
+      if (layer) {
+        if (isPolygonLayer(layer)) {
+          selectedGradientTypes[layerKey] = 'color';
+        } else if (isLineStringLayer(layer)) {
+          selectedGradientTypes[layerKey] = 'size';
+        } else if (isPointLayer(layer)) {
+          selectedGradientTypes[layerKey] = 'size';
+        }
+      }
+
+      await updateLayer(layerKey, selectedGradientAttributes[layerKey]);
+      updateLegend();
+    });
+
   attributeDropdownContainer.appendChild(label);
   attributeDropdownContainer.appendChild(attributeDropdown);
-
-  // Append the container to the modal content
   const modalContent = document.querySelector(".modal-content");
   modalContent.appendChild(attributeDropdownContainer);
 }
+
 
 function createDropdown(name, parameter, dropdown_label, key, options_list, selected_options_list, filename_creation_function) {
   const options = options_list[parameter];
@@ -554,18 +595,35 @@ function createZefSubLayerCheckboxes(key) {
   modalContent.appendChild(container);
 }
 
-
+document.body.addEventListener('mousedown', function(event) {
+  if (event.target.classList.contains("details-btn") && event.target.hasAttribute("data-key")) {
+    window.lastClickWasMoreButton = true;
+    event.stopPropagation();    // Stop bubbling
+    event.preventDefault();     // Prevent default behavior (this helps with dropdown focus)
+  }
+});
 
 document.body.addEventListener('click', function(event) {
-  // Check if a details button was clicked
   if (event.target.classList.contains("details-btn") && event.target.hasAttribute("data-key")) {
+    event.stopPropagation();  // Prevent dropdown toggle
     const key = event.target.getAttribute("data-key");
 
     // Reset the content of the modal
     resetModalContent();
 
     // Add a link for the user to download the geojson file
-    let url = `${STORAGE_URL}${geojsonNames[key]}`
+      let details_content = '';
+      if (Object.values(uploadedGeojsonNames).includes(key)) {
+        document.getElementById('details-content').innerHTML = '';
+        document.getElementById('details-title').innerText = `${key} Details`;
+
+        document.getElementById('details-modal').style.display = 'flex';
+
+        createAttributeDropdown(key);
+        return;
+      }
+
+      let url = `${STORAGE_URL}${geojsonNames[key]}`;  // <-- Move this up here
   
     const dirs_with_multiple_geojsons = ['infrastructure_pooling_thought_experiment', 'incentives_and_regulations', 'grid_emission_intensity', 'costs_and_emissions'];
   
@@ -576,7 +634,7 @@ document.body.addEventListener('click', function(event) {
           break; // Exit the loop once a match is found
       }
     }
-    let details_content = '';
+
     if (dir_has_multiple_geojsons) {
       // Remove the geojson filename from the download url
       const lastSlashIndex = url.lastIndexOf('/');
@@ -596,9 +654,9 @@ document.body.addEventListener('click', function(event) {
     document.getElementById('details-modal').style.display = 'flex';
 
     // Create a dropdown menu to choose the gradient attribute
-    if (key in availableGradientAttributes) {
-        createAttributeDropdown(key);
-    }
+      if (uploadedGeojsonNames.hasOwnProperty(key) || key in availableGradientAttributes) {
+          createAttributeDropdown(key);
+      }
 
     // Create additional dropdown menus for the truck charging layer
     if(key === "Savings from Pooled Charging Infrastructure") {
@@ -696,11 +754,12 @@ document.getElementById("area-details-button").addEventListener("click", functio
 
 
 function getAttributeNamesForFeature(layerName) {
-  // Check if the layerName exists in availableGradientAttributes
-  if (layerName in availableGradientAttributes) {
+  if (uploadedGeojsonNames.hasOwnProperty(layerName)) {
+    return getAttributesForLayer(layerName);  // Extract dynamically
+  } else if (layerName in availableGradientAttributes) {
     return availableGradientAttributes[layerName];
   } else {
-    return []; // Return an empty array if the layerName is not found
+    return [];
   }
 }
 
@@ -1023,7 +1082,5 @@ function getSelectedLayerCombinations() {
     //(combinations[0])
     return combinations;
 }
-
-
 
 export { populateLayerDropdown, getSelectedLayers, getSelectedLayersValues, showStateRegulations, getAreaLayerName, createZefFilenames };

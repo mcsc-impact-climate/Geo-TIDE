@@ -64,51 +64,79 @@
     <div id="uploaded-layer-selection" style="position: absolute; top: 10px; left: 40px; background: rgba(255, 255, 255, 0.8); padding: 10px; {% if not uploaded_files%} display:none {%endif%}">
       <select id="usefiles-data-ajax"  multiple="multiple" style="width: 100%;">
       </select>
-      <div class="options-button-wrapper">
-        <button id="options-button" class="options-button" style="margin-top: 10px;">Options</button>
-        <div class="spinner-circle" id="options-spinner"></div>
-      </div>
     </div>
 
 <!-- Initialize Select2 -->
 <script>
-    let uploadedGeojsonNames = {};
-    $(document).ready(function() {
-        $('#usefiles-data-ajax').select2({
-            placeholder: 'Select one or more layers',
-            allowClear: true,
-            ajax: {
-              cache: true,
-              delay: 250,
-              dataType: 'json',
-              url: '{{uploaded_files}}',
-              headers: {
-                  "Content-Type" : "application/json",
-              },
-              processResults: function (data) {
-                const kv = []
-                for(const item of data.data) {
-                  const geojsonFile = item.files.find(file => file.file_link.includes('.geojson'));
-                  if (geojsonFile) {
-                    kv.push({text: item.name, id: geojsonFile.file_link})
-                  }
-                }
-                // Transforms the top-level key of the response object from 'items' to 'results'
-                return {
-                  results: kv,
-                  pagination: { more: data.next_page || false}
-                };
-              },
-              data: function (params) {
-              return {
-                      search_query: params.term,
-                      page: params.page
-                      }
+let uploadedGeojsonNames = {};
+$(document).ready(function() {
+    const $select = $('#usefiles-data-ajax');
+
+    $select.select2({
+      placeholder: 'Select one or more uploaded layers',
+      allowClear: true,
+      ajax: {
+        cache: false,  // 🔥 Disable caching
+        delay: 250,
+        dataType: 'json',
+        url: '{{uploaded_files}}',
+        headers: { "Content-Type": "application/json" },
+        data: function (params) {
+          return { search_query: params.term, page: params.page };
+        },
+        processResults: function (data) {
+          const selectedIds = ($select.val() || []).map(id => id.split('?')[0]); // Only base URLs
+
+          const kv = [];
+          for (const item of data.data) {
+            const geojsonFile = item.files.find(file => file.file_link.includes('.geojson'));
+            if (geojsonFile) {
+              const baseUrl = geojsonFile.file_link.split('?')[0]; // Strip query params
+              if (!selectedIds.includes(baseUrl)) {
+                kv.push({ text: item.name, id: geojsonFile.file_link });
               }
-            },
-        });
+            }
+          }
+          return { results: kv, pagination: { more: data.next_page || false } };
+        }
+      },
+      templateSelection: function (data) {
+        const container = document.createElement('span');
+        container.classList.add('uploaded-layer-pill');
+        container.style.display = 'flex';
+        container.style.alignItems = 'center';
+
+        const textNode = document.createElement('span');
+        textNode.textContent = data.text;
+
+        const moreButton = document.createElement('button');
+        moreButton.textContent = 'More';
+        moreButton.classList.add('details-btn');
+        moreButton.setAttribute('data-key', data.text);
+        moreButton.style.marginLeft = '40px';
+
+        container.appendChild(textNode);
+        container.appendChild(moreButton);
+
+        return container;
+      }
     });
+
+    // Placeholder logic
+    function setSearchPlaceholder() {
+      setTimeout(() => {
+        const inputField = $select.next('.select2-container').find('.select2-search__field');
+        if (inputField.length) {
+          inputField.attr('placeholder', 'Select one or more uploaded layers');
+        }
+      }, 50);
+    }
+
+    $select.on('select2:open select2:close select2:select select2:unselect', setSearchPlaceholder);
+    setSearchPlaceholder();
+});
 </script>
+
 
 </div>
 
@@ -131,25 +159,6 @@
       <p><em>Italicized regulations and incentives benefit multiple fuel types and appear multiple times.</em></p>
     </div>
   </div>
-</div>
-
-<!-- Modal for the Options -->
-<div id="options-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border:1px solid black; z-index:1000;">
-  <h3>Layer Options</h3>
-  <label for="layer-dropdown">Select uploaded layer</label>
-  <select id="layer-dropdown" style="width: 100%; margin-bottom: 10px;">
-    <option>Select uploaded layer</option>
-    <!-- Uploaded layers will be dynamically added here -->
-  </select>
-
-  <label for="gradient-dropdown">Select gradient attribute</label>
-  <select id="gradient-dropdown" style="width: 100%;">
-    <option>None</option>
-    <!-- Layer properties will be dynamically added here -->
-  </select>
-  
-  <button id="apply-options" style="margin-top: 10px;">Apply</button>
-  <button id="close-modal" style="margin-top: 10px;">Close</button>
 </div>
 
 <!-- Stuff Displaying DOE Plan, on pause -->

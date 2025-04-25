@@ -672,3 +672,9 @@ ul {
   width: auto !important;       /* Allow it to expand beyond the minimum */
   max-width: 100%;              /* Prevent overflow beyond parent container */
 }
+
+#uploaded-layer-selection .select2-search__field {
+  min-width: 100% !important;  /* Ensure it expands fully */
+  width: 100% !important;
+  box-sizing: border-box;      /* Prevent overflow */
+}

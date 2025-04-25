@@ -116,36 +116,20 @@
             return container;
           }
         });
-
-        const addPlaceholder = () => {
-            const selectionContainer = $select.next('.select2-container').find('.select2-selection__rendered');
-            const existingPlaceholder = selectionContainer.find('.select2-placeholder-custom');
-            if ($select.val() && $select.val().length > 0) {
-                if (existingPlaceholder.length === 0) {
-                    const placeholder = $('<li class="select2-placeholder-custom">Select one or more uploaded layers</li>');
-                    placeholder.css({
-                      color: '#a9a9a9',                 // Match default placeholder grey
-                      marginTop: '5px',
-                      paddingLeft: '6px',            // Match left padding of choices
-                      display: 'block',              // Ensure it spans full width
-                      listStyle: 'none',
-                      width: '100%',
-                      fontSize: '18px'               // Ensure font size matches
-                    });
-                    selectionContainer.append(placeholder);
-                }
-            } else {
-                existingPlaceholder.remove();
+        
+        function setSearchPlaceholder() {
+          setTimeout(() => {  // Delay ensures input field is fully ready
+            const inputField = $select.next('.select2-container').find('.select2-search__field');
+            if (inputField.length) {
+              inputField.attr('placeholder', 'Select one or more uploaded layers');
             }
-        };
+          }, 50);  // 50ms delay for reliable rendering
+        }
 
-        // Call after Select2 finishes rendering selections
-        $select.on('select2:select select2:unselect', function() {
-            setTimeout(addPlaceholder, 0);
-        });
+        $select.on('select2:open select2:close select2:select select2:unselect', setSearchPlaceholder);
 
         // Initial call on page load
-        addPlaceholder();
+        setSearchPlaceholder();
     });
 </script>
 

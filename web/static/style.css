@@ -662,3 +662,7 @@ ul {
   align-items: center !important;      /* Vertical centering */
   box-sizing: border-box !important;   /* Prevent padding from adding height */
 }
+
+#uploaded-layer-selection .select2-container {
+  width: 350px !important;  /* Adjust width as needed */
+}

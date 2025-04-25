@@ -70,7 +70,9 @@
 <script>
     let uploadedGeojsonNames = {};
     $(document).ready(function() {
-        $('#usefiles-data-ajax').select2({
+        const $select = $('#usefiles-data-ajax');
+
+        $select.select2({
           placeholder: 'Select one or more uploaded layers',
           allowClear: true,
           ajax: {
@@ -93,7 +95,6 @@
               return { search_query: params.term, page: params.page };
             }
           },
-          // ADD this block:
           templateSelection: function (data) {
             const container = document.createElement('span');
             container.classList.add('uploaded-layer-pill');
@@ -101,13 +102,13 @@
             container.style.alignItems = 'center';
 
             const textNode = document.createElement('span');
-            textNode.textContent = data.text;  // The name of the layer
+            textNode.textContent = data.text;
 
             const moreButton = document.createElement('button');
             moreButton.textContent = 'More';
-            moreButton.classList.add('details-btn');  // Use existing button style
+            moreButton.classList.add('details-btn');
             moreButton.setAttribute('data-key', data.text);
-            moreButton.style.marginLeft = '40px';  // Keep this to space out from the text
+            moreButton.style.marginLeft = '40px';
 
             container.appendChild(textNode);
             container.appendChild(moreButton);
@@ -115,6 +116,36 @@
             return container;
           }
         });
+
+        const addPlaceholder = () => {
+            const selectionContainer = $select.next('.select2-container').find('.select2-selection__rendered');
+            const existingPlaceholder = selectionContainer.find('.select2-placeholder-custom');
+            if ($select.val() && $select.val().length > 0) {
+                if (existingPlaceholder.length === 0) {
+                    const placeholder = $('<li class="select2-placeholder-custom">Select one or more uploaded layers</li>');
+                    placeholder.css({
+                      color: '#a9a9a9',                 // Match default placeholder grey
+                      marginTop: '5px',
+                      paddingLeft: '6px',            // Match left padding of choices
+                      display: 'block',              // Ensure it spans full width
+                      listStyle: 'none',
+                      width: '100%',
+                      fontSize: '18px'               // Ensure font size matches
+                    });
+                    selectionContainer.append(placeholder);
+                }
+            } else {
+                existingPlaceholder.remove();
+            }
+        };
+
+        // Call after Select2 finishes rendering selections
+        $select.on('select2:select select2:unselect', function() {
+            setTimeout(addPlaceholder, 0);
+        });
+
+        // Initial call on page load
+        addPlaceholder();
     });
 </script>
 

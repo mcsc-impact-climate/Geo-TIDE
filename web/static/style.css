@@ -632,6 +632,10 @@ ul {
 
 #uploaded-layer-selection .select2-selection__rendered {
   line-height: 1.4 !important;         /* Match line-height */
+  display: flex !important;
+  flex-direction: column !important; /* Stack pills and placeholder vertically */
+  align-items: flex-start !important; /* Align items to the left */
+  white-space: normal !important; /* Allow wrapping */
 }
 
 .uploaded-layer-pill {

@@ -1,5 +1,11 @@
-import { selectedGradientAttributes, geojsonColors, selectedGradientTypes, predefinedColors, dataInfo } from './name_maps.js';
-import { attributeBounds } from './map.js'
+import {
+  selectedGradientAttributes,
+  geojsonColors,
+  selectedGradientTypes,
+  predefinedColors,
+  dataInfo,
+} from './name_maps.js';
+import { attributeBounds } from './map.js';
 
 let colorIndex = 0; // Tracks which color to assign next
 const layerColors = {}; // To store assigned colors for each layer
@@ -24,25 +30,35 @@ function generateDistinctColor() {
   return `hsl(${hue}, 100%, 50%)`;
 }
 
-function createStyleFunction(layerName, boundaryColor = 'gray', boundaryWidth = 1, isHover = false) {
-  console.log(`Layer: ${layerName}, Gradient Type: ${selectedGradientTypes[layerName]}, Attribute: ${selectedGradientAttributes[layerName]}`);
-  return function(feature) {
+function createStyleFunction(
+  layerName,
+  boundaryColor = 'gray',
+  boundaryWidth = 1,
+  isHover = false
+) {
+  console.log(
+    `Layer: ${layerName}, Gradient Type: ${selectedGradientTypes[layerName]}, Attribute: ${selectedGradientAttributes[layerName]}`
+  );
+  return function (feature) {
     const attributeKey = layerName;
     const useGradient = layerName in selectedGradientAttributes;
     let attributeName = '';
     let gradientType = '';
     let attributeValue = '';
-    
+
     if (useGradient) {
       attributeName = selectedGradientAttributes[layerName];
       gradientType = selectedGradientTypes[layerName];
       attributeValue = feature.get(attributeName);
     }
-    
+
     const bounds = attributeBounds[layerName];
 
     // Assign layer color dynamically or from predefined settings
-    let layerColor = layerName in geojsonColors ? geojsonColors[layerName] || 'yellow' : assignColorToLayer(layerName);
+    let layerColor =
+      layerName in geojsonColors
+        ? geojsonColors[layerName] || 'yellow'
+        : assignColorToLayer(layerName);
 
     const geometryType = feature.getGeometry().getType();
 
@@ -52,15 +68,16 @@ function createStyleFunction(layerName, boundaryColor = 'gray', boundaryWidth = 
         if (gradientType === 'size') {
           // This is a little bit hacky - I want to make the point sizes bigger for user-uploaded data, so I'm flagging a layer as user-uploaded if it doesn't have a defined color.
           let minSize, maxSize;
-          if(layerName in geojsonColors) {
-              minSize = 2;
-              maxSize = 10;
+          if (layerName in geojsonColors) {
+            minSize = 2;
+            maxSize = 10;
+          } else {
+            minSize = 4;
+            maxSize = 15;
           }
-          else {
-              minSize = 4;
-              maxSize = 15;
-          }
-          const pointSize = minSize + ((maxSize - minSize) * (attributeValue - bounds.min) / (bounds.max - bounds.min));
+          const pointSize =
+            minSize +
+            ((maxSize - minSize) * (attributeValue - bounds.min)) / (bounds.max - bounds.min);
           return new ol.style.Style({
             image: new ol.style.Circle({
               radius: pointSize,
@@ -69,7 +86,9 @@ function createStyleFunction(layerName, boundaryColor = 'gray', boundaryWidth = 
             zIndex: 10,
           });
         } else if (gradientType === 'color') {
-          const component = Math.floor(255 * (attributeValue - bounds.min) / (bounds.max - bounds.min));
+          const component = Math.floor(
+            (255 * (attributeValue - bounds.min)) / (bounds.max - bounds.min)
+          );
           const pointColor = `rgb(0, ${component}, 255)`; // Light blue to dark blue gradient
           return new ol.style.Style({
             image: new ol.style.Circle({
@@ -81,14 +100,14 @@ function createStyleFunction(layerName, boundaryColor = 'gray', boundaryWidth = 
         }
       }
       // This is a little bit hacky - I want to make the point sizes bigger for user-uploaded data, so I'm flagging a layer as user-uploaded if it doesn't have a defined color.
-      else if(!(layerName in geojsonColors)) {
-          return new ol.style.Style({
-            image: new ol.style.Circle({
-              radius: 8,
-              fill: new ol.style.Fill({ color: layerColor }),
-            }),
-            zIndex: 10,
-          });
+      else if (!(layerName in geojsonColors)) {
+        return new ol.style.Style({
+          image: new ol.style.Circle({
+            radius: 8,
+            fill: new ol.style.Fill({ color: layerColor }),
+          }),
+          zIndex: 10,
+        });
       }
       return new ol.style.Style({
         image: new ol.style.Circle({
@@ -101,16 +120,23 @@ function createStyleFunction(layerName, boundaryColor = 'gray', boundaryWidth = 
 
     // ---- 2) POLYGONS ----
     else if (geometryType === 'Polygon' || geometryType === 'MultiPolygon') {
-      const isHubs = typeof layerName === "string" && layerName.startsWith("ZEF Corridor Strategy Phase") && layerName.includes("Hubs");
+      const isHubs =
+        typeof layerName === 'string' &&
+        layerName.startsWith('ZEF Corridor Strategy Phase') &&
+        layerName.includes('Hubs');
 
       if (useGradient && bounds) {
-        const component = Math.floor(255 - (255 * (attributeValue - bounds.min) / (bounds.max - bounds.min)));
-        let fillColor = isHubs ? `rgba(${component}, ${component}, 255, 0.5)` : `rgb(${component}, ${component}, 255)`; // White to blue gradient
+        const component = Math.floor(
+          255 - (255 * (attributeValue - bounds.min)) / (bounds.max - bounds.min)
+        );
+        let fillColor = isHubs
+          ? `rgba(${component}, ${component}, 255, 0.5)`
+          : `rgb(${component}, ${component}, 255)`; // White to blue gradient
 
         return new ol.style.Style({
           stroke: new ol.style.Stroke({ color: boundaryColor, width: boundaryWidth }),
           fill: new ol.style.Fill({ color: fillColor }),
-          zIndex: 1
+          zIndex: 1,
         });
       } else {
         let fillColor = isHubs ? convertRgbToRgba(layerColor, 0.5) : layerColor;
@@ -118,7 +144,7 @@ function createStyleFunction(layerName, boundaryColor = 'gray', boundaryWidth = 
         return new ol.style.Style({
           stroke: new ol.style.Stroke({ color: boundaryColor, width: boundaryWidth }),
           fill: new ol.style.Fill({ color: fillColor }),
-          zIndex: 1
+          zIndex: 1,
         });
       }
     }
@@ -132,7 +158,7 @@ function createStyleFunction(layerName, boundaryColor = 'gray', boundaryWidth = 
             color: layerColor,
             width: normalizedWidth,
           }),
-          zIndex: 5
+          zIndex: 5,
         });
       } else {
         return new ol.style.Style({
@@ -140,11 +166,14 @@ function createStyleFunction(layerName, boundaryColor = 'gray', boundaryWidth = 
             color: layerColor,
             width: 3,
           }),
-          zIndex: 5
+          zIndex: 5,
         });
       }
     }
-    console.log(`Layer: ${layerName}, Use Gradient: ${useGradient}, Attribute: ${attributeName}, Bounds:`, bounds);
+    console.log(
+      `Layer: ${layerName}, Use Gradient: ${useGradient}, Attribute: ${attributeName}, Bounds:`,
+      bounds
+    );
     if (attributeValue === null || attributeValue === undefined) return null;
     return null;
   };
@@ -200,10 +229,4 @@ function isLineStringLayer(layer) {
   return geometryType === 'LineString' || geometryType === 'MultiLineString';
 }
 
-export {
-  createStyleFunction,
-  isPolygonLayer,
-  isPointLayer,
-  isLineStringLayer,
-  assignColorToLayer
-};
+export { createStyleFunction, isPolygonLayer, isPointLayer, isLineStringLayer, assignColorToLayer };

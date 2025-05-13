@@ -1,18 +1,25 @@
-import { initMap, updateSelectedLayers, updateLegend, attachEventListeners, handleMapClick, handleMapHover, map } from './map.js';
+import {
+  initMap,
+  updateSelectedLayers,
+  updateLegend,
+  attachEventListeners,
+  handleMapClick,
+  handleMapHover,
+  map,
+} from './map.js';
 import { populateLayerDropdown, getSelectedLayers } from './ui.js';
 
 let geojsonNames = {};
 
-
 // Fetch available geojson names from the Django app
 fetch(GET_GEOJSONS)
-  .then(response => {
+  .then((response) => {
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
     return response.json();
   })
-  .then(data => {
+  .then((data) => {
     geojsonNames = data;
 
     // Fetch uploaded geojson names from the Django app
@@ -29,7 +36,7 @@ fetch(GET_GEOJSONS)
   //   }
   //   return response.json();
   // })
-  .then(data => {
+  .then((data) => {
     // Populate the layer selection drop-down with both geojson names and uploaded geojson names
     populateLayerDropdown(geojsonNames);
     attachEventListeners(); // Attach event listeners after populating the dropdown
@@ -37,9 +44,8 @@ fetch(GET_GEOJSONS)
     map.on('pointermove', handleMapHover);
     map.on('singleclick', handleMapClick);
   })
-  .catch(error => {
+  .catch((error) => {
     console.log('Fetch Error:', error);
   });
 
 export { geojsonNames };
-

@@ -726,9 +726,21 @@ function clearLayerSelections() {
     checkbox.checked = false;
   });
 
-  // Clear selected option in the area layer dropdown
+  // Clear selected options in the area layer dropdown
   const areaLayerDropdown = document.getElementById("area-layer-dropdown");
   areaLayerDropdown.selectedIndex = 0; // Assuming the first option is "Select Area Feature"
+
+  // Clear uploaded layers from Select2
+  const uploadedSelect = $('#usefiles-data-ajax');
+  if (uploadedSelect.length > 0) {
+    uploadedSelect.val(null).trigger('change');
+  }
+
+  // Clear uploaded layer name tracking
+  for (const key in uploadedGeojsonNames) {
+    delete uploadedGeojsonNames[key];
+  }
+
   updateSelectedLayers();
   updateLegend();
 }

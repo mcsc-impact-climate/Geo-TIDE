@@ -126,9 +126,7 @@ function handleMapHover(event) {
   map.forEachFeatureAtPixel(event.pixel, function (feature) {
     featureFound = true;
 
-    const selectedLayer = getAreaLayerName(
-      document.getElementById('area-layer-dropdown').value
-    );
+    const selectedLayer = getAreaLayerName(document.getElementById('area-layer-dropdown').value);
     const layerName = feature.get('layerName') || selectedLayer;
 
     if (layerName === 'State-Level Incentives and Regulations') {
@@ -146,7 +144,6 @@ function handleMapHover(event) {
     lastFeature = null;
   }
 }
-
 
 // Function to handle click events
 function handleMapClick(event) {
@@ -682,11 +679,11 @@ function updateLegend() {
           const polygonLegend = createPolygonLegendEntry(layerName, bounds, layerColor);
           symbolContainer.appendChild(polygonLegend);
         } else if (isLineStringLayer(layer)) {
-            const lineLegend = createLineLegendEntry(layerName, bounds, layerColor);
-            symbolContainer.appendChild(lineLegend);
+          const lineLegend = createLineLegendEntry(layerName, bounds, layerColor);
+          symbolContainer.appendChild(lineLegend);
         } else if (isPointLayer(layer)) {
-            const pointLegend = createPointLegendEntry(layerName, bounds, layerColor, gradientType);
-            symbolContainer.appendChild(pointLegend);
+          const pointLegend = createPointLegendEntry(layerName, bounds, layerColor, gradientType);
+          symbolContainer.appendChild(pointLegend);
         }
 
         layerDiv.appendChild(symbolContainer);

@@ -409,29 +409,30 @@ function createDropdown(
     selected_options_list[parameter] = dropdown.value;
 
     // Check if the layer is visible on the map
-      if (key !== 'National ZEF Corridor Strategy') {  // Skip visibility check for ZEF, which is not an actual layer
-        const layerObj = layerCache[key];
-        if (!layerObj || !layerObj.getVisible()) {
-          console.log("Exiting early as the layer isn't yet visible on the map");
-          return;
-        }
+    if (key !== 'National ZEF Corridor Strategy') {
+      // Skip visibility check for ZEF, which is not an actual layer
+      const layerObj = layerCache[key];
+      if (!layerObj || !layerObj.getVisible()) {
+        console.log("Exiting early as the layer isn't yet visible on the map");
+        return;
       }
+    }
 
     // Proceed with reloading or updating layers
     if (key === 'National ZEF Corridor Strategy') {
       selectedZefOptions['Phase'] = selected_options_list['Phase'];
 
-        // Remove all sublayers across all phases
-        for (let phase = 1; phase <= 4; phase++) {
-          ['Corridors', 'Facilities', 'Hubs'].forEach((sub) => {
-            removeLayer(`ZEF Corridor Strategy Phase ${phase} ${sub}`);
-          });
-        }
+      // Remove all sublayers across all phases
+      for (let phase = 1; phase <= 4; phase++) {
+        ['Corridors', 'Facilities', 'Hubs'].forEach((sub) => {
+          removeLayer(`ZEF Corridor Strategy Phase ${phase} ${sub}`);
+        });
+      }
 
-        // Force re-load of new phase's selected sublayers
-        await updateSelectedLayers();
-        updateLegend();
-      } else {
+      // Force re-load of new phase's selected sublayers
+      await updateSelectedLayers();
+      updateLegend();
+    } else {
       // Non-ZEF layers
       await removeLayer(key);
       await loadLayer(key, `${STORAGE_URL}${filename_creation_function(selected_options_list)}`);

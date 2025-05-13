@@ -90,7 +90,8 @@ function getBaseStyle(layerName, feature, boundaryColor, boundaryWidth, isHover)
         let minSize = layerName in geojsonColors ? 2 : 4;
         let maxSize = layerName in geojsonColors ? 10 : 15;
         const pointSize =
-          minSize + ((maxSize - minSize) * (attributeValue - bounds.min)) / (bounds.max - bounds.min);
+          minSize +
+          ((maxSize - minSize) * (attributeValue - bounds.min)) / (bounds.max - bounds.min);
         return new ol.style.Style({
           image: new ol.style.Circle({
             radius: pointSize,
@@ -169,7 +170,6 @@ function getBaseStyle(layerName, feature, boundaryColor, boundaryWidth, isHover)
   return null;
 }
 
-
 /**
  * Helper that, given a color like "rgb(255, 0, 0)" or "#ff0000",
  * returns an "rgba(r, g, b, alpha)" string for partial transparency.
@@ -220,4 +220,11 @@ function isLineStringLayer(layer) {
   return geometryType === 'LineString' || geometryType === 'MultiLineString';
 }
 
-export { createStyleFunction, createHoverStyle, isPolygonLayer, isPointLayer, isLineStringLayer, assignColorToLayer };
+export {
+  createStyleFunction,
+  createHoverStyle,
+  isPolygonLayer,
+  isPointLayer,
+  isLineStringLayer,
+  assignColorToLayer,
+};

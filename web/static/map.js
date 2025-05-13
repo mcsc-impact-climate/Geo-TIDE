@@ -1,5 +1,6 @@
 import {
   createStyleFunction,
+  createHoverStyle,
   isPolygonLayer,
   isPointLayer,
   isLineStringLayer,
@@ -118,41 +119,34 @@ async function attachEventListeners() {
   }
 }
 
-let lastFeature;
-
-// Function to handle hover events
+let lastFeature = null;
 function handleMapHover(event) {
   let featureFound = false;
+
   map.forEachFeatureAtPixel(event.pixel, function (feature) {
     featureFound = true;
-    //console.log(getAreaLayerName(document.getElementById("area-layer-dropdown").value));
-    if (
-      feature !== lastFeature &&
-      getAreaLayerName(document.getElementById('area-layer-dropdown').value) ==
-        'State-Level Incentives and Regulations'
-    ) {
-      if (lastFeature) {
-        const lastLayerName = getAreaLayerName(
-          document.getElementById('area-layer-dropdown').value
-        );
-        lastFeature.setStyle(createStyleFunction(lastLayerName, 'gray', 1)); // Reset style on the last hovered feature
+
+    const selectedLayer = getAreaLayerName(
+      document.getElementById('area-layer-dropdown').value
+    );
+    const layerName = feature.get('layerName') || selectedLayer;
+
+    if (layerName === 'State-Level Incentives and Regulations') {
+      if (lastFeature && lastFeature !== feature) {
+        lastFeature.setStyle(null); // Clear previous hover
       }
-      if (feature) {
-        const currentLayerName = feature.get('layerName');
-        //console.log('Current Layer Name:', currentLayerName); // Debugging
-        feature.setStyle(createStyleFunction(currentLayerName, 'white', 3, true)); // Apply hover style to the new feature
-      }
-      //console.log(getAreaLayerName(document.getElementById("area-layer-dropdown").value));
+
+      feature.setStyle(createHoverStyle(layerName, feature));
       lastFeature = feature;
     }
   });
-  // If no feature was found under the cursor, reset the last hovered feature, if goes off map, last hovered feature does not stay color
+
   if (!featureFound && lastFeature) {
-    const lastLayerName = 'State-Level Incentives and Regulations'; // Adjust as needed
-    lastFeature.setStyle(createStyleFunction(lastLayerName, 'gray', 1)); // Reset the last feature's style
-    lastFeature = null; // Clear lastFeature to avoid retaining hover effects
+    lastFeature.setStyle(null); // Reset to default layer style
+    lastFeature = null;
   }
 }
+
 
 // Function to handle click events
 function handleMapClick(event) {

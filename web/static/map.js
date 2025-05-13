@@ -705,6 +705,8 @@ function isDictionary(obj) {
 
 // Add event listener to the "Clear" button
 document.getElementById("clear-button").addEventListener("click", function () {
+  console.log("Clear button clicked");
+  event.stopPropagation(); // Prevent outside click handler from firing
     
   // Show confirmation modal
   document.getElementById("clear-confirmation-modal").style.display = "flex";

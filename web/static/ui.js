@@ -409,33 +409,29 @@ function createDropdown(
     selected_options_list[parameter] = dropdown.value;
 
     // Check if the layer is visible on the map
-    const layerObj = layerCache[key];
-    if (!layerObj || !layerObj.getVisible()) {
-      console.log("Exiting early as the layer isn't yet visible on the map");
-      return; // Exit early if the layer isn't visible
-    }
+      if (key !== 'National ZEF Corridor Strategy') {  // Skip visibility check for ZEF, which is not an actual layer
+        const layerObj = layerCache[key];
+        if (!layerObj || !layerObj.getVisible()) {
+          console.log("Exiting early as the layer isn't yet visible on the map");
+          return;
+        }
+      }
 
     // Proceed with reloading or updating layers
-
     if (key === 'National ZEF Corridor Strategy') {
-      const layerData = filename_creation_function(selected_options_list);
+      selectedZefOptions['Phase'] = selected_options_list['Phase'];
 
-      // Remove all ZEF layers across all phases (1-4)
-      for (let phase = 1; phase <= 4; phase++) {
-        removeLayer(`ZEF Corridor Strategy Phase ${phase} Corridors`);
-        removeLayer(`ZEF Corridor Strategy Phase ${phase} Facilities`);
-        removeLayer(`ZEF Corridor Strategy Phase ${phase} Hubs`);
-      }
-
-      // Load new ZEF layers based on selected options
-      if (Array.isArray(layerData.urls)) {
-        for (let i = 0; i < layerData.names.length; i++) {
-          await loadLayer(layerData.names[i], layerData.urls[i]);
+        // Remove all sublayers across all phases
+        for (let phase = 1; phase <= 4; phase++) {
+          ['Corridors', 'Facilities', 'Hubs'].forEach((sub) => {
+            removeLayer(`ZEF Corridor Strategy Phase ${phase} ${sub}`);
+          });
         }
+
+        // Force re-load of new phase's selected sublayers
+        await updateSelectedLayers();
+        updateLegend();
       } else {
-        await loadLayer(key, `${STORAGE_URL}${layerData.urls}`);
-      }
-    } else {
       // Non-ZEF layers
       await removeLayer(key);
       await loadLayer(key, `${STORAGE_URL}${filename_creation_function(selected_options_list)}`);

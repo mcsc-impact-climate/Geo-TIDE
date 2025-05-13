@@ -93,11 +93,10 @@ const stateNames = {
   WY: 'Wyoming',
 };
 
-// Add this line near the top of ui.js
 window.lastClickWasMoreButton = false;
+const areaLayerDropdown = document.getElementById('area-layer-dropdown');
 
 function populateLayerDropdown(mapping) {
-  const areaLayerDropdown = document.getElementById('area-layer-dropdown');
   const highwayFlowContainer = document.getElementById('highway-flow-checkboxes');
   const highwayInfraContainer = document.getElementById('highway-infra-checkboxes');
   const pointH2prodContainer = document.getElementById('point-h2prod-checkboxes');
@@ -202,7 +201,6 @@ function getSelectedLayers() {
   });
 
   // Get the selected area layer from the dropdown
-  const areaLayerDropdown = document.getElementById('area-layer-dropdown');
   for (const option of areaLayerDropdown.options) {
     if (option.selected && option.text !== 'None') {
       selectedLayerNames.push(option.text);
@@ -219,7 +217,6 @@ function getSelectedLayers() {
   return selectedLayerNames;
 }
 
-const areaLayerDropdown = document.getElementById('area-layer-dropdown');
 const details_button = document.getElementById('area-details-button');
 
 areaLayerDropdown.addEventListener('change', function () {
@@ -243,7 +240,6 @@ function getSelectedLayersValues() {
   });
 
   // Get the selected area layer from the dropdown
-  const areaLayerDropdown = document.getElementById('area-layer-dropdown');
   for (const option of areaLayerDropdown.options) {
     if (option.selected && option.text !== 'None') {
       selectedLayerValues.set(option.text, option.value); // Push the text of the selected option
@@ -268,7 +264,6 @@ document.getElementById('layer-selection').addEventListener('click', function (e
 
 // Function to get the selected area layer's name based on its value
 function getAreaLayerName(selectedValue) {
-  const areaLayerDropdown = document.getElementById('area-layer-dropdown');
   const selectedOption = Array.from(areaLayerDropdown.options).find(
     (option) => option.value === selectedValue
   );
@@ -307,7 +302,7 @@ async function createAttributeDropdown(key) {
   }
 
   const attributeDropdownContainer = document.createElement('div');
-  attributeDropdownContainer.classList.add('attribute-dropdown-container');
+  attributeDropdownContainer.classList.add('dropdown-container');
 
   const label = document.createElement('label');
   label.setAttribute('for', 'attribute-dropdown');
@@ -382,20 +377,19 @@ function createDropdown(
 ) {
   const options = options_list[parameter];
 
-  // Check if the dropdown already exists
-  if (document.getElementById(name + '-dropdown')) {
-    return; // Exit the function if it already exists
-  }
+  // Prevent duplicate dropdowns
+  if (document.getElementById(`${name}-dropdown`)) return;
 
   const dropdownContainer = document.createElement('div');
-  dropdownContainer.classList.add(name + '-dropdown-container');
+  dropdownContainer.classList.add('dropdown-container'); // << apply new standard class
 
   const label = document.createElement('label');
-  label.setAttribute('for', name + '-dropdown');
+  label.setAttribute('for', `${name}-dropdown`);
   label.textContent = dropdown_label;
 
   const dropdown = document.createElement('select');
-  dropdown.id = name + '-dropdown';
+  dropdown.id = `${name}-dropdown`;
+  dropdown.classList.add('dropdown'); // Optional: style <select> directly if needed
 
   // Create and add options to the dropdown
   for (const this_option in options) {
@@ -590,29 +584,19 @@ function createZefFilenames(selected_options_list) {
   return { names: layerNames, urls: filenames };
 }
 
+function createDropdownGroup(dropdowns, key, options, selectedOptions, filenameFn) {
+  dropdowns.forEach(([id, param, label]) => {
+    createDropdown(id, param, label, key, options, selectedOptions, filenameFn);
+  });
+}
+
 function createChargingDropdowns(key) {
-  const rangeDropdownResult = createDropdown(
-    'range',
-    'Range',
-    'Truck Range: ',
-    key,
-    truckChargingOptions,
-    selectedTruckChargingOptions,
-    createTruckChargingFilename
-  );
-  const chargingTimeDropdownResult = createDropdown(
-    'chargingTime',
-    'Charging Time',
-    'Charging Time: ',
-    key,
-    truckChargingOptions,
-    selectedTruckChargingOptions,
-    createTruckChargingFilename
-  );
-  const maxWaitTimeDropdownResult = createDropdown(
-    'maxWaitTime',
-    'Max Allowed Wait Time',
-    'Max Allowed Wait Time: ',
+  createDropdownGroup(
+    [
+      ['range', 'Range', 'Truck Range: '],
+      ['chargingTime', 'Charging Time', 'Charging Time: '],
+      ['maxWaitTime', 'Max Allowed Wait Time', 'Max Allowed Wait Time: '],
+    ],
     key,
     truckChargingOptions,
     selectedTruckChargingOptions,
@@ -621,19 +605,11 @@ function createChargingDropdowns(key) {
 }
 
 function createStateSupportDropdowns(key) {
-  const supportTypeDropdownResult = createDropdown(
-    'support-type',
-    'Support Type',
-    'Support type: ',
-    key,
-    stateSupportOptions,
-    selectedStateSupportOptions,
-    createStateSupportFilename
-  );
-  const supportTargetDropdownResult = createDropdown(
-    'support-target',
-    'Support Target',
-    'Support target: ',
+  createDropdownGroup(
+    [
+      ['support-type', 'Support Type', 'Support type: '],
+      ['support-target', 'Support Target', 'Support target: '],
+    ],
     key,
     stateSupportOptions,
     selectedStateSupportOptions,
@@ -642,28 +618,12 @@ function createStateSupportDropdowns(key) {
 }
 
 function createTcoDropdowns(key) {
-  const payloadDropdownResult = createDropdown(
-    'average-payload',
-    'Average Payload',
-    'Average payload: ',
-    key,
-    tcoOptions,
-    selectedTcoOptions,
-    createTcoFilename
-  );
-  const vmtDropdownResult = createDropdown(
-    'average-vmt',
-    'Average VMT',
-    'Average VMT: ',
-    key,
-    tcoOptions,
-    selectedTcoOptions,
-    createTcoFilename
-  );
-  const chargingPowerDropdownResult = createDropdown(
-    'charging-power',
-    'Max Charging Power',
-    'Max charging power: ',
+  createDropdownGroup(
+    [
+      ['average-payload', 'Average Payload', 'Average payload: '],
+      ['average-vmt', 'Average VMT', 'Average VMT: '],
+      ['charging-power', 'Max Charging Power', 'Max charging power: '],
+    ],
     key,
     tcoOptions,
     selectedTcoOptions,
@@ -672,28 +632,12 @@ function createTcoDropdowns(key) {
 }
 
 function createEmissionsDropdowns(key) {
-  const payloadDropdownResult = createDropdown(
-    'average-payload',
-    'Average Payload',
-    'Average payload: ',
-    key,
-    emissionsOptions,
-    selectedEmissionsOptions,
-    createEmissionsFilename
-  );
-  const vmtDropdownResult = createDropdown(
-    'average-vmt',
-    'Average VMT',
-    'Average VMT: ',
-    key,
-    emissionsOptions,
-    selectedEmissionsOptions,
-    createEmissionsFilename
-  );
-  const visualizeByDropdownResult = createDropdown(
-    'visualize-by',
-    'Visualize By',
-    'Visualize by: ',
+  createDropdownGroup(
+    [
+      ['average-payload', 'Average Payload', 'Average payload: '],
+      ['average-vmt', 'Average VMT', 'Average VMT: '],
+      ['visualize-by', 'Visualize By', 'Visualize by: '],
+    ],
     key,
     emissionsOptions,
     selectedEmissionsOptions,
@@ -702,10 +646,8 @@ function createEmissionsDropdowns(key) {
 }
 
 function createGridEmissionsDropdowns(key) {
-  const visualizeDropdownResult = createDropdown(
-    'visualize-by',
-    'Visualize By',
-    'Visualize by: ',
+  createDropdownGroup(
+    [['visualize-by', 'Visualize By', 'Visualize by: ']],
     key,
     gridEmissionsOptions,
     selectedGridEmissionsOptions,
@@ -714,10 +656,8 @@ function createGridEmissionsDropdowns(key) {
 }
 
 function createHourlyEmissionsDropdowns(key) {
-  const visualizeDropdownResult = createDropdown(
-    'hour-of-day',
-    'Hour of Day',
-    'Hour of day: ',
+  createDropdownGroup(
+    [['hour-of-day', 'Hour of Day', 'Hour of day: ']],
     key,
     hourlyEmissionsOptions,
     selectedHourlyEmissionsOptions,
@@ -726,10 +666,8 @@ function createHourlyEmissionsDropdowns(key) {
 }
 
 function createFaf5Dropdowns(key) {
-  const visualizeDropdownResult = createDropdown(
-    'commodity',
-    'Commodity',
-    'Commodity: ',
+  createDropdownGroup(
+    [['commodity', 'Commodity', 'Commodity: ']],
     key,
     faf5Options,
     selectedFaf5Options,
@@ -928,9 +866,8 @@ document.body.addEventListener('click', function (event) {
   window.lastClickWasMoreButton = false;
 });
 
-document.getElementById('area-details-button').addEventListener('click', function () {
+document.getElementById('area-details-button').addEventListener('click', function (event) {
   event.stopPropagation(); // Prevent outside click handler from firing
-  const areaLayerDropdown = document.getElementById('area-layer-dropdown');
   const selectedAreaLayer = areaLayerDropdown.value;
   if (selectedAreaLayer !== '') {
     // Fetch details based on the selected area layer
@@ -1044,90 +981,12 @@ function getDetails(key) {
 function resetModalContent() {
   const modalContent = document.querySelector('.modal-content');
 
-  // Remove attribute-dropdown-container if it exists
-  const attributeDropdownContainer = document.querySelector('.attribute-dropdown-container');
-  if (attributeDropdownContainer) {
-    modalContent.removeChild(attributeDropdownContainer);
-  }
-
-  // Remove range-dropdown-container if it exists
-  const rangeDropdownContainer = document.querySelector('.range-dropdown-container');
-  if (rangeDropdownContainer) {
-    modalContent.removeChild(rangeDropdownContainer);
-  }
-
-  // Remove chargingTime-dropdown-container if it exists
-  const chargingTimeDropdownContainer = document.querySelector('.chargingTime-dropdown-container');
-  if (chargingTimeDropdownContainer) {
-    modalContent.removeChild(chargingTimeDropdownContainer);
-  }
-
-  // Remove maxWaitTime-dropdown-container if it exists
-  const maxWaitTimeDropdownContainer = document.querySelector('.maxWaitTime-dropdown-container');
-  if (maxWaitTimeDropdownContainer) {
-    modalContent.removeChild(maxWaitTimeDropdownContainer);
-  }
-
-  // Remove support-type-dropdown-container if it exists
-  const supportTypeDropdownContainer = document.querySelector('.support-type-dropdown-container');
-  if (supportTypeDropdownContainer) {
-    modalContent.removeChild(supportTypeDropdownContainer);
-  }
-
-  // Remove support-target-dropdown-container if it exists
-  const supportTargetDropdownContainer = document.querySelector(
-    '.support-target-dropdown-container'
-  );
-  if (supportTargetDropdownContainer) {
-    modalContent.removeChild(supportTargetDropdownContainer);
-  }
-
-  // Remove payload-dropdown-container if it exists
-  const payloadDropdownContainer = document.querySelector('.average-payload-dropdown-container');
-  if (payloadDropdownContainer) {
-    modalContent.removeChild(payloadDropdownContainer);
-  }
-
-  // Remove vmt-dropdown-container if it exists
-  const vmtDropdownContainer = document.querySelector('.average-vmt-dropdown-container');
-  if (vmtDropdownContainer) {
-    modalContent.removeChild(vmtDropdownContainer);
-  }
-
-  // Remove visualize-by-dropdown-container if it exists
-  const visualizeByDropdownContainer = document.querySelector('.visualize-by-dropdown-container');
-  if (visualizeByDropdownContainer) {
-    modalContent.removeChild(visualizeByDropdownContainer);
-  }
-
-  // Remove hour-of-day-dropdown-container if it exists
-  const hourOfDayDropdownContainer = document.querySelector('.hour-of-day-dropdown-container');
-  if (hourOfDayDropdownContainer) {
-    modalContent.removeChild(hourOfDayDropdownContainer);
-  }
-
-  // Remove commodity-dropdown-container if it exists
-  const commodityDropdownContainer = document.querySelector('.commodity-dropdown-container');
-  if (commodityDropdownContainer) {
-    modalContent.removeChild(commodityDropdownContainer);
-  }
-
-  // Remove visualize-by-dropdown-container if it exists
-  const chargingPowerDropdownContainer = document.querySelector(
-    '.charging-power-dropdown-container'
-  );
-  if (chargingPowerDropdownContainer) {
-    modalContent.removeChild(chargingPowerDropdownContainer);
-  }
-
-  // Remove phase dropdown container if it exists
-  const phaseDropdownContainer = document.querySelector('.phase-dropdown-container');
-  if (phaseDropdownContainer) {
-    modalContent.removeChild(phaseDropdownContainer);
-  }
+  // Remove all standardized dropdown containers
+  const dropdowns = modalContent.querySelectorAll('.dropdown-container');
+  dropdowns.forEach((el) => modalContent.removeChild(el));
 
   // Remove ZEF sub-layer checkboxes container if it exists
-  const zefSubLayerContainer = document.querySelector('.zef-sub-layers-container');
+  const zefSubLayerContainer = modalContent.querySelector('.zef-sub-layers-container');
   if (zefSubLayerContainer) {
     modalContent.removeChild(zefSubLayerContainer);
   }

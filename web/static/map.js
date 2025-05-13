@@ -402,6 +402,217 @@ function reverseMapping(originalMap) {
   return Object.fromEntries(Object.entries(originalMap).map(([key, value]) => [value, key]));
 }
 
+function createPolygonLegendEntry(layerName, bounds, layerColor) {
+  const container = document.createElement('div');
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 50;
+  canvas.height = 10;
+  const ctx = canvas.getContext('2d');
+
+  const useGradient = layerName in selectedGradientAttributes;
+
+  if (useGradient && bounds) {
+    const minVal =
+      bounds.min < 0.01
+        ? bounds.min.toExponential(1)
+        : bounds.min > 100
+          ? bounds.min.toExponential(1)
+          : bounds.min.toFixed(1);
+    const maxVal =
+      bounds.max < 0.01
+        ? bounds.max.toExponential(1)
+        : bounds.max > 100
+          ? bounds.max.toExponential(1)
+          : bounds.max.toFixed(1);
+
+    const minDiv = document.createElement('div');
+    minDiv.innerText = minVal.toString();
+    minDiv.style.marginRight = '5px';
+
+    const maxDiv = document.createElement('div');
+    maxDiv.innerText = maxVal.toString();
+    maxDiv.style.marginLeft = '5px';
+
+    const gradient = ctx.createLinearGradient(0, 0, 50, 0);
+    gradient.addColorStop(0, 'rgb(255, 255, 255)');
+    gradient.addColorStop(1, 'rgb(0, 0, 255)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 50, 10);
+
+    container.appendChild(minDiv);
+    container.appendChild(canvas);
+    container.appendChild(maxDiv);
+  } else {
+    ctx.fillStyle = layerColor;
+    ctx.fillRect(0, 0, 50, 10);
+    container.appendChild(canvas);
+  }
+
+  return container;
+}
+
+function createLineLegendEntry(layerName, bounds, layerColor) {
+  const container = document.createElement('div');
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+
+  const useGradient = layerName in selectedGradientAttributes;
+
+  if (useGradient && bounds) {
+    const minVal =
+      bounds.min < 0.01
+        ? bounds.min.toExponential(1)
+        : bounds.min > 100
+          ? bounds.min.toExponential(1)
+          : bounds.min.toFixed(1);
+    const maxVal =
+      bounds.max < 0.01
+        ? bounds.max.toExponential(1)
+        : bounds.max > 100
+          ? bounds.max.toExponential(1)
+          : bounds.max.toFixed(1);
+
+    const minDiv = document.createElement('div');
+    minDiv.innerText = minVal.toString();
+    minDiv.style.marginRight = '5px';
+
+    const maxDiv = document.createElement('div');
+    maxDiv.innerText = maxVal.toString();
+    maxDiv.style.marginLeft = '5px';
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 50;
+    canvas.height = 20;
+    const ctx = canvas.getContext('2d');
+
+    for (let x = 0; x <= 50; x++) {
+      let lineWidth = 1 + (x / 50) * 9;
+      ctx.strokeStyle = layerColor;
+      ctx.lineWidth = lineWidth;
+      ctx.beginPath();
+      ctx.moveTo(x, 10 - lineWidth / 2);
+      ctx.lineTo(x, 10 + lineWidth / 2);
+      ctx.stroke();
+    }
+
+    container.appendChild(minDiv);
+    container.appendChild(canvas);
+    container.appendChild(maxDiv);
+  } else {
+    const canvas = document.createElement('canvas');
+    canvas.width = 50;
+    canvas.height = 10;
+    const ctx = canvas.getContext('2d');
+
+    ctx.strokeStyle = layerColor;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(0, 5);
+    ctx.lineTo(50, 5);
+    ctx.stroke();
+
+    container.appendChild(canvas);
+  }
+
+  return container;
+}
+
+function createPointLegendEntry(layerName, bounds, layerColor, gradientType) {
+  const container = document.createElement('div');
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+
+  const useGradient = layerName in selectedGradientAttributes;
+
+  if (useGradient && bounds) {
+    const minVal =
+      bounds.min < 0.01
+        ? bounds.min.toExponential(1)
+        : bounds.min > 100
+          ? bounds.min.toExponential(1)
+          : bounds.min.toFixed(1);
+    const maxVal =
+      bounds.max < 0.01
+        ? bounds.max.toExponential(1)
+        : bounds.max > 100
+          ? bounds.max.toExponential(1)
+          : bounds.max.toFixed(1);
+
+    const minDiv = document.createElement('div');
+    minDiv.innerText = minVal.toString();
+    minDiv.style.marginRight = '5px';
+
+    const maxDiv = document.createElement('div');
+    maxDiv.innerText = maxVal.toString();
+    maxDiv.style.marginLeft = '5px';
+
+    if (gradientType === 'size') {
+      const minCanvas = document.createElement('canvas');
+      minCanvas.width = 20;
+      minCanvas.height = 20;
+      const minCtx = minCanvas.getContext('2d');
+      minCtx.fillStyle = layerColor;
+      minCtx.beginPath();
+      minCtx.arc(10, 10, 2, 0, Math.PI * 2);
+      minCtx.fill();
+
+      const maxCanvas = document.createElement('canvas');
+      maxCanvas.width = 20;
+      maxCanvas.height = 20;
+      const maxCtx = maxCanvas.getContext('2d');
+      maxCtx.fillStyle = layerColor;
+      maxCtx.beginPath();
+      maxCtx.arc(10, 10, 10, 0, Math.PI * 2);
+      maxCtx.fill();
+
+      container.appendChild(minDiv);
+      container.appendChild(minCanvas);
+      container.appendChild(maxCanvas);
+      container.appendChild(maxDiv);
+    } else if (gradientType === 'color') {
+      const minCanvas = document.createElement('canvas');
+      minCanvas.width = 20;
+      minCanvas.height = 20;
+      const minCtx = minCanvas.getContext('2d');
+      minCtx.fillStyle = 'lightblue';
+      minCtx.beginPath();
+      minCtx.arc(10, 10, 3, 0, Math.PI * 2);
+      minCtx.fill();
+
+      const maxCanvas = document.createElement('canvas');
+      maxCanvas.width = 20;
+      maxCanvas.height = 20;
+      const maxCtx = maxCanvas.getContext('2d');
+      maxCtx.fillStyle = 'blue';
+      maxCtx.beginPath();
+      maxCtx.arc(10, 10, 3, 0, Math.PI * 2);
+      maxCtx.fill();
+
+      container.appendChild(minDiv);
+      container.appendChild(minCanvas);
+      container.appendChild(maxCanvas);
+      container.appendChild(maxDiv);
+    }
+  } else {
+    const canvas = document.createElement('canvas');
+    canvas.width = 50;
+    canvas.height = 10;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = layerColor;
+    ctx.beginPath();
+    ctx.arc(25, 5, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    canvas.style.marginLeft = '30px';
+    container.appendChild(canvas);
+  }
+
+  return container;
+}
+
 function updateLegend() {
   const legendDiv = document.getElementById('legend');
   legendDiv.style.display = 'flex';
@@ -474,233 +685,14 @@ function updateLegend() {
 
         // Add legend entry only for visible layers
         if (isPolygonLayer(layer)) {
-          if (useGradient) {
-            const minVal =
-              bounds.min < 0.01
-                ? bounds.min.toExponential(1)
-                : bounds.min > 100
-                  ? bounds.min.toExponential(1)
-                  : bounds.min.toFixed(1);
-            const minDiv = document.createElement('div');
-            minDiv.innerText = minVal.toString();
-            minDiv.style.marginRight = '5px';
-            symbolContainer.appendChild(minDiv);
-            symbolContainer.style.marginRight = '40px';
-
-            const gradient = ctx.createLinearGradient(0, 0, 50, 0);
-            gradient.addColorStop(0, 'rgb(255, 255, 255)'); // White for low values
-            gradient.addColorStop(1, `rgb(0, 0, 255)`); // Blue for high values
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, 50, 10);
-            symbolContainer.appendChild(canvas);
-            symbolContainer.style.marginRight = '40px';
-
-            const maxVal =
-              bounds.max < 0.01
-                ? bounds.max.toExponential(1)
-                : bounds.max > 100
-                  ? bounds.max.toExponential(1)
-                  : bounds.max.toFixed(1);
-            const maxDiv = document.createElement('div');
-            maxDiv.innerText = maxVal.toString();
-            maxDiv.style.marginLeft = '5px';
-            symbolContainer.appendChild(maxDiv);
-            symbolContainer.style.marginRight = '40px';
-          } else {
-            // Solid color rectangle
-            ctx.fillStyle = layerColor;
-            ctx.fillRect(0, 0, 50, 10);
-            symbolContainer.appendChild(canvas);
-            symbolContainer.style.marginRight = '40px';
-          }
+          const polygonLegend = createPolygonLegendEntry(layerName, bounds, layerColor);
+          symbolContainer.appendChild(polygonLegend);
         } else if (isLineStringLayer(layer)) {
-          if (useGradient && bounds) {
-            // Check to make sure bounds are actually defined
-            const minVal =
-              bounds.min < 0.01
-                ? bounds.min.toExponential(1)
-                : bounds.min > 100
-                  ? bounds.min.toExponential(1)
-                  : bounds.min.toFixed(1);
-            const minDiv = document.createElement('div');
-            minDiv.innerText = minVal.toString(); // Minimum attribute value
-            minDiv.style.marginRight = '5px';
-            symbolContainer.appendChild(minDiv);
-            symbolContainer.style.marginRight = '40px';
-
-            // New canvas for line width
-            const canvas = document.createElement('canvas');
-            canvas.width = 50;
-            canvas.height = 20; // Increased height to make space for the varying line width
-            const ctx = canvas.getContext('2d');
-
-            // Draw a line segment that gradually increases in width from 1 to 10
-            let yPosition = 10; // vertical position for the line
-
-            for (let x = 0; x <= 50; x++) {
-              let lineWidth = 1 + (x / 50) * 9; // lineWidth will vary between 1 and 10
-              ctx.strokeStyle = layerColor;
-              ctx.lineWidth = lineWidth;
-
-              ctx.beginPath();
-              ctx.moveTo(x, yPosition - lineWidth / 2);
-              ctx.lineTo(x, yPosition + lineWidth / 2);
-              ctx.stroke();
-            }
-
-            symbolContainer.appendChild(canvas);
-            symbolContainer.style.marginRight = '40px';
-
-            // Check to make sure bounds are actually defined
-            const maxVal =
-              bounds.max < 0.01
-                ? bounds.max.toExponential(1)
-                : bounds.max > 100
-                  ? bounds.max.toExponential(1)
-                  : bounds.max.toFixed(1);
-            const maxDiv = document.createElement('div');
-            maxDiv.innerText = maxVal.toString(); // Maximum attribute value
-            maxDiv.style.marginLeft = '5px';
-            symbolContainer.appendChild(maxDiv);
-            symbolContainer.style.marginRight = '40px';
-          } else {
-            // New canvas for constant width line
-            const constantCanvas = document.createElement('canvas');
-            constantCanvas.width = 50;
-            constantCanvas.height = 10; // Set height to 10 for constant line width
-            const constantCtx = constantCanvas.getContext('2d');
-
-            constantCtx.strokeStyle = layerColor;
-            constantCtx.lineWidth = 3;
-
-            constantCtx.beginPath();
-            constantCtx.moveTo(0, 5);
-            constantCtx.lineTo(50, 5);
-            constantCtx.stroke();
-
-            symbolContainer.appendChild(constantCanvas);
-            symbolContainer.style.marginRight = '40px';
-          }
+            const lineLegend = createLineLegendEntry(layerName, bounds, layerColor);
+            symbolContainer.appendChild(lineLegend);
         } else if (isPointLayer(layer)) {
-          // this block is for point-like geometries
-          // check if gradient should be used for points
-          if (useGradient && bounds) {
-            if (gradientType === 'size') {
-              // Minimum value and minimum point size
-              const minVal =
-                bounds.min < 0.01
-                  ? bounds.min.toExponential(1)
-                  : bounds.min > 100
-                    ? bounds.min.toExponential(1)
-                    : bounds.min.toFixed(1);
-              const minDiv = document.createElement('div');
-              minDiv.innerText = minVal.toString();
-              minDiv.style.marginRight = '5px';
-              symbolContainer.appendChild(minDiv);
-
-              // Canvas to draw points
-              const minPointSize = 2; // Minimum size (can set according to your needs)
-              const maxPointSize = 10; // Maximum size (can set according to your needs)
-
-              // Create canvas for the minimum point size
-              const minPointCanvas = document.createElement('canvas');
-              minPointCanvas.width = 20;
-              minPointCanvas.height = 20;
-              const minCtx = minPointCanvas.getContext('2d');
-
-              minCtx.fillStyle = layerColor;
-              minCtx.beginPath();
-              minCtx.arc(10, 10, minPointSize, 0, Math.PI * 2);
-              minCtx.fill();
-              symbolContainer.appendChild(minPointCanvas);
-
-              // Create canvas for the maximum point size
-              const maxPointCanvas = document.createElement('canvas');
-              maxPointCanvas.width = 20;
-              maxPointCanvas.height = 20;
-              const maxCtx = maxPointCanvas.getContext('2d');
-
-              maxCtx.fillStyle = layerColor;
-              maxCtx.beginPath();
-              maxCtx.arc(10, 10, maxPointSize, 0, Math.PI * 2);
-              maxCtx.fill();
-              symbolContainer.appendChild(maxPointCanvas);
-
-              // Maximum value
-              const maxVal =
-                bounds.max < 0.01
-                  ? bounds.max.toExponential(1)
-                  : bounds.max > 100
-                    ? bounds.max.toExponential(1)
-                    : bounds.max.toFixed(1);
-              const maxDiv = document.createElement('div');
-              maxDiv.innerText = maxVal.toString();
-              maxDiv.style.marginLeft = '5px';
-              symbolContainer.appendChild(maxDiv);
-            } else if (gradientType === 'color') {
-              // Minimum value and minimum point size
-              const minVal =
-                bounds.min < 0.01
-                  ? bounds.min.toExponential(1)
-                  : bounds.min > 100
-                    ? bounds.min.toExponential(1)
-                    : bounds.min.toFixed(1);
-              const minDiv = document.createElement('div');
-              minDiv.innerText = minVal.toString();
-              minDiv.style.marginRight = '5px';
-              symbolContainer.appendChild(minDiv);
-
-              // Canvas to draw points
-              const minPointColor = 'lightblue'; // Light blue for minimum value
-              const maxPointColor = 'blue'; // Dark blue for maximum value
-
-              // Create canvas for the minimum point size
-              const minPointCanvas = document.createElement('canvas');
-              minPointCanvas.width = 20;
-              minPointCanvas.height = 20;
-              const minCtx = minPointCanvas.getContext('2d');
-
-              minCtx.fillStyle = minPointColor;
-              minCtx.beginPath();
-              minCtx.arc(10, 10, 3, 0, Math.PI * 2);
-              minCtx.fill();
-              symbolContainer.appendChild(minPointCanvas);
-
-              // Create canvas for the maximum point size
-              const maxPointCanvas = document.createElement('canvas');
-              maxPointCanvas.width = 20;
-              maxPointCanvas.height = 20;
-              const maxCtx = maxPointCanvas.getContext('2d');
-
-              maxCtx.fillStyle = maxPointColor;
-              maxCtx.beginPath();
-              maxCtx.arc(10, 10, 3, 0, Math.PI * 2);
-              maxCtx.fill();
-              symbolContainer.appendChild(maxPointCanvas);
-
-              // Maximum value
-              const maxVal =
-                bounds.max < 0.01
-                  ? bounds.max.toExponential(1)
-                  : bounds.max > 100
-                    ? bounds.max.toExponential(1)
-                    : bounds.max.toFixed(1);
-              const maxDiv = document.createElement('div');
-              maxDiv.innerText = maxVal.toString();
-              maxDiv.style.marginLeft = '5px';
-              symbolContainer.appendChild(maxDiv);
-            }
-          } else {
-            // code for constant size points
-            ctx.fillStyle = layerColor;
-            ctx.beginPath();
-            ctx.arc(25, 5, 3, 0, Math.PI * 2);
-            ctx.fill();
-            canvas.style.marginLeft = '30px'; // Shift canvas to align the center
-            symbolContainer.appendChild(canvas);
-          }
-
-          symbolContainer.style.marginRight = '40px';
+            const pointLegend = createPointLegendEntry(layerName, bounds, layerColor, gradientType);
+            symbolContainer.appendChild(pointLegend);
         }
 
         layerDiv.appendChild(symbolContainer);

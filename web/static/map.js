@@ -38,12 +38,30 @@ function initMap() {
 
 // Attach the updateSelectedLayers function to the button click event
 async function attachEventListeners() {
-  const applyButton = document.getElementById("apply-button");
-  applyButton.addEventListener('click', async () => {
-    await updateSelectedLayers(); // Wait for updateSelectedLayers to complete
-    //await updateSelectedLayers();
-    updateLegend(); // Now, call updateLegend after updateSelectedLayers is done
-  });
+  // Automatically update when any checkbox changes
+  document.querySelectorAll('#layer-selection input[type="checkbox"]').forEach(checkbox => {
+      checkbox.addEventListener('change', async () => {
+        try {
+          await updateSelectedLayers();
+          updateLegend();
+        } catch (error) {
+          console.error('Auto-update on checkbox change failed:', error);
+        }
+      });
+    });
+
+    // Automatically update when area layer dropdown changes
+    const areaDropdown = document.getElementById("area-layer-dropdown");
+    if (areaDropdown) {
+      areaDropdown.addEventListener('change', async () => {
+        try {
+          await updateSelectedLayers();
+          updateLegend();
+        } catch (error) {
+          console.error('Auto-update on area layer change failed:', error);
+        }
+      });
+  }
 
   const uploadedLayerDropdown = $('#usefiles-data-ajax');
   //console.log(uploadedLayerDropdown); // This should not be null or undefined
@@ -158,7 +176,6 @@ function compareLayers(a, b) {
   }
 }
 
-// Function to load a specific layer from the server
 async function loadLayer(layerName, layerUrl = null, showApplySpinner = true) {
   const layerMap = getSelectedLayersValues();
   let url = layerUrl && layerUrl.startsWith('https://')
@@ -169,16 +186,10 @@ async function loadLayer(layerName, layerUrl = null, showApplySpinner = true) {
     url = layerName;
   }
 
-  // console.log("Layer loaded:", layerName);
+  const spinnerOverlay = document.getElementById('map-loading-spinner');
 
-  // Spinner and Apply button elements
-  let applyButton = document.getElementById('apply-button');
-  let spinner = document.getElementById('lds-spinner');
-    
-  if (showApplySpinner) {
-      applyButton.classList.add('disabled');
-      applyButton.disabled = true;
-      spinner.style.visibility = "visible";
+  if (showApplySpinner && spinnerOverlay) {
+    spinnerOverlay.style.display = 'flex'; // Show full-screen spinner
   }
 
   try {
@@ -202,7 +213,6 @@ async function loadLayer(layerName, layerUrl = null, showApplySpinner = true) {
       attributeBounds[layerName] = { min: minVal, max: maxVal };
     }
 
-    // Create vector layer and add to map
     const vectorLayer = new ol.layer.Vector({
       source: new ol.source.Vector({
         features: features,
@@ -211,22 +221,19 @@ async function loadLayer(layerName, layerUrl = null, showApplySpinner = true) {
       key: layerName,
     });
 
-    // Cache and store layer
     layerCache[layerName] = vectorLayer;
     vectorLayers.push(vectorLayer);
 
   } catch (error) {
     console.error('Fetch Error:', error);
-    throw error; // Propagate error
+    throw error;
   } finally {
-      if (showApplySpinner) {
-          // Hide spinner and enable Apply button
-          spinner.style.visibility = "hidden";
-          applyButton.classList.remove('disabled');
-          applyButton.disabled = false;
-      }
+    if (showApplySpinner && spinnerOverlay) {
+      spinnerOverlay.style.display = 'none'; // Hide spinner after loading
+    }
   }
 }
+
 
 
 

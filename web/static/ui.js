@@ -604,6 +604,7 @@ document.body.addEventListener('mousedown', function(event) {
 });
 
 document.body.addEventListener('click', function(event) {
+  // Handle More button clicks
   if (event.target.classList.contains("details-btn") && event.target.hasAttribute("data-key")) {
     event.stopPropagation();  // Prevent dropdown toggle
     const key = event.target.getAttribute("data-key");
@@ -616,7 +617,6 @@ document.body.addEventListener('click', function(event) {
       if (Object.values(uploadedGeojsonNames).includes(key)) {
         document.getElementById('details-content').innerHTML = '';
         document.getElementById('details-title').innerText = `${key} Details`;
-
         document.getElementById('details-modal').style.display = 'flex';
 
         createAttributeDropdown(key);
@@ -672,6 +672,22 @@ document.body.addEventListener('click', function(event) {
   if (event.target.classList.contains("close-btn")) {//|| event.target.parentElement.tagName === 'SELECT') {
     document.getElementById('details-modal').style.display = 'none';
   }
+  // Also close the modal if the user clicks anywhere outside of it
+  else {
+    const modal = document.getElementById('details-modal');
+    const modalContent = modal.querySelector('.modal-content');
+
+    const isModalOpen = modal.style.display === 'flex';
+    const clickedOutside = !modalContent.contains(event.target);
+
+    // Prevent accidental close right after a More button click
+    if (!window.lastClickWasMoreButton && isModalOpen && clickedOutside) {
+      modal.style.display = 'none';
+    }
+  }
+    
+  // Always reset the flag at the end
+  window.lastClickWasMoreButton = false;
 });
 
 

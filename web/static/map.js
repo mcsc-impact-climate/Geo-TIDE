@@ -705,16 +705,11 @@ function isDictionary(obj) {
 
 // Add event listener to the "Clear" button
 document.getElementById("clear-button").addEventListener("click", function () {
-  // Clear all vector layers (excluding the base layer)
-  const mapLayers = map.getLayers().getArray();
-  mapLayers.forEach(layer => {
-    if (layer instanceof ol.layer.Vector && !layer.get("baseLayer")) {
-      map.removeLayer(layer);
-    }
-  });
-
-  // Optionally, clear any selected checkboxes or dropdown selections
-  clearLayerSelections();
+  console.log("Clear button clicked");
+  event.stopPropagation(); // Prevent outside click handler from firing
+    
+  // Show confirmation modal
+  document.getElementById("clear-confirmation-modal").style.display = "flex";
 });
 
 function clearLayerSelections() {
@@ -730,6 +725,42 @@ function clearLayerSelections() {
   updateSelectedLayers();
   updateLegend();
 }
+
+// Confirm clear action
+document.getElementById("confirm-clear").addEventListener("click", function () {
+  document.getElementById("clear-confirmation-modal").style.display = "none";
+
+  // Remove all vector layers from map
+  const mapLayers = map.getLayers().getArray();
+  mapLayers.forEach(layer => {
+    if (layer instanceof ol.layer.Vector && !layer.get("baseLayer")) {
+      map.removeLayer(layer);
+    }
+  });
+
+  clearLayerSelections();
+});
+
+// Cancel clear
+document.getElementById("cancel-clear").addEventListener("click", function () {
+  document.getElementById("clear-confirmation-modal").style.display = "none";
+});
+
+// Close modal via X
+document.getElementById("clear-modal-close").addEventListener("click", function () {
+  document.getElementById("clear-confirmation-modal").style.display = "none";
+});
+
+// Close modal if clicking outside the modal content
+window.addEventListener("click", function (event) {
+  const modal = document.getElementById("clear-confirmation-modal");
+  const content = modal.querySelector(".modal-content");
+
+  if (modal.style.display === "flex" && !content.contains(event.target)) {
+    modal.style.display = "none";
+  }
+});
+
 
 function getAttributesForLayer(layerName) {
     // Check if the layer is available in the cache

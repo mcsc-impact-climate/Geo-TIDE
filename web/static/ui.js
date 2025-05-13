@@ -680,6 +680,8 @@ document.body.addEventListener('click', function(event) {
     const isModalOpen = modal.style.display === 'flex';
     const clickedOutside = !modalContent.contains(event.target);
 
+    //console.log("Outside click? ", isModalOpen && clickedOutside);
+
     // Prevent accidental close right after a More button click
     if (!window.lastClickWasMoreButton && isModalOpen && clickedOutside) {
       modal.style.display = 'none';
@@ -692,6 +694,7 @@ document.body.addEventListener('click', function(event) {
 
 
 document.getElementById("area-details-button").addEventListener("click", function () {
+  event.stopPropagation();  // Prevent outside click handler from firing
   const areaLayerDropdown = document.getElementById("area-layer-dropdown");
   const selectedAreaLayer = areaLayerDropdown.value;
   if (selectedAreaLayer !== "") {

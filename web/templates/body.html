@@ -53,11 +53,16 @@
 
 
         <div class="button-container">
-          <div class="apply-button-wrapper">
-            <button id="apply-button" class="apply-button">Apply</button>
-            <div class="spinner-circle" id="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-          </div>
           <button id="clear-button" class="clear-button">Clear Layers</button>
+        </div>
+
+        <!-- Full-screen loading spinner overlay -->
+        <div id="map-loading-spinner">
+          <div class="spinner-content">
+            <div class="lds-default"><div></div><div></div><div></div><div></div><div></div>
+            <div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+            <p>Loading layer...</p>
+          </div>
         </div>
 
     </div>

@@ -66,6 +66,15 @@ body {
   font-size: 16px;
 }
 
+#clear-confirmation-modal h2 {
+  font-weight: bold;
+  font-size: 22px;
+}
+
+#clear-confirmation-modal p {
+  font-size: 16px;
+}
+
 .toggle-button {
   font-weight: normal;
   font-size: 14px;
@@ -83,6 +92,10 @@ body {
   border: 2px solid black;
   cursor: pointer; /* Add a pointer cursor on hover */
   margin-top: 20px;
+}
+
+.apply-button:hover {
+    background-color: darkgreen;
 }
 
 .apply-button-wrapper {
@@ -116,7 +129,7 @@ body {
 }
 
 /* Additional styles for the "Clear" button (you can customize these styles) */
-#clear-button {
+.clear-button {
   display: block; /* Always on its own line */
   background-color: red; /* background color */
   color: white; /* White text color */
@@ -125,6 +138,10 @@ body {
   border: 2px solid black; /* Remove border */
   cursor: pointer; /* Add a pointer cursor on hover */
   margin-top: 20px;
+}
+
+.clear-button:hover {
+    background-color: darkred;
 }
 
 .modal {
@@ -203,6 +220,41 @@ body {
 
 .regulations-title {
     font-size: 14px;
+}
+
+.cancel-clear,
+.confirm-clear {
+  font-size: 14px;
+  border: 1px solid black;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  margin-left: 5px;
+  cursor: pointer;
+  flex-shrink: 0;
+  height: 22px;
+  line-height: 20px;  /* Vertically center text */
+}
+
+/* Cancel-clear: red themed */
+.cancel-clear {
+  background-color: red;
+  color: #fff;
+}
+
+.cancel-clear:hover {
+  background-color: darkred;
+}
+
+/* Confirm-clear: green themed */
+.confirm-clear {
+  background-color: green;
+  color: #fff;
+}
+
+.confirm-clear:hover {
+  background-color: darkgreen;
 }
 
 /* Style for the attribute dropdown container */

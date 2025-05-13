@@ -154,8 +154,8 @@ body {
   background-color: #f4f4f4;     /* Light gray background */
   padding: 20px;
   border-radius: 5px;            /* Rounded corners */
-  width: 50%;                    /* Medium size */
-  max-width: 600px;
+  width: 90%;                    /* Medium size */
+  max-width: 1000px;
   min-width: 300px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.25); /* Subtle shadow */
   font-size: 14px;
@@ -249,267 +249,26 @@ body {
   background-color: darkgreen;
 }
 
-/* Style for the attribute dropdown container */
-.attribute-dropdown-container {
+/* Generic dropdown container */
+.dropdown-container {
   font-size: 14px;
   display: flex;
-  justify-content: left; /* Center the content horizontally */
-  align-items: center; /* Center the content vertically */
-  margin-top: 20px; /* Adjust the top margin as needed */
+  justify-content: left;
+  align-items: center;
+  margin-top: 20px;
 }
 
-/* Style for the label */
-.attribute-dropdown-container label {
+/* Generic dropdown label */
+.dropdown-container label {
+  margin-right: 10px;
   font-size: 14px;
-  margin-right: 10px; /* Add right margin for spacing */
 }
 
-/* Style for the "Select Attribute" dropdown */
-#attribute-dropdown {
-  width: 60%; /* Make the dropdown fill the available width */
-  padding: 5px; /* Add some padding to the dropdown */
-  font-size: 14px; /* Adjust the font size as needed */
-}
-
-/* Style for the attribute dropdown container */
-.range-dropdown-container {
-  display: flex;
-  justify-content: left; /* Center the content horizontally */
-  align-items: center; /* Center the content vertically */
-  margin-top: 20px; /* Adjust the top margin as needed */
-}
-
-/* Style for the label */
-.range-dropdown-container label {
-  margin-right: 10px; /* Add right margin for spacing */
-}
-
-/* Style for the "Select Attribute" dropdown */
-#range-dropdown {
-  width: 60%; /* Make the dropdown fill the available width */
-  padding: 5px; /* Add some padding to the dropdown */
-  font-size: 14px; /* Adjust the font size as needed */
-}
-
-/* Style for the attribute dropdown container */
-.chargingTime-dropdown-container {
-  display: flex;
-  justify-content: left; /* Center the content horizontally */
-  align-items: center; /* Center the content vertically */
-  margin-top: 20px; /* Adjust the top margin as needed */
-}
-
-/* Style for the label */
-.chargingTime-dropdown-container label {
-  margin-right: 10px; /* Add right margin for spacing */
-}
-
-/* Style for the "Select Attribute" dropdown */
-#chargingTime-dropdown {
-  width: 60%; /* Make the dropdown fill the available width */
-  padding: 5px; /* Add some padding to the dropdown */
-  font-size: 14px; /* Adjust the font size as needed */
-}
-
-/* Style for the attribute dropdown container */
-.maxWaitTime-dropdown-container {
-  display: flex;
-  justify-content: left; /* Center the content horizontally */
-  align-items: center; /* Center the content vertically */
-  margin-top: 20px; /* Adjust the top margin as needed */
-}
-
-/* Style for the label */
-.maxWaitTime-dropdown-container label {
-  margin-right: 10px; /* Add right margin for spacing */
-}
-
-/* Style for the "Select Attribute" dropdown */
-#maxWaitTime-dropdown {
-  width: 60%; /* Make the dropdown fill the available width */
-  padding: 5px; /* Add some padding to the dropdown */
-  font-size: 14px; /* Adjust the font size as needed */
-}
-
-/* Style for the attribute dropdown container */
-.support-type-dropdown-container {
-  display: flex;
-  justify-content: left; /* Center the content horizontally */
-  align-items: center; /* Center the content vertically */
-  margin-top: 20px; /* Adjust the top margin as needed */
-}
-
-/* Style for the label */
-.support-type-dropdown-container label {
-  margin-right: 10px; /* Add right margin for spacing */
-}
-
-/* Style for the "Select Attribute" dropdown */
-#support-type-dropdown {
-  width: 60%; /* Make the dropdown fill the available width */
-  padding: 5px; /* Add some padding to the dropdown */
-  font-size: 14px; /* Adjust the font size as needed */
-}
-
-/* Style for the support target dropdown container */
-.support-target-dropdown-container {
-  display: flex;
-  justify-content: left; /* Center the content horizontally */
-  align-items: center; /* Center the content vertically */
-  margin-top: 20px; /* Adjust the top margin as needed */
-}
-
-/* Style for the label */
-.support-target-dropdown-container label {
-  margin-right: 10px; /* Add right margin for spacing */
-}
-
-/* Style for the "Select Attribute" dropdown */
-#support-target-dropdown {
-  width: 60%; /* Make the dropdown fill the available width */
-  padding: 5px; /* Add some padding to the dropdown */
-  font-size: 14px; /* Adjust the font size as needed */
-}
-
-/* Style for the support target dropdown container */
-.average-payload-dropdown-container {
-  display: flex;
-  justify-content: left; /* Center the content horizontally */
-  align-items: center; /* Center the content vertically */
-  margin-top: 20px; /* Adjust the top margin as needed */
-}
-
-/* Style for the label */
-.average-payload-dropdown-container label {
-  margin-right: 10px; /* Add right margin for spacing */
-}
-
-/* Style for the "Select Attribute" dropdown */
-#average-payload-dropdown {
-  width: 60%; /* Make the dropdown fill the available width */
-  padding: 5px; /* Add some padding to the dropdown */
-  font-size: 14px; /* Adjust the font size as needed */
-}
-
-/* Style for the support target dropdown container */
-.average-vmt-dropdown-container {
-  display: flex;
-  justify-content: left; /* Center the content horizontally */
-  align-items: center; /* Center the content vertically */
-  margin-top: 20px; /* Adjust the top margin as needed */
-}
-
-/* Style for the label */
-.average-vmt-dropdown-container label {
-  margin-right: 10px; /* Add right margin for spacing */
-}
-
-/* Style for the "Select Attribute" dropdown */
-#average-vmt-dropdown {
-  width: 60%; /* Make the dropdown fill the available width */
-  padding: 5px; /* Add some padding to the dropdown */
-  font-size: 14px; /* Adjust the font size as needed */
-}
-
-/* Style for the visualize by dropdown container */
-.visualize-by-dropdown-container {
-  display: flex;
-  justify-content: left; /* Center the content horizontally */
-  align-items: center; /* Center the content vertically */
-  margin-top: 20px; /* Adjust the top margin as needed */
-}
-
-/* Style for the label */
-.visualize-by-dropdown-container label {
-  margin-right: 10px; /* Add right margin for spacing */
-}
-
-/* Style for the "Visualize By" dropdown */
-#visualize-by-dropdown {
-  width: 60%; /* Make the dropdown fill the available width */
-  padding: 5px; /* Add some padding to the dropdown */
-  font-size: 14px; /* Adjust the font size as needed */
-}
-
-/* Style for the hour of day dropdown container */
-.hour-of-day-dropdown-container {
-  display: flex;
-  justify-content: left; /* Center the content horizontally */
-  align-items: center; /* Center the content vertically */
-  margin-top: 20px; /* Adjust the top margin as needed */
-}
-
-/* Style for the label */
-.hour-of-day-dropdown-container label {
-  margin-right: 10px; /* Add right margin for spacing */
-}
-
-/* Style for the "Visualize By" dropdown */
-#hour-of-day-dropdown {
-  width: 60%; /* Make the dropdown fill the available width */
-  padding: 5px; /* Add some padding to the dropdown */
-  font-size: 14px; /* Adjust the font size as needed */
-}
-
-
-/* Style for the commodity dropdown container */
-.commodity-dropdown-container {
-  display: flex;
-  justify-content: left; /* Center the content horizontally */
-  align-items: center; /* Center the content vertically */
-  margin-top: 20px; /* Adjust the top margin as needed */
-}
-
-/* Style for the label */
-.commodity-dropdown-container label {
-  margin-right: 10px; /* Add right margin for spacing */
-}
-
-/* Style for the "Visualize By" dropdown */
-#commodity-dropdown {
-  width: 60%; /* Make the dropdown fill the available width */
-  padding: 5px; /* Add some padding to the dropdown */
-  font-size: 14px; /* Adjust the font size as needed */
-}
-
-/* Style for the charging power dropdown container */
-.charging-power-dropdown-container {
-  display: flex;
-  justify-content: left; /* Center the content horizontally */
-  align-items: center; /* Center the content vertically */
-  margin-top: 20px; /* Adjust the top margin as needed */
-}
-
-/* Style for the label */
-.charging-power-dropdown-container label {
-  margin-right: 10px; /* Add right margin for spacing */
-}
-
-/* Style for the "Visualize By" dropdown */
-#charging-power-dropdown {
-  width: 60%; /* Make the dropdown fill the available width */
-  padding: 5px; /* Add some padding to the dropdown */
-  font-size: 14px; /* Adjust the font size as needed */
-}
-
-/* Style for the phase dropdown container */
-.phase-dropdown-container {
-  display: flex;
-  justify-content: left; /* Center the content horizontally */
-  align-items: center; /* Center the content vertically */
-  margin-top: 20px; /* Adjust the top margin as needed */
-}
-
-/* Style for the label */
-.phase-dropdown-container label {
-  margin-right: 10px; /* Add right margin for spacing */
-}
-
-/* Style for the "Visualize By" dropdown */
-#phase-dropdown {
-  width: 60%; /* Make the dropdown fill the available width */
-  padding: 5px; /* Add some padding to the dropdown */
-  font-size: 14px; /* Adjust the font size as needed */
+/* Generic select element */
+.dropdown-container select {
+  width: 60%;
+  padding: 5px;
+  font-size: 14px;
 }
 
 /* Keep checkboxes in one row with proper spacing */

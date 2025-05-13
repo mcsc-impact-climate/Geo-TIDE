@@ -1,157 +1,218 @@
 {% load static %}
 <!-- Include jQuery and Select2 CSS/JS files -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link
+  href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+  rel="stylesheet"
+/>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <div id="map" class="map"></div>
 
-    <div id="legend" style="position: absolute; bottom: 20px; left: 20px; background: rgba(255, 255, 255, 0.8); padding: 10px;">
-      <h3><b>Legend</b></h3>
+<div
+  id="legend"
+  style="
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+  "
+>
+  <h3><b>Legend</b></h3>
+</div>
+
+<div
+  id="layer-selection"
+  style="
+    position: absolute;
+    top: 85px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+  "
+>
+  <h3>Area Feature (Choose one)</h3>
+  <select id="area-layer-dropdown">
+    <option>Select Area Feature</option>
+    <!-- Add options for area layers -->
+  </select>
+
+  <button
+    class="details-btn"
+    id="area-details-button"
+    style="visibility: hidden"
+  >
+    More
+  </button>
+
+  <h3>Highway Features (Choose multiple)</h3>
+  <button class="toggle-button" data-target="highway-flow-checkboxes">
+    Show Highway Flows
+  </button>
+  <div id="highway-flow-checkboxes" style="display: none">
+    <!-- Add checkboxes for highway flows -->
+  </div>
+
+  <br />
+  <br />
+  <button class="toggle-button" data-target="highway-infra-checkboxes">
+    Show Planned Infrastructure Corridors
+  </button>
+  <div id="highway-infra-checkboxes" style="display: none">
+    <!-- Add checkboxes for highway flows -->
+  </div>
+
+  <h3>Point Features (Choose multiple)</h3>
+  <button class="toggle-button" data-target="point-refuel-checkboxes">
+    Show Charge/Fuel Stations
+  </button>
+  <div id="point-refuel-checkboxes" style="display: none">
+    <!-- Add checkboxes for point layers -->
+  </div>
+
+  <br />
+  <br />
+
+  <button class="toggle-button" data-target="point-h2prod-checkboxes">
+    Show Hydrogen Production Facilities
+  </button>
+  <div id="point-h2prod-checkboxes" style="display: none">
+    <!-- Add checkboxes for point layers -->
+  </div>
+
+  <br />
+  <br />
+
+  <button class="toggle-button" data-target="point-other-checkboxes">
+    Show Other Point Features
+  </button>
+  <div id="point-other-checkboxes" style="display: none">
+    <!-- Add checkboxes for point layers -->
+  </div>
+
+  <div class="button-container">
+    <button id="clear-button" class="clear-button">Clear Layers</button>
+  </div>
+
+  <!-- Full-screen loading spinner overlay -->
+  <div id="map-loading-spinner">
+    <div class="spinner-content">
+      <div class="lds-default">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+      <p>Loading layer...</p>
     </div>
-
-    <div id="layer-selection" style="position: absolute; top: 85px; right: 20px; background: rgba(255, 255, 255, 0.8); padding: 10px;">
-        <h3>Area Feature (Choose one)</h3>
-        <select id="area-layer-dropdown">
-          <option>Select Area Feature</option>
-          <!-- Add options for area layers -->
-        </select>
-
-          <button class="details-btn" id="area-details-button" style="visibility: hidden;">More</button>
-
-        <h3>Highway Features (Choose multiple)</h3>
-        <button class="toggle-button" data-target="highway-flow-checkboxes">Show Highway Flows</button>
-        <div id="highway-flow-checkboxes" style="display: none;">
-          <!-- Add checkboxes for highway flows -->
-        </div>
-
-        <br><br>
-          <button class="toggle-button" data-target="highway-infra-checkboxes">Show Planned Infrastructure Corridors</button>
-        <div id="highway-infra-checkboxes" style="display: none;">
-          <!-- Add checkboxes for highway flows -->
-        </div>
-
-        <h3>Point Features (Choose multiple)</h3>
-        <button class="toggle-button" data-target="point-refuel-checkboxes">Show Charge/Fuel Stations</button>
-        <div id="point-refuel-checkboxes" style="display: none;">
-          <!-- Add checkboxes for point layers -->
-        </div>
-
-        <br><br>
-
-          <button class="toggle-button" data-target="point-h2prod-checkboxes">Show Hydrogen Production Facilities</button>
-        <div id="point-h2prod-checkboxes" style="display: none;">
-          <!-- Add checkboxes for point layers -->
-        </div>
-
-        <br><br>
-
-          <button class="toggle-button" data-target="point-other-checkboxes">Show Other Point Features</button>
-        <div id="point-other-checkboxes" style="display: none;">
-          <!-- Add checkboxes for point layers -->
-        </div>
-
-
-        <div class="button-container">
-          <button id="clear-button" class="clear-button">Clear Layers</button>
-        </div>
-
-        <!-- Full-screen loading spinner overlay -->
-        <div id="map-loading-spinner">
-          <div class="spinner-content">
-            <div class="lds-default"><div></div><div></div><div></div><div></div><div></div>
-            <div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-            <p>Loading layer...</p>
-          </div>
-        </div>
-
-    </div>
-    <div id="uploaded-layer-selection" style="position: absolute; top: 10px; left: 40px; background: rgba(255, 255, 255, 0.8); padding: 10px; {% if not uploaded_files%} display:none {%endif%}">
-      <select id="usefiles-data-ajax"  multiple="multiple" style="width: 100%;">
-      </select>
-    </div>
-
+  </div>
+</div>
+<div
+  id="uploaded-layer-selection"
+  style="position: absolute; top: 10px; left: 40px; background: rgba(255, 255, 255, 0.8); padding: 10px; {% if not uploaded_files%} display:none {%endif%}"
+>
+  <select
+    id="usefiles-data-ajax"
+    multiple="multiple"
+    style="width: 100%"
+  ></select>
+</div>
 
 <!-- Initialize Select2 -->
 <script>
-let uploadedGeojsonNames = {};
-$(document).ready(function() {
-    const $select = $('#usefiles-data-ajax');
+  let uploadedGeojsonNames = {};
+  $(document).ready(function () {
+    const $select = $("#usefiles-data-ajax");
 
     $select.select2({
-      placeholder: 'Select one or more uploaded layers',
+      placeholder: "Select one or more uploaded layers",
       allowClear: true,
       ajax: {
-        cache: false,  //  Disable caching
+        cache: false, //  Disable caching
         delay: 250,
-        dataType: 'json',
-        url: '{{uploaded_files}}',
+        dataType: "json",
+        url: "{{uploaded_files}}",
         headers: { "Content-Type": "application/json" },
         data: function (params) {
           return { search_query: params.term, page: params.page };
         },
         processResults: function (data) {
-          const selectedIds = ($select.val() || []).map(id => id.split('?')[0]); // Only base URLs
+          const selectedIds = ($select.val() || []).map(
+            (id) => id.split("?")[0],
+          ); // Only base URLs
 
           const kv = [];
           for (const item of data.data) {
-            const geojsonFile = item.files.find(file => file.file_link.includes('.geojson'));
+            const geojsonFile = item.files.find((file) =>
+              file.file_link.includes(".geojson"),
+            );
             if (geojsonFile) {
-              const baseUrl = geojsonFile.file_link.split('?')[0]; // Strip query params
+              const baseUrl = geojsonFile.file_link.split("?")[0]; // Strip query params
               if (!selectedIds.includes(baseUrl)) {
                 kv.push({ text: item.name, id: geojsonFile.file_link });
               }
             }
           }
           return { results: kv, pagination: { more: data.next_page || false } };
-        }
+        },
       },
       templateSelection: function (data) {
-        const container = document.createElement('span');
-        container.classList.add('uploaded-layer-pill');
-        container.style.display = 'flex';
-        container.style.alignItems = 'center';
+        const container = document.createElement("span");
+        container.classList.add("uploaded-layer-pill");
+        container.style.display = "flex";
+        container.style.alignItems = "center";
 
-        const textNode = document.createElement('span');
+        const textNode = document.createElement("span");
         textNode.textContent = data.text;
 
-        const moreButton = document.createElement('button');
-        moreButton.textContent = 'More';
-        moreButton.classList.add('details-btn');
-        moreButton.setAttribute('data-key', data.text);
-        moreButton.style.marginLeft = '40px';
+        const moreButton = document.createElement("button");
+        moreButton.textContent = "More";
+        moreButton.classList.add("details-btn");
+        moreButton.setAttribute("data-key", data.text);
+        moreButton.style.marginLeft = "40px";
 
         container.appendChild(textNode);
         container.appendChild(moreButton);
 
         return container;
-      }
+      },
     });
 
     // Placeholder logic
     function setSearchPlaceholder() {
       setTimeout(() => {
-        const inputField = $select.next('.select2-container').find('.select2-search__field');
+        const inputField = $select
+          .next(".select2-container")
+          .find(".select2-search__field");
         if (inputField.length) {
-          inputField.attr('placeholder', 'Select one or more uploaded layers');
+          inputField.attr("placeholder", "Select one or more uploaded layers");
         }
       }, 50);
     }
 
-    $select.on('select2:open select2:close select2:select select2:unselect', setSearchPlaceholder);
+    $select.on(
+      "select2:open select2:close select2:select select2:unselect",
+      setSearchPlaceholder,
+    );
     setSearchPlaceholder();
-});
+  });
 </script>
 
-
-</div>
-
 <div id="details-modal" class="modal">
-<div class="modal-content">
-  <span class="close-btn">&times;</span>
-  <h2 id="details-title">Details</h2>
-  <p id="details-content">Details content goes here.</p>
-</div>
+  <div class="modal-content">
+    <span class="close-btn">&times;</span>
+    <h2 id="details-title">Details</h2>
+    <p id="details-content">Details content goes here.</p>
+  </div>
 </div>
 
 <!-- Modal for displaying regulations -->
@@ -162,7 +223,12 @@ $(document).ready(function() {
     <p><em>Click on targets to view more information.</em></p>
     <div id="regulations-details">
       <p>Loading...</p>
-      <p><em>Italicized regulations and incentives benefit multiple fuel types and appear multiple times.</em></p>
+      <p>
+        <em>
+          Italicized regulations and incentives benefit multiple fuel types and
+          appear multiple times.
+        </em>
+      </p>
     </div>
   </div>
 </div>
@@ -171,21 +237,34 @@ $(document).ready(function() {
 <script>
   const GET_GEOJSONS = '{% url "get-geojsons" %}';
   const GET_GEOJSON = '{% url "get-geojson" %}';
-  const STORAGE_URL = 'https://mcsc-datahub-public.s3.us-west-2.amazonaws.com/';
-  const CSV_URL = 'https://raw.githubusercontent.com/mcsc-impact-climate/FAF5-Analysis/main/data/incentives_and_regulations/state_level/';
+  const STORAGE_URL = "https://mcsc-datahub-public.s3.us-west-2.amazonaws.com/";
+  const CSV_URL =
+    "https://raw.githubusercontent.com/mcsc-impact-climate/FAF5-Analysis/main/data/incentives_and_regulations/state_level/";
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-<script type="module"  src='{% static "main.js"%}'></script>
+<script type="module" src='{% static "main.js"%}'></script>
 
 <!-- Modal for confirming layer claering -->
-<div id="clear-confirmation-modal" class="modal" style="display: none;">
-  <div class="modal-content" style="max-width: 400px;">
+<div id="clear-confirmation-modal" class="modal" style="display: none">
+  <div class="modal-content" style="max-width: 400px">
     <span class="close-btn" id="clear-modal-close">&times;</span>
     <h2>Confirm Clear</h2>
-    <p>This will remove all displayed layers from the map and reset selections. Are you sure you want to continue?</p>
-    <div style="display: flex; justify-content: center; gap: 10px; margin-top: 20px;">
+    <p>
+      This will remove all displayed layers from the map and reset selections.
+      Are you sure you want to continue?
+    </p>
+    <div
+      style="
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+      "
+    >
       <button id="cancel-clear" class="cancel-clear">Cancel</button>
-      <button id="confirm-clear" class="confirm-clear">Yes, clear layers</button>
+      <button id="confirm-clear" class="confirm-clear">
+        Yes, clear layers
+      </button>
     </div>
   </div>
 </div>

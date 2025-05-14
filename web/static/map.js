@@ -604,127 +604,126 @@ function createPointLegendEntry(layerName, bounds, layerColor, gradientType) {
   return container;
 }
 
+let previouslyRenderedLegendKeys = new Set();
+
 function updateLegend() {
   const legendDiv = document.getElementById('legend');
   legendDiv.style.display = 'flex';
   legendDiv.style.flexDirection = 'column';
 
-  // Clear existing legend entries
   while (legendDiv.firstChild) {
     legendDiv.removeChild(legendDiv.firstChild);
   }
 
-  // Add and style Legend header
   const header = document.createElement('h3');
   header.appendChild(document.createTextNode('Legend'));
   header.style.fontWeight = 'bold';
   legendDiv.appendChild(header);
 
-  // Get the currently selected layers
   const selectedLayers = getSelectedLayers();
+  const areaLayers = [],
+    lineLayers = [],
+    pointLayers = [];
+  const newRenderedLegendKeys = new Set();
 
-  // Iterate through the vectorLayers and update the legend
   vectorLayers.forEach((layer) => {
-    const layerName = layer.get('key'); // Get the key property
-    const isLayerVisible = layer.getVisible();
+    const name = layer.get('key');
+    const visible = layer.getVisible();
+    const selected =
+      selectedLayers.includes(name) ||
+      (selectedLayers.includes('National ZEF Corridor Strategy') &&
+        name.startsWith('ZEF Corridor Strategy Phase'));
 
-    if (isLayerVisible) {
-      // Check if this layer is in the list of selected layers
-      if (
-        selectedLayers.includes(layerName) ||
-        (selectedLayers.includes('National ZEF Corridor Strategy') &&
-          layerName.startsWith('ZEF Corridor Strategy Phase'))
-      ) {
-        const layerDiv = document.createElement('div');
-        layerDiv.style.display = 'flex';
-        layerDiv.style.alignItems = 'center';
-
-        const symbolLabelContainer = document.createElement('div');
-        symbolLabelContainer.style.display = 'flex';
-        symbolLabelContainer.style.width = '150px'; // Setting fixed width to ensure alignment
-        symbolLabelContainer.style.alignItems = 'center';
-        symbolLabelContainer.style.justifyContent = 'center';
-
-        const symbolContainer = document.createElement('div');
-        symbolContainer.style.display = 'flex';
-        symbolContainer.style.alignItems = 'center';
-        symbolContainer.style.width = '120px'; // fixed width
-
-        const canvas = document.createElement('canvas');
-        canvas.width = 50;
-        canvas.height = 10;
-        const ctx = canvas.getContext('2d');
-
-        const useGradient = layerName in selectedGradientAttributes;
-
-        // If the layer is pre-defined, set it to its defined color, or default to yellow
-        let layerColor = '';
-        if (layerName in geojsonColors) {
-          layerColor = geojsonColors[layerName] || 'yellow'; // Fetch color from dictionary, or default to yellow
-        }
-        // Otherwise, set the color dynamically
-        else {
-          layerColor = assignColorToLayer(layerName);
-        }
-        let attributeName = '';
-        let gradientType = '';
-        if (useGradient) {
-          attributeName = selectedGradientAttributes[layerName];
-          gradientType = selectedGradientTypes[layerName];
-        }
-        const bounds = attributeBounds[layerName];
-
-        // Add legend entry only for visible layers
-        if (isPolygonLayer(layer)) {
-          const polygonLegend = createPolygonLegendEntry(layerName, bounds, layerColor);
-          symbolContainer.appendChild(polygonLegend);
-        } else if (isLineStringLayer(layer)) {
-          const lineLegend = createLineLegendEntry(layerName, bounds, layerColor);
-          symbolContainer.appendChild(lineLegend);
-        } else if (isPointLayer(layer)) {
-          const pointLegend = createPointLegendEntry(layerName, bounds, layerColor, gradientType);
-          symbolContainer.appendChild(pointLegend);
-        }
-
-        layerDiv.appendChild(symbolContainer);
-
-        symbolLabelContainer.appendChild(symbolContainer); // Append symbolContainer to symbolLabelContainer
-
-        // Make a title for the legend entry
-        const title = document.createElement('div');
-
-        // First, check if the layer is included in the pre-defined legend labels
-        if (layerName in legendLabels) {
-          if (typeof legendLabels[layerName] === 'string') {
-            title.innerText = legendLabels[layerName];
-          } else if (isDictionary(legendLabels[layerName])) {
-            title.innerText = legendLabels[layerName][selectedGradientAttributes[layerName]];
-          }
-        }
-        // Next, check if it's included the uploaded layers
-        else if (layerName in uploadedGeojsonNames) {
-          // Check if a gradient attribute is selected for the layer
-          if (layerName in selectedGradientAttributes && selectedGradientAttributes[layerName]) {
-            // Set the legend label to the name of the selected gradient attribute
-            title.innerText =
-              uploadedGeojsonNames[layerName] + ': ' + selectedGradientAttributes[layerName];
-          } else {
-            // Default to the GeoJSON file name
-            title.innerText = uploadedGeojsonNames[layerName];
-          }
-        }
-        // Otherwise, just use the layer name directly
-        else {
-          title.innerText = layerName;
-        }
-        title.style.marginLeft = '20px';
-
-        layerDiv.appendChild(symbolLabelContainer); // Append symbolLabelContainer to layerDiv
-        layerDiv.appendChild(title);
-        legendDiv.appendChild(layerDiv);
-      }
+    if (visible && selected) {
+      if (isPolygonLayer(layer)) areaLayers.push(layer);
+      else if (isLineStringLayer(layer)) lineLayers.push(layer);
+      else if (isPointLayer(layer)) pointLayers.push(layer);
     }
   });
+
+  const renderGroup = (layers) => {
+    if (layers.length === 0) return;
+
+    const groupWrapper = document.createElement('div');
+    groupWrapper.style.backgroundColor = 'rgb(240, 246, 248)';
+    groupWrapper.style.padding = '5px';
+    groupWrapper.style.marginBottom = '5px';
+    groupWrapper.style.borderRadius = '5px';
+
+    layers.forEach((layer) => {
+      const layerName = layer.get('key');
+      newRenderedLegendKeys.add(layerName);
+      const isNew = !previouslyRenderedLegendKeys.has(layerName);
+
+      const layerDiv = document.createElement('div');
+      layerDiv.style.display = 'flex';
+      layerDiv.style.alignItems = 'center';
+      layerDiv.style.marginBottom = '4px';
+
+      const symbolContainer = document.createElement('div');
+      symbolContainer.style.display = 'flex';
+      symbolContainer.style.alignItems = 'center';
+      symbolContainer.style.justifyContent = 'center';
+      symbolContainer.style.width = '150px';
+
+      const useGradient = layerName in selectedGradientAttributes;
+      const layerColor =
+        layerName in geojsonColors
+          ? geojsonColors[layerName] || 'yellow'
+          : assignColorToLayer(layerName);
+      const gradientType = selectedGradientTypes[layerName];
+      const bounds = attributeBounds[layerName];
+
+      if (isPolygonLayer(layer)) {
+        symbolContainer.appendChild(createPolygonLegendEntry(layerName, bounds, layerColor));
+      } else if (isLineStringLayer(layer)) {
+        symbolContainer.appendChild(createLineLegendEntry(layerName, bounds, layerColor));
+      } else if (isPointLayer(layer)) {
+        symbolContainer.appendChild(
+          createPointLegendEntry(layerName, bounds, layerColor, gradientType)
+        );
+      }
+
+      const title = document.createElement('div');
+      if (layerName in legendLabels) {
+        const label = legendLabels[layerName];
+        title.innerText =
+          typeof label === 'string' ? label : label[selectedGradientAttributes[layerName]];
+      } else if (layerName in uploadedGeojsonNames) {
+        title.innerText = selectedGradientAttributes[layerName]
+          ? `${uploadedGeojsonNames[layerName]}: ${selectedGradientAttributes[layerName]}`
+          : uploadedGeojsonNames[layerName];
+      } else {
+        title.innerText = layerName;
+      }
+      title.style.marginLeft = '20px';
+
+      layerDiv.appendChild(symbolContainer);
+      layerDiv.appendChild(title);
+      groupWrapper.appendChild(layerDiv);
+
+      if (isNew) {
+        layerDiv.classList.add('legend-fadeout-start');
+        groupWrapper.appendChild(layerDiv);
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            layerDiv.classList.add('fadeout'); // triggers fade from yellow
+          });
+        });
+      } else {
+        groupWrapper.appendChild(layerDiv);
+      }
+    });
+
+    legendDiv.appendChild(groupWrapper);
+  };
+
+  renderGroup(areaLayers);
+  renderGroup(lineLayers);
+  renderGroup(pointLayers);
+
+  previouslyRenderedLegendKeys = newRenderedLegendKeys;
 }
 
 async function fetchCSVData(csvFileName) {

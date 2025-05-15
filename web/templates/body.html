@@ -26,12 +26,13 @@
   id="layer-selection"
   style="
     position: absolute;
-    top: 85px;
+    top: 250px;
     right: 20px;
     background: rgba(255, 255, 255, 0.8);
     padding: 10px;
   "
 >
+  <h2>Public Data</h2>
   <h3>Area Feature (Choose one)</h3>
   <select id="area-layer-dropdown">
     <option>Select Area Feature</option>
@@ -118,8 +119,9 @@
 </div>
 <div
   id="uploaded-layer-selection"
-  style="position: absolute; top: 10px; left: 40px; background: rgba(255, 255, 255, 0.8); padding: 10px; {% if not uploaded_files%} display:none {%endif%}"
+  style="position: absolute; top: 75px; right: 20px; background: rgba(255, 255, 255, 0.8); padding: 10px; {% if not uploaded_files%} display:none {%endif%}"
 >
+  <h2>Uploaded Data</h2>
   <select
     id="usefiles-data-ajax"
     multiple="multiple"

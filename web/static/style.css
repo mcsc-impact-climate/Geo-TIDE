@@ -658,6 +658,25 @@ ul {
   white-space: nowrap; /* Prevent legend entries from wrapping */
 }
 
+.legend-group {
+  background-color: rgb(240, 246, 248);
+  padding: 5px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  display: table;        /* expands to widest child */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+.legend-entry {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
 #layer-selection {
   max-height: 60vh; /* Layer selection can grow taller */
   overflow-y: auto;

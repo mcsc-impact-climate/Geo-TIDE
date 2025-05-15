@@ -645,10 +645,7 @@ function updateLegend() {
     if (layers.length === 0) return;
 
     const groupWrapper = document.createElement('div');
-    groupWrapper.style.backgroundColor = 'rgb(240, 246, 248)';
-    groupWrapper.style.padding = '5px';
-    groupWrapper.style.marginBottom = '5px';
-    groupWrapper.style.borderRadius = '5px';
+    groupWrapper.className = 'legend-group';
 
     layers.forEach((layer) => {
       const layerName = layer.get('key');
@@ -656,9 +653,7 @@ function updateLegend() {
       const isNew = !previouslyRenderedLegendKeys.has(layerName);
 
       const layerDiv = document.createElement('div');
-      layerDiv.style.display = 'flex';
-      layerDiv.style.alignItems = 'center';
-      layerDiv.style.marginBottom = '4px';
+      layerDiv.className = 'legend-entry';
 
       const symbolContainer = document.createElement('div');
       symbolContainer.style.display = 'flex';
@@ -700,15 +695,13 @@ function updateLegend() {
 
       layerDiv.appendChild(symbolContainer);
       layerDiv.appendChild(title);
-      groupWrapper.appendChild(layerDiv);
 
       if (isNew) {
         layerDiv.classList.add('legend-fadeout-start');
         groupWrapper.appendChild(layerDiv);
-
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
-            layerDiv.classList.add('fadeout'); // triggers fade from yellow
+            layerDiv.classList.add('fadeout');
           });
         });
       } else {

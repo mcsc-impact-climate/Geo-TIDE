@@ -645,7 +645,7 @@ ul {
 
 /* Transition to transparent or original bg color */
 .legend-fadeout-start.fadeout {
-  background-color: rgb(240, 246, 248); /* match group bg or transparent */
+  background-color: transparent; /* transparent */
   transition: background-color 1.5s ease;
 }
 
@@ -659,11 +659,9 @@ ul {
 }
 
 .legend-group {
-  background-color: rgb(240, 246, 248);
   padding: 5px;
   margin-bottom: 5px;
   border-radius: 5px;
-  display: table;        /* expands to widest child */
   width: 100%;
   box-sizing: border-box;
 }

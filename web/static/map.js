@@ -248,6 +248,7 @@ async function loadLayer(layerName, layerUrl = null, showApplySpinner = true) {
 }
 
 function removeLayer(layerName) {
+  console.log('In removeLayer'); 
   const layerIndex = vectorLayers.findIndex((layer) => layer.get('key') === layerName);
 
   if (layerIndex !== -1) {
@@ -754,6 +755,7 @@ function isDictionary(obj) {
 // Add event listener to the "Clear" button
 document.getElementById('clear-button').addEventListener('click', function () {
   console.log('Clear button clicked');
+  console.log('new console line'); 
   event.stopPropagation(); // Prevent outside click handler from firing
 
   // Show confirmation modal

@@ -605,21 +605,79 @@ function createPointLegendEntry(layerName, bounds, layerColor, gradientType) {
   return container;
 }
 
+
+function updateLegendWidth() {
+  const legend = document.getElementById('legend');
+  const legendContent = document.getElementById('legend-content');
+  const hasContent = legendContent.children.length > 0;
+  let isLegendOpen = window.getComputedStyle(legendContent).display !== 'none';
+
+  
+  if (isLegendOpen) {
+    if (hasContent) {
+      legend.style.width = '31.25rem';
+    } else {
+      legend.style.width = '8.3125rem';
+    }
+  } else {
+    legend.style.width = '8.3125rem';
+  }
+}
+
+
+function createLetterIconSVG(letter) {
+  const div = document.createElement('div');
+  div.innerHTML = {
+    A: `
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"
+           viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+           xmlns="http://www.w3.org/2000/svg">
+        <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0"/>
+        <path d="M14 12.833 12 7.5l-2 5.333m4 0 1 2.667m-1-2.667h-4M9 15.5l1-2.667"/>
+      </svg>`,
+    H: `
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"
+           viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+           xmlns="http://www.w3.org/2000/svg">
+        <path d='M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0M9.5 8v4m0 0v4m0-4h5m0-4v4m0 0v4'/>
+      </svg>`,
+    P: `
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"
+           viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+           xmlns="http://www.w3.org/2000/svg">
+        <path d='M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0'/>
+        <path d='M9.75 12V8.5a.5.5 0 0 1 .5-.5h3a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5zm0 0v4'/>
+      </svg>`
+  }[letter];
+
+
+  const svg = div.firstElementChild;
+
+  svg.style.width = '1.5rem';
+  svg.style.height = '1.5rem';
+
+  if (letter === 'A') {
+    svg.style.marginTop = '3.375rem'; 
+  } else {
+    svg.style.marginTop = '0.25rem';
+  }
+
+  return svg; 
+}
+
+
+
 let previouslyRenderedLegendKeys = new Set();
 
 function updateLegend() {
-  const legendDiv = document.getElementById('legend');
-  legendDiv.style.display = 'flex';
-  legendDiv.style.flexDirection = 'column';
+  const legendContent = document.getElementById('legend-content');
+  if (!legendContent) return;
+  legendContent.style.display = 'flex';
+  legendContent.style.flexDirection = 'column';
 
-  while (legendDiv.firstChild) {
-    legendDiv.removeChild(legendDiv.firstChild);
+  while (legendContent.firstChild) {
+    legendContent.removeChild(legendContent.firstChild);
   }
-
-  const header = document.createElement('h3');
-  header.appendChild(document.createTextNode('Legend'));
-  header.style.fontWeight = 'bold';
-  legendDiv.appendChild(header);
 
   const selectedLayers = getSelectedLayers();
   const areaLayers = [],
@@ -642,25 +700,47 @@ function updateLegend() {
     }
   });
 
-  const renderGroup = (layers) => {
+  let isNotFirstGroup = false;
+
+  const renderGroup = (layers, letter) => {
     if (layers.length === 0) return;
+
+    if (isNotFirstGroup) {
+      const separator = document.createElement('div');
+      separator.classList.add('separator');
+      legendContent.appendChild(separator); 
+    }
+
+
 
     const groupWrapper = document.createElement('div');
     groupWrapper.className = 'legend-group';
 
-    layers.forEach((layer) => {
+    layers.forEach((layer, index) => {
       const layerName = layer.get('key');
       newRenderedLegendKeys.add(layerName);
       const isNew = !previouslyRenderedLegendKeys.has(layerName);
 
       const layerDiv = document.createElement('div');
       layerDiv.className = 'legend-entry';
+      layerDiv.style.display = 'flex';
+      layerDiv.style.alignItems = 'center';
+      layerDiv.style.flexDirection = 'row';
 
       const symbolContainer = document.createElement('div');
       symbolContainer.style.display = 'flex';
       symbolContainer.style.alignItems = 'center';
       symbolContainer.style.justifyContent = 'center';
       symbolContainer.style.width = '150px';
+      
+      symbolContainer.style.marginLeft = '5.25rem';
+
+      if (index === 0) {
+          const svgIcon = createLetterIconSVG(letter);
+          svgIcon.style.position = 'absolute';
+          svgIcon.style.left = '12px';
+          layerDiv.appendChild(svgIcon);
+      }
 
       const useGradient = layerName in selectedGradientAttributes;
       const layerColor =
@@ -680,44 +760,52 @@ function updateLegend() {
         );
       }
 
-      const title = document.createElement('div');
-      if (layerName in legendLabels) {
-        const label = legendLabels[layerName];
-        title.innerText =
-          typeof label === 'string' ? label : label[selectedGradientAttributes[layerName]];
-      } else if (layerName in uploadedGeojsonNames) {
-        title.innerText = selectedGradientAttributes[layerName]
-          ? `${uploadedGeojsonNames[layerName]}: ${selectedGradientAttributes[layerName]}`
-          : uploadedGeojsonNames[layerName];
-      } else {
-        title.innerText = layerName;
-      }
-      title.style.marginLeft = '20px';
 
-      layerDiv.appendChild(symbolContainer);
-      layerDiv.appendChild(title);
+    const title = document.createElement('div');
+    title.classList.add('legend-text'); 
 
-      if (isNew) {
-        layerDiv.classList.add('legend-fadeout-start');
-        groupWrapper.appendChild(layerDiv);
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            layerDiv.classList.add('fadeout');
-          });
-        });
-      } else {
-        groupWrapper.appendChild(layerDiv);
-      }
+    
+
+if (layerName in legendLabels) {
+  const label = legendLabels[layerName];
+  title.innerText =
+    typeof label === 'string' ? label : label[selectedGradientAttributes[layerName]];
+} else if (layerName in uploadedGeojsonNames) {
+  title.innerText = selectedGradientAttributes[layerName]
+    ? `${uploadedGeojsonNames[layerName]}: ${selectedGradientAttributes[layerName]}`
+    : uploadedGeojsonNames[layerName];
+} else {
+  title.innerText = layerName;
+}  
+layerDiv.appendChild(symbolContainer);
+layerDiv.appendChild(title);
+
+if (isNew) {
+  layerDiv.classList.add('legend-fadeout-start');
+  groupWrapper.appendChild(layerDiv);
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      layerDiv.classList.add('fadeout');
     });
+  });
+} else {
+  groupWrapper.appendChild(layerDiv);
+}
+});
 
-    legendDiv.appendChild(groupWrapper);
-  };
+    legendContent.appendChild(groupWrapper);
+    isNotFirstGroup = true;
 
-  renderGroup(areaLayers);
-  renderGroup(lineLayers);
-  renderGroup(pointLayers);
+};
+
+  
+
+  renderGroup(areaLayers, 'A');
+  renderGroup(lineLayers, 'H');
+  renderGroup(pointLayers, 'P');
 
   previouslyRenderedLegendKeys = newRenderedLegendKeys;
+  updateLegendWidth();
 }
 
 async function fetchCSVData(csvFileName) {
@@ -754,6 +842,7 @@ function isDictionary(obj) {
 
 // Add event listener to the "Clear" button
 document.getElementById('clear-button').addEventListener('click', function () {
+
   console.log('Clear button clicked');
   console.log('new console line'); 
   event.stopPropagation(); // Prevent outside click handler from firing

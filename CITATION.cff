@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 authors:
-- family-names: "MacDonell"
+- family-names: "Eamer"
   given-names: "Danika"
   orcid: "https://orcid.org/0000-0001-5533-6300"
 - family-names: "Kasami"

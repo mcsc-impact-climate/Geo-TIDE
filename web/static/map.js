@@ -396,6 +396,7 @@ function reverseMapping(originalMap) {
 
 function createPolygonLegendEntry(layerName, bounds, layerColor) {
   const container = document.createElement('div');
+  container.className = 'legend-entry-wrapper';
   container.style.display = 'flex';
   container.style.alignItems = 'center';
 
@@ -440,14 +441,17 @@ function createPolygonLegendEntry(layerName, bounds, layerColor) {
   } else {
     ctx.fillStyle = layerColor;
     ctx.fillRect(0, 0, 50, 10);
+    
     container.appendChild(canvas);
   }
+  container.style.justifyContent = 'flex-end';
 
   return container;
 }
 
 function createLineLegendEntry(layerName, bounds, layerColor) {
   const container = document.createElement('div');
+  container.className = 'legend-entry-wrapper';
   container.style.display = 'flex';
   container.style.alignItems = 'center';
 
@@ -506,14 +510,20 @@ function createLineLegendEntry(layerName, bounds, layerColor) {
     ctx.lineTo(50, 5);
     ctx.stroke();
 
+
+
     container.appendChild(canvas);
   }
+
+  container.style.justifyContent = 'flex-end';
+
 
   return container;
 }
 
 function createPointLegendEntry(layerName, bounds, layerColor, gradientType) {
   const container = document.createElement('div');
+  container.className = 'legend-entry-wrapper';
   container.style.display = 'flex';
   container.style.alignItems = 'center';
 
@@ -598,7 +608,9 @@ function createPointLegendEntry(layerName, bounds, layerColor, gradientType) {
     ctx.arc(25, 5, 3, 0, Math.PI * 2);
     ctx.fill();
 
-    canvas.style.marginLeft = '30px';
+    container.style.width = '100%'; 
+    container.style.justifyContent = 'flex-end';
+    container.style.marginRight = '0rem'; 
     container.appendChild(canvas);
   }
 
@@ -655,12 +667,6 @@ function createLetterIconSVG(letter) {
 
   svg.style.width = '1.5rem';
   svg.style.height = '1.5rem';
-
-  if (letter === 'A') {
-    svg.style.marginTop = '3.375rem'; 
-  } else {
-    svg.style.marginTop = '0.25rem';
-  }
 
   return svg; 
 }
@@ -729,20 +735,18 @@ function updateLegend() {
 
       const symbolContainer = document.createElement('div');
       symbolContainer.style.display = 'flex';
-      symbolContainer.style.alignItems = 'center';
-      symbolContainer.style.justifyContent = 'center';
-      symbolContainer.style.width = '150px';
+            symbolContainer.style.width = '150px';
       
-      symbolContainer.style.marginLeft = '5.25rem';
+      symbolContainer.style.justifyContent = 'flex-end'; 
 
       if (index === 0) {
           const svgIcon = createLetterIconSVG(letter);
           svgIcon.style.position = 'absolute';
           svgIcon.style.left = '12px';
+          layerDiv.style.marginTop = '10px'; 
           layerDiv.appendChild(svgIcon);
       }
 
-      const useGradient = layerName in selectedGradientAttributes;
       const layerColor =
         layerName in geojsonColors
           ? geojsonColors[layerName] || 'yellow'
@@ -941,7 +945,6 @@ function getAttributesForLayer(layerName) {
 }
 
 async function applyLayerOptions(layerName, gradientAttribute) {
-  //console.log("In applyLayerOptions()")
   // This is where you apply the selected gradient or attribute to the layer
   //console.log(`Applying gradient ${gradientAttribute} to layer ${layerName}`);
 

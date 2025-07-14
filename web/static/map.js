@@ -459,10 +459,6 @@ function createLineLegendEntry(layerName, bounds, layerColor) {
   const isUploaded = !(layerName in geojsonColors);
 
     if (useGradient && bounds && isUploaded) {
-      const symbolWrapper = document.createElement('div');
-      symbolWrapper.style.display = 'flex';
-      symbolWrapper.style.alignItems = 'center';
-      symbolWrapper.style.width = '150px';
 
       const canvas = document.createElement('canvas');
       canvas.width = 50;
@@ -501,17 +497,13 @@ function createLineLegendEntry(layerName, bounds, layerColor) {
       maxDiv.innerText = maxVal.toString();
       maxDiv.style.marginLeft = '5px';
 
-      symbolWrapper.appendChild(minDiv);
-      symbolWrapper.appendChild(canvas);
-      symbolWrapper.appendChild(maxDiv);
+      container.appendChild(minDiv);
+      container.appendChild(canvas);
+      container.appendChild(maxDiv);
 
-      return symbolWrapper;
+      return container;
     } else if (useGradient && bounds) {
     // Gradient (e.g., width) on persistent or uploaded layer
-    const symbolWrapper = document.createElement('div');
-    symbolWrapper.style.display = 'flex';
-    symbolWrapper.style.alignItems = 'center';
-    symbolWrapper.style.width = '150px';
 
     const minVal =
       bounds.min < 0.01
@@ -549,10 +541,9 @@ function createLineLegendEntry(layerName, bounds, layerColor) {
       ctx.stroke();
     }
 
-    symbolWrapper.appendChild(minDiv);
-    symbolWrapper.appendChild(canvas);
-    symbolWrapper.appendChild(maxDiv);
-    container.appendChild(symbolWrapper);
+    container.appendChild(minDiv);
+    container.appendChild(canvas);
+    container.appendChild(maxDiv);
   } else {
     // No gradient → solid line
     const canvas = document.createElement('canvas');

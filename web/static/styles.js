@@ -3,7 +3,6 @@ import {
   geojsonColors,
   selectedGradientTypes,
   predefinedColors,
-  dataInfo,
 } from './name_maps.js';
 import { attributeBounds } from './map.js';
 
@@ -26,8 +25,61 @@ function assignColorToLayer(layerName) {
 
 // Function to generate distinct color dynamically (optional)
 function generateDistinctColor() {
-  const hue = Math.random() * 360;
-  return `hsl(${hue}, 100%, 50%)`;
+  const hue = Math.random();
+  const [r, g, b] = hslToRgb(hue, 1, 0.5);  // Ensure RGB output
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+function hexToRgb(hex) {
+  const bigint = parseInt(hex.slice(1), 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return [r, g, b];
+}
+
+function hslToRgb(h, s, l) {
+  let r, g, b;
+
+  if (s === 0) {
+    r = g = b = l; // achromatic
+  } else {
+    const hue2rgb = function (p, q, t) {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1 / 6) return p + (q - p) * 6 * t;
+      if (t < 1 / 2) return q;
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+      return p;
+    };
+
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+
+    r = hue2rgb(p, q, h + 1 / 3);
+    g = hue2rgb(p, q, h);
+    b = hue2rgb(p, q, h - 1 / 3);
+  }
+
+  return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+}
+
+function interpolateFromWhiteToColor(color, t) {
+  let r, g, b;
+
+  if (color.startsWith('#')) {
+    [r, g, b] = hexToRgb(color);
+  } else {
+    const match = color.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+    if (!match) return color;
+    [r, g, b] = match.slice(1).map(Number);
+  }
+
+  const rNew = Math.round(255 * (1 - t) + r * t);
+  const gNew = Math.round(255 * (1 - t) + g * t);
+  const bNew = Math.round(255 * (1 - t) + b * t);
+
+  return `rgb(${rNew}, ${gNew}, ${bNew})`;
 }
 
 function createStyleFunction(layerName, boundaryColor = 'gray', boundaryWidth = 1) {
@@ -87,7 +139,7 @@ function getBaseStyle(layerName, feature, boundaryColor, boundaryWidth, isHover)
   if (geometryType === 'Point' || geometryType === 'MultiPoint') {
     if (useGradient && bounds) {
       if (gradientType === 'size') {
-        let minSize = layerName in geojsonColors ? 2 : 4;
+        let minSize = layerName in geojsonColors ? 2 : 4;       // DME: If the layername is in geojsonColors, we know it's a persistent layer, and otherwise it's an uploaded layer
         let maxSize = layerName in geojsonColors ? 10 : 15;
         const pointSize =
           minSize +
@@ -153,19 +205,42 @@ function getBaseStyle(layerName, feature, boundaryColor, boundaryWidth, isHover)
     });
   }
 
-  if (geometryType === 'LineString' || geometryType === 'MultiLineString') {
-    let width = 3;
-    if (useGradient && bounds) {
-      width = 1 + 9 * ((attributeValue - bounds.min) / (bounds.max - bounds.min));
+    if (geometryType === 'LineString' || geometryType === 'MultiLineString') {
+      if (useGradient && bounds) {
+        if (layerName in geojsonColors) {
+          // Persistent layer: use width gradient
+          const width = 1 + 9 * ((attributeValue - bounds.min) / (bounds.max - bounds.min));
+          return new ol.style.Style({
+            stroke: new ol.style.Stroke({
+              color: layerColor,
+              width: width,
+            }),
+            zIndex: 5,
+          });
+        } else {
+          // Uploaded layer: use color gradient in orange tones
+            const t = (attributeValue - bounds.min) / (bounds.max - bounds.min);
+            const gradientColor = interpolateFromWhiteToColor(layerColor, t);
+
+          return new ol.style.Style({
+            stroke: new ol.style.Stroke({
+              color: gradientColor,
+              width: 3,
+            }),
+            zIndex: 5,
+          });
+        }
+      }
+
+      // Fallback style
+      return new ol.style.Style({
+        stroke: new ol.style.Stroke({
+          color: layerColor,
+          width: 3,
+        }),
+        zIndex: 5,
+      });
     }
-    return new ol.style.Style({
-      stroke: new ol.style.Stroke({
-        color: layerColor,
-        width: width,
-      }),
-      zIndex: 5,
-    });
-  }
 
   return null;
 }

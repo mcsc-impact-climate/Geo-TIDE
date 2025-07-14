@@ -650,7 +650,7 @@ ul {
 
 /* Transition to transparent or original bg color */
 .legend-fadeout-start.fadeout {
-  background-color: rgb(240, 246, 248); /* match group bg or transparent */
+  background-color: transparent; /* transparent */
   transition: background-color 1.5s ease;
 }
 

@@ -456,20 +456,75 @@ function createLineLegendEntry(layerName, bounds, layerColor) {
   container.style.alignItems = 'center';
 
   const useGradient = layerName in selectedGradientAttributes;
+  const isUploaded = !(layerName in geojsonColors);
 
-  if (useGradient && bounds) {
+    if (useGradient && bounds && isUploaded) {
+      const symbolWrapper = document.createElement('div');
+      symbolWrapper.style.display = 'flex';
+      symbolWrapper.style.alignItems = 'center';
+      symbolWrapper.style.width = '150px';
+
+      const canvas = document.createElement('canvas');
+      canvas.width = 50;
+      canvas.height = 10;
+      const ctx = canvas.getContext('2d');
+
+      // Create a gradient from white to the assigned layerColor
+      const gradient = ctx.createLinearGradient(0, 0, 50, 0);
+      gradient.addColorStop(0, 'rgb(255, 255, 255)');
+      gradient.addColorStop(1, layerColor);  // dynamic color
+      ctx.strokeStyle = gradient;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(0, 5);
+      ctx.lineTo(50, 5);
+      ctx.stroke();
+
+      const minVal =
+        bounds.min < 0.01
+          ? bounds.min.toExponential(1)
+          : bounds.min > 100
+            ? bounds.min.toExponential(1)
+            : bounds.min.toFixed(1);
+      const maxVal =
+        bounds.max < 0.01
+          ? bounds.max.toExponential(1)
+          : bounds.max > 100
+            ? bounds.max.toExponential(1)
+            : bounds.max.toFixed(1);
+
+      const minDiv = document.createElement('div');
+      minDiv.innerText = minVal.toString();
+      minDiv.style.marginRight = '5px';
+
+      const maxDiv = document.createElement('div');
+      maxDiv.innerText = maxVal.toString();
+      maxDiv.style.marginLeft = '5px';
+
+      symbolWrapper.appendChild(minDiv);
+      symbolWrapper.appendChild(canvas);
+      symbolWrapper.appendChild(maxDiv);
+
+      return symbolWrapper;
+    } else if (useGradient && bounds) {
+    // Gradient (e.g., width) on persistent or uploaded layer
+    const symbolWrapper = document.createElement('div');
+    symbolWrapper.style.display = 'flex';
+    symbolWrapper.style.alignItems = 'center';
+    symbolWrapper.style.width = '150px';
+
     const minVal =
       bounds.min < 0.01
         ? bounds.min.toExponential(1)
         : bounds.min > 100
-          ? bounds.min.toExponential(1)
-          : bounds.min.toFixed(1);
+        ? bounds.min.toExponential(1)
+        : bounds.min.toFixed(1);
     const maxVal =
       bounds.max < 0.01
         ? bounds.max.toExponential(1)
         : bounds.max > 100
-          ? bounds.max.toExponential(1)
-          : bounds.max.toFixed(1);
+        ? bounds.max.toExponential(1)
+        : bounds.max.toFixed(1);
 
     const minDiv = document.createElement('div');
     minDiv.innerText = minVal.toString();
@@ -485,7 +540,7 @@ function createLineLegendEntry(layerName, bounds, layerColor) {
     const ctx = canvas.getContext('2d');
 
     for (let x = 0; x <= 50; x++) {
-      let lineWidth = 1 + (x / 50) * 9;
+      const lineWidth = 1 + (x / 50) * 9;
       ctx.strokeStyle = layerColor;
       ctx.lineWidth = lineWidth;
       ctx.beginPath();
@@ -494,10 +549,12 @@ function createLineLegendEntry(layerName, bounds, layerColor) {
       ctx.stroke();
     }
 
-    container.appendChild(minDiv);
-    container.appendChild(canvas);
-    container.appendChild(maxDiv);
+    symbolWrapper.appendChild(minDiv);
+    symbolWrapper.appendChild(canvas);
+    symbolWrapper.appendChild(maxDiv);
+    container.appendChild(symbolWrapper);
   } else {
+    // No gradient → solid line
     const canvas = document.createElement('canvas');
     canvas.width = 50;
     canvas.height = 10;
@@ -510,8 +567,6 @@ function createLineLegendEntry(layerName, bounds, layerColor) {
     ctx.lineTo(50, 5);
     ctx.stroke();
 
-
-
     container.appendChild(canvas);
   }
 
@@ -520,6 +575,7 @@ function createLineLegendEntry(layerName, bounds, layerColor) {
 
   return container;
 }
+
 
 function createPointLegendEntry(layerName, bounds, layerColor, gradientType) {
   const container = document.createElement('div');
@@ -675,6 +731,22 @@ function createLetterIconSVG(letter) {
 
 let previouslyRenderedLegendKeys = new Set();
 
+function createLegendLabel(value) {
+  const label = document.createElement('div');
+  label.style.fontSize = '10px';
+  label.style.margin = '0 5px';
+  label.style.width = '30px';
+  label.style.textAlign = 'center';
+  label.style.color = '#555';
+  if (typeof value === 'number') {
+    label.textContent =
+      value < 0.01 || value > 100 ? value.toExponential(1) : value.toFixed(1);
+  } else {
+    label.textContent = '';
+  }
+  return label;
+}
+
 function updateLegend() {
   const legendContent = document.getElementById('legend-content');
   if (!legendContent) return;
@@ -754,10 +826,12 @@ function updateLegend() {
 
       if (isPolygonLayer(layer)) {
         symbolContainer.appendChild(createPolygonLegendEntry(layerName, bounds, layerColor));
-      } else if (isLineStringLayer(layer)) {
-        symbolContainer.appendChild(createLineLegendEntry(layerName, bounds, layerColor));
-      } else if (isPointLayer(layer)) {
-        symbolContainer.appendChild(
+        } else if (isLineStringLayer(layer)) {
+          symbolContainer.appendChild(
+          createLineLegendEntry(layerName, bounds, layerColor)
+          );
+        } else if (isPointLayer(layer)) {
+          symbolContainer.appendChild(
           createPointLegendEntry(layerName, bounds, layerColor, gradientType)
         );
       }

@@ -159,6 +159,14 @@ function addLayerCheckbox(key, value, container) {
   const label = document.createElement('label');
   label.setAttribute('for', `${key}-checkbox`);
   label.textContent = key;
+  label.style.color = 'var(--theme-foreground, #020618)'; 
+  label.style.font = 'var(--font-family-sans, Inter)';
+  label.style.fontSize = 'var(--font-size-sm, 0.875rem)';
+  label.style.fontStyle = 'normal';
+  label.style.fontWeight = 'var(--font-weight-normal, 400)';
+  label.style.lineHeight = 'var(--font-leading-5, 1.25rem)'; 
+  label.style.letterSpacing = 'var(--font-tracking-normal, 0rem)';
+      
   checkboxContainer.appendChild(label);
 
   container.appendChild(checkboxContainer);

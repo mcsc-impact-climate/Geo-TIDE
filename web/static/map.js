@@ -248,6 +248,7 @@ async function loadLayer(layerName, layerUrl = null, showApplySpinner = true) {
 }
 
 function removeLayer(layerName) {
+  console.log('In removeLayer'); 
   const layerIndex = vectorLayers.findIndex((layer) => layer.get('key') === layerName);
 
   if (layerIndex !== -1) {
@@ -395,6 +396,7 @@ function reverseMapping(originalMap) {
 
 function createPolygonLegendEntry(layerName, bounds, layerColor) {
   const container = document.createElement('div');
+  container.className = 'legend-entry-wrapper';
   container.style.display = 'flex';
   container.style.alignItems = 'center';
 
@@ -439,14 +441,17 @@ function createPolygonLegendEntry(layerName, bounds, layerColor) {
   } else {
     ctx.fillStyle = layerColor;
     ctx.fillRect(0, 0, 50, 10);
+    
     container.appendChild(canvas);
   }
+  container.style.justifyContent = 'flex-end';
 
   return container;
 }
 
 function createLineLegendEntry(layerName, bounds, layerColor) {
   const container = document.createElement('div');
+  container.className = 'legend-entry-wrapper';
   container.style.display = 'flex';
   container.style.alignItems = 'center';
 
@@ -454,10 +459,6 @@ function createLineLegendEntry(layerName, bounds, layerColor) {
   const isUploaded = !(layerName in geojsonColors);
 
     if (useGradient && bounds && isUploaded) {
-      const symbolWrapper = document.createElement('div');
-      symbolWrapper.style.display = 'flex';
-      symbolWrapper.style.alignItems = 'center';
-      symbolWrapper.style.width = '150px';
 
       const canvas = document.createElement('canvas');
       canvas.width = 50;
@@ -496,17 +497,13 @@ function createLineLegendEntry(layerName, bounds, layerColor) {
       maxDiv.innerText = maxVal.toString();
       maxDiv.style.marginLeft = '5px';
 
-      symbolWrapper.appendChild(minDiv);
-      symbolWrapper.appendChild(canvas);
-      symbolWrapper.appendChild(maxDiv);
+      container.appendChild(minDiv);
+      container.appendChild(canvas);
+      container.appendChild(maxDiv);
 
-      return symbolWrapper;
+      return container;
     } else if (useGradient && bounds) {
     // Gradient (e.g., width) on persistent or uploaded layer
-    const symbolWrapper = document.createElement('div');
-    symbolWrapper.style.display = 'flex';
-    symbolWrapper.style.alignItems = 'center';
-    symbolWrapper.style.width = '150px';
 
     const minVal =
       bounds.min < 0.01
@@ -544,10 +541,9 @@ function createLineLegendEntry(layerName, bounds, layerColor) {
       ctx.stroke();
     }
 
-    symbolWrapper.appendChild(minDiv);
-    symbolWrapper.appendChild(canvas);
-    symbolWrapper.appendChild(maxDiv);
-    container.appendChild(symbolWrapper);
+    container.appendChild(minDiv);
+    container.appendChild(canvas);
+    container.appendChild(maxDiv);
   } else {
     // No gradient → solid line
     const canvas = document.createElement('canvas');
@@ -562,14 +558,11 @@ function createLineLegendEntry(layerName, bounds, layerColor) {
     ctx.lineTo(50, 5);
     ctx.stroke();
 
-    const symbolWrapper = document.createElement('div');
-    symbolWrapper.style.display = 'flex';
-    symbolWrapper.style.alignItems = 'center';
-    symbolWrapper.style.width = '150px';
-
-    symbolWrapper.appendChild(canvas);
-    container.appendChild(symbolWrapper);
+    container.appendChild(canvas);
   }
+
+  container.style.justifyContent = 'flex-end';
+
 
   return container;
 }
@@ -577,6 +570,7 @@ function createLineLegendEntry(layerName, bounds, layerColor) {
 
 function createPointLegendEntry(layerName, bounds, layerColor, gradientType) {
   const container = document.createElement('div');
+  container.className = 'legend-entry-wrapper';
   container.style.display = 'flex';
   container.style.alignItems = 'center';
 
@@ -661,12 +655,70 @@ function createPointLegendEntry(layerName, bounds, layerColor, gradientType) {
     ctx.arc(25, 5, 3, 0, Math.PI * 2);
     ctx.fill();
 
-    canvas.style.marginLeft = '30px';
+    container.style.width = '100%'; 
+    container.style.justifyContent = 'flex-end';
+    container.style.marginRight = '0rem'; 
     container.appendChild(canvas);
   }
 
   return container;
 }
+
+
+function updateLegendWidth() {
+  const legend = document.getElementById('legend');
+  const legendContent = document.getElementById('legend-content');
+  const hasContent = legendContent.children.length > 0;
+  let isLegendOpen = window.getComputedStyle(legendContent).display !== 'none';
+
+  
+  if (isLegendOpen) {
+    if (hasContent) {
+      legend.style.width = '31.25rem';
+    } else {
+      legend.style.width = '8.3125rem';
+    }
+  } else {
+    legend.style.width = '8.3125rem';
+  }
+}
+
+
+function createLetterIconSVG(letter) {
+  const div = document.createElement('div');
+  div.innerHTML = {
+    A: `
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"
+           viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+           xmlns="http://www.w3.org/2000/svg">
+        <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0"/>
+        <path d="M14 12.833 12 7.5l-2 5.333m4 0 1 2.667m-1-2.667h-4M9 15.5l1-2.667"/>
+      </svg>`,
+    H: `
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"
+           viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+           xmlns="http://www.w3.org/2000/svg">
+        <path d='M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0M9.5 8v4m0 0v4m0-4h5m0-4v4m0 0v4'/>
+      </svg>`,
+    P: `
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"
+           viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+           xmlns="http://www.w3.org/2000/svg">
+        <path d='M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0'/>
+        <path d='M9.75 12V8.5a.5.5 0 0 1 .5-.5h3a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5zm0 0v4'/>
+      </svg>`
+  }[letter];
+
+
+  const svg = div.firstElementChild;
+
+  svg.style.width = '1.5rem';
+  svg.style.height = '1.5rem';
+
+  return svg; 
+}
+
+
 
 let previouslyRenderedLegendKeys = new Set();
 
@@ -687,18 +739,12 @@ function createLegendLabel(value) {
 }
 
 function updateLegend() {
-  const legendDiv = document.getElementById('legend');
-  legendDiv.style.display = 'flex';
-  legendDiv.style.flexDirection = 'column';
+  const legendContent = document.getElementById('legend-content');
+  if (!legendContent) return;
 
-  while (legendDiv.firstChild) {
-    legendDiv.removeChild(legendDiv.firstChild);
+  while (legendContent.firstChild) {
+    legendContent.removeChild(legendContent.firstChild);
   }
-
-  const header = document.createElement('h3');
-  header.appendChild(document.createTextNode('Legend'));
-  header.style.fontWeight = 'bold';
-  legendDiv.appendChild(header);
 
   const selectedLayers = getSelectedLayers();
   const areaLayers = [],
@@ -721,27 +767,47 @@ function updateLegend() {
     }
   });
 
-  const renderGroup = (layers) => {
+  let isNotFirstGroup = false;
+
+  const renderGroup = (layers, letter) => {
     if (layers.length === 0) return;
+
+    if (isNotFirstGroup) {
+      const separator = document.createElement('div');
+      separator.classList.add('separator');
+      legendContent.appendChild(separator); 
+    }
+
+
 
     const groupWrapper = document.createElement('div');
     groupWrapper.className = 'legend-group';
 
-    layers.forEach((layer) => {
+    layers.forEach((layer, index) => {
       const layerName = layer.get('key');
       newRenderedLegendKeys.add(layerName);
       const isNew = !previouslyRenderedLegendKeys.has(layerName);
 
       const layerDiv = document.createElement('div');
       layerDiv.className = 'legend-entry';
+      layerDiv.style.display = 'flex';
+      layerDiv.style.alignItems = 'center';
+      layerDiv.style.flexDirection = 'row';
 
       const symbolContainer = document.createElement('div');
       symbolContainer.style.display = 'flex';
-      symbolContainer.style.alignItems = 'center';
-      symbolContainer.style.justifyContent = 'center';
-      symbolContainer.style.width = '150px';
+            symbolContainer.style.width = '150px';
+      
+      symbolContainer.style.justifyContent = 'flex-end'; 
 
-      const useGradient = layerName in selectedGradientAttributes;
+      if (index === 0) {
+          const svgIcon = createLetterIconSVG(letter);
+          svgIcon.style.position = 'absolute';
+          svgIcon.style.left = '12px';
+          layerDiv.style.marginTop = '10px'; 
+          layerDiv.appendChild(svgIcon);
+      }
+
       const layerColor =
         layerName in geojsonColors
           ? geojsonColors[layerName] || 'yellow'
@@ -761,44 +827,52 @@ function updateLegend() {
         );
       }
 
-      const title = document.createElement('div');
-      if (layerName in legendLabels) {
-        const label = legendLabels[layerName];
-        title.innerText =
-          typeof label === 'string' ? label : label[selectedGradientAttributes[layerName]];
-      } else if (layerName in uploadedGeojsonNames) {
-        title.innerText = selectedGradientAttributes[layerName]
-          ? `${uploadedGeojsonNames[layerName]}: ${selectedGradientAttributes[layerName]}`
-          : uploadedGeojsonNames[layerName];
-      } else {
-        title.innerText = layerName;
-      }
-      title.style.marginLeft = '20px';
 
-      layerDiv.appendChild(symbolContainer);
-      layerDiv.appendChild(title);
+    const title = document.createElement('div');
+    title.classList.add('legend-text'); 
 
-      if (isNew) {
-        layerDiv.classList.add('legend-fadeout-start');
-        groupWrapper.appendChild(layerDiv);
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            layerDiv.classList.add('fadeout');
-          });
-        });
-      } else {
-        groupWrapper.appendChild(layerDiv);
-      }
+    
+
+if (layerName in legendLabels) {
+  const label = legendLabels[layerName];
+  title.innerText =
+    typeof label === 'string' ? label : label[selectedGradientAttributes[layerName]];
+} else if (layerName in uploadedGeojsonNames) {
+  title.innerText = selectedGradientAttributes[layerName]
+    ? `${uploadedGeojsonNames[layerName]}: ${selectedGradientAttributes[layerName]}`
+    : uploadedGeojsonNames[layerName];
+} else {
+  title.innerText = layerName;
+}  
+layerDiv.appendChild(symbolContainer);
+layerDiv.appendChild(title);
+
+if (isNew) {
+  layerDiv.classList.add('legend-fadeout-start');
+  groupWrapper.appendChild(layerDiv);
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      layerDiv.classList.add('fadeout');
     });
+  });
+} else {
+  groupWrapper.appendChild(layerDiv);
+}
+});
 
-    legendDiv.appendChild(groupWrapper);
-  };
+    legendContent.appendChild(groupWrapper);
+    isNotFirstGroup = true;
 
-  renderGroup(areaLayers);
-  renderGroup(lineLayers);
-  renderGroup(pointLayers);
+};
+
+  
+
+  renderGroup(areaLayers, 'A');
+  renderGroup(lineLayers, 'H');
+  renderGroup(pointLayers, 'P');
 
   previouslyRenderedLegendKeys = newRenderedLegendKeys;
+  updateLegendWidth();
 }
 
 async function fetchCSVData(csvFileName) {
@@ -835,7 +909,9 @@ function isDictionary(obj) {
 
 // Add event listener to the "Clear" button
 document.getElementById('clear-button').addEventListener('click', function () {
+
   console.log('Clear button clicked');
+  console.log('new console line'); 
   event.stopPropagation(); // Prevent outside click handler from firing
 
   // Show confirmation modal
@@ -932,7 +1008,6 @@ function getAttributesForLayer(layerName) {
 }
 
 async function applyLayerOptions(layerName, gradientAttribute) {
-  //console.log("In applyLayerOptions()")
   // This is where you apply the selected gradient or attribute to the layer
   //console.log(`Applying gradient ${gradientAttribute} to layer ${layerName}`);
 

@@ -678,8 +678,6 @@ let previouslyRenderedLegendKeys = new Set();
 function updateLegend() {
   const legendContent = document.getElementById('legend-content');
   if (!legendContent) return;
-  legendContent.style.display = 'flex';
-  legendContent.style.flexDirection = 'column';
 
   while (legendContent.firstChild) {
     legendContent.removeChild(legendContent.firstChild);

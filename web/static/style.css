@@ -687,7 +687,8 @@ ul {
 
 .legend-group {
   padding: 5px;
-  margin-bottom: 5px;
+  margin-top: 0px; 
+  margin-bottom: 0px; 
   border-radius: 5px;
   width: 100%;
   box-sizing: border-box;
@@ -763,3 +764,10 @@ ul {
   align-items: center; 
   justify-content: flex-end; 
 }
+
+#legend-content {
+  display: flex;
+  flex-direction: column;
+}
+
+

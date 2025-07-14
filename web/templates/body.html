@@ -54,10 +54,12 @@
   id="layer-selection"
   style="
     position: absolute;
-    top: 250px;
-    right: 20px;
+    top: 36.6rem;
+    bottom: 4rem; 
+    right: 1rem; 
     padding: 10px;
     width: 23.625rem;
+    height: 29.6875rem; 
     flex-shrink: 0; 
     border-radius: var(--Corner-Small, 0.5rem);
     background: #FFF;
@@ -71,6 +73,9 @@
 
 <div style="display: flex; align-items: center; justify-content: space-between;">
   <h2 style="
+  position: absolute;
+  top: 0.05rem;
+  left: 1rem;
   color: var(--theme-foreground, #020618);
   font-family: var(--font-family-sans, Inter);
   font-size: var(--font-size-xl, 1.25rem);
@@ -84,34 +89,70 @@
 </h2>
   <button id="Public-toggle" style="  
   display: flex; 
-        align-items: center;
-        justify-content: center;
+  align-items: center;
+  justify-content: center;
         width: 1.5rem;
         height: 1.5rem;
-flex-shrink: 0;
+        flex-shrink: 0;
 position: absolute;
-top: 0.75rem;
+top: 0.5rem;
 right: 1rem;
     border: none;
     background: transparent;
   ">
-    <svg id="public-chevron-path" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"
+
+
+    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"
       viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"
       style="transition: transform 0.3s ease;">
-      <path d="m6 6 6 6 6-6M6 12l6 6 6-6"/>
+      <path id = "public-chevron-path" d="m6 6 6 6 6-6M6 12l6 6 6-6"/>
     </svg>
   </button>
+
+
 </div>
 
 
   <div id="public-data-content">
-  <h3 style = "color: var(--theme-foreground, #020618);
-  font-family: var(--font-family-sans, Inter);
-  font-size: var(--font-size-base, 1rem);
-  font-style: normal;
-  font-weight: var(--font-weight-semibold, 600);
-  line-height: var(--font-leading-6, 1.5rem); /* 150% */
-  letter-spacing: var(--font-tracking-normal, 0rem);"
+
+    <div style=
+    
+    "margin-top: 2rem;
+    display: flex; 
+    align-items: flex-start; 
+    gap: 0.5rem; "
+    >
+
+    <button id="area-icon" style= "
+      width: 1.5rem;
+      height: 1.5rem;
+      padding: 0;
+      background: transparent; 
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    ">
+       <svg width="1.5rem" height="1.5rem" style="width: 1.5rem; height: 1.5rem;" fill="none" stroke="currentColor" stroke-width="1.5"
+       viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+       xmlns="http://www.w3.org/2000/svg">
+    <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0"/>
+    <path d="M14 12.833 12 7.5l-2 5.333m4 0 1 2.667m-1-2.667h-4M9 15.5l1-2.667"/>
+   </svg>
+    </button>
+
+  
+    
+  <h3 style = "
+    padding: 0;
+    color: var(--theme-foreground, #020618);
+    font-family: var(--font-family-sans, Inter);
+    font-size: var(--font-size-base, 1rem);
+    font-style: normal;
+    font-weight: var(--font-weight-semibold, 600);
+    line-height: var(--font-leading-6, 1.5rem); 
+    letter-spacing: var(--font-tracking-normal, 0rem);
+  "
   >
       Area Feature
     <span style="
@@ -126,8 +167,30 @@ right: 1rem;
       (Choose one)
     </span>
   </h3>
+</div>
 
-  <select id="area-layer-dropdown">
+  <select id="area-layer-dropdown" 
+    style = "
+      position: absolute; 
+      margin-top: 0.75rem; 
+      left: 1rem;
+      width: 16.9375rem;
+      height: var(--spacing-10, 2.5rem);
+      padding: var(--spacing-2, 0.5rem);
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+      color: var(--theme-accent-foreground, #0F172B);
+      text-align: center; 
+      font-family: var(--font-family-sans, Inter);
+      font-size: var(--font-size-sm, 0.875rem);
+      font-style: normal;
+      font-weight: var (--font-weight-medium, 500);
+      line-height: var(--font-leading-5, 1.25rem); /* 142.857% */
+      letter-spacing: var(--font-tracking-normal, 0rem);
+    "
+  
+  >
     <option>Select Area Feature</option>
     <!-- Add options for area layers -->
   </select>
@@ -135,18 +198,79 @@ right: 1rem;
   <button
     class="details-btn"
     id="area-details-button"
-    style="visibility: hidden"
+    style = "
+    position: absolute; 
+    right: 1rem; 
+    margin-top: 0.75rem; 
+    height: 1.5rem;
+    width: 4.1875rem;
+    padding: var(--spacing-2, 0.5rem) var(--spacing-4, 1rem);
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--spacing-1-5, 0.375rem);
+    flex-shrink: 0;
+    border-radius: var(--radius-md, 0.375rem);
+    border: 1px solid var(--theme-input, #E2E8F0);
+    opacity: var(--opacity-100, 1);
+    background: var(--theme-background, #FFF);
+    "
+   
+  onmouseover="this.style.backgroundColor='#F1F5F9';"
+  onmouseout="this.style.backgroundColor='var(--theme-background, #FFF)';"
   >
-    More
-  </button>
+  
+  <span style="
+  position: absolute;
+  top: 0.1rem;
+  color: var(--theme-accent-foreground, #0F172B);
+  text-align: center;
+  font-family: var(--font-family-sans, Inter);
+  font-size: var(--font-size-sm, 0.875rem);
+  font-style: normal;
+  font-weight: var(--font-weight-medium, 500);
+  line-height: var(--font-leading-5, 1.25rem);
+  letter-spacing: var(--font-tracking-normal, 0rem);
+  display: block; 
+">
+  More
+</span>
+</button>
+
+<div style=
+    
+" 
+margin-top: 4.5rem;
+display: flex; 
+align-items: flex-start; 
+gap: 0.5rem; "
+>
+
+<button id="highway-icon" style= "
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  background: transparent; 
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+">
+   <svg width="1.5rem" height="1.5rem" style="width: 1.5rem; height: 1.5rem;" fill="none" stroke="currentColor" stroke-width="1.5"
+   viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+           xmlns="http://www.w3.org/2000/svg">
+        <path d='M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0M9.5 8v4m0 0v4m0-4h5m0-4v4m0 0v4'/>
+      </svg>
+</button>
+
 
   <h3 style="
+    padding: 0; 
     color: var(--theme-foreground, #020618);
     font-family: var(--font-family-sans, Inter);
     font-size: var(--font-size-base, 1rem);
     font-style: normal;
     font-weight: var(--font-weight-semibold, 600);
-    line-height: var(--font-leading-6, 1.5rem); /* 150% */
+    line-height: var(--font-leading-6, 1.5rem); 
     letter-spacing: var(--font-tracking-normal, 0rem);
   ">
     Highway Features
@@ -162,6 +286,8 @@ right: 1rem;
       (Choose multiple)
     </span>
   </h3>
+
+</div>
   <button class="toggle-button" data-target="highway-flow-checkboxes" 
   
   style = "color: var(--theme-foreground, #020618);
@@ -196,7 +322,37 @@ right: 1rem;
     <!-- Add checkboxes for highway flows -->
   </div>
 
+
+
+  <div style=
+    
+" 
+margin-top: 4.5rem;
+display: flex; 
+align-items: flex-start; 
+gap: 0.5rem; "
+>
+
+<button id="point-icon" style= "
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  background: transparent; 
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+">
+   <svg width="1.5rem" height="1.5rem" style="width: 1.5rem; height: 1.5rem;" fill="none" stroke="currentColor" stroke-width="1.5"
+   viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+           xmlns="http://www.w3.org/2000/svg">
+        <path d='M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0'/>
+        <path d='M9.75 12V8.5a.5.5 0 0 1 .5-.5h3a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5zm0 0v4'/>
+      </svg>
+</button>
+
   <h3 style="
+  padding: 0; 
   color: var(--theme-foreground, #020618);
   font-family: var(--font-family-sans, Inter);
   font-size: var(--font-size-base, 1rem);
@@ -216,6 +372,8 @@ letter-spacing: var(--font-tracking-normal, 0rem);
 ">
 (Choose multiple)
 </span></h3>
+
+  </div>
   <button class="toggle-button" data-target="point-refuel-checkboxes" style = "color: var(--theme-foreground, #020618);
 
   font-family: var(--font-family-sans, Inter);
@@ -307,7 +465,6 @@ box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0
   ">
   <h2 style = "color: var(--theme-foreground, #020618);
 
-  /* text-xl/semibold */
   font-family: var(--font-family-sans, Inter);
   font-size: var(--font-size-xl, 1.25rem);
   font-style: normal;
@@ -523,10 +680,10 @@ box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0
     function updatePublicWidth() {
       if (publicContent.style.display !== 'none' && publicContent.children.length > 0) {
         layerSelection.style.width = '23.625rem'; 
-        layerSelection.style.height = '50rem'; 
+        layerSelection.style.height = '29.6875rem'; 
       } else {
-        layerSelection.style.width = '170px';
-        layerSelection.style.height = '44px'; 
+        layerSelection.style.width = '10.625rem';
+        layerSelection.style.height = '2.75rem'; 
       }
     }
 
@@ -534,20 +691,17 @@ box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0
     publicContent.addEventListener('DOMNodeInserted', updatePublicWidth);
     publicContent.addEventListener('DOMNodeRemoved', updatePublicWidth);
 
-
-
-    let isOpen = publicContent.style.display !== 'none';
+    let isOpen = window.getComputedStyle(publicContent).display !== 'none';
 
     toggleButton.addEventListener('click', function () {
       isOpen = !isOpen;
       publicContent.style.display = isOpen ? 'block' : 'none';
       updatePublicWidth();
-
-      chevronPath .setAttribute(
+      chevronPath.setAttribute(
         'd',
         isOpen
-          ? 'm6 6 6 6 6-6M6 12l6 6 6-6' 
-          : 'm18 12-6-6-6 6m12 6-6-6-6 6' 
+          ? 'm6 6 6 6 6-6M6 12l6 6 6-6'
+          : 'm18 12-6-6-6 6m12 6-6-6-6 6'
       );
     });
   });

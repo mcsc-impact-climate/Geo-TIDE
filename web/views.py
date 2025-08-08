@@ -15,7 +15,7 @@ STORAGE_URL_PRIVATE = 'https://mcsc-datahub-files.s3.us-west-2.amazonaws.com/'
 # Create an ordered dictionary to maintain the order of items
 geojsons = OrderedDict()
 
-geojson_directory = "geojsons_simplified"
+geojson_directory = "geojson_files"
 uploaded_geojson_directory = "user_upload_files/"
 
 # Total domestic Imports and Exports
@@ -120,11 +120,11 @@ geojsons["Savings from Pooled Charging Infrastructure"] = os.path.join(
 # Estimated lifecycle costs and emissions per mile for Tesla Semi
 geojsons["Lifecycle Truck Emissions"] = os.path.join(
     geojson_directory,
-    "costs_and_emissions/state_emissions_per_mile_payload40000_avVMT100000.geojson",
+    "costs_and_emissions_new/state_emissions_per_mile_payload40000_avVMT100000_avRange400.geojson",
 )
 geojsons["Total Cost of Truck Ownership"] = os.path.join(
     geojson_directory,
-    "costs_and_emissions/costs_per_mile_payload40000_avVMT100000_maxChP400.geojson",
+    "costs_and_emissions_new/costs_per_mile_payload40000_avVMT100000_maxChP400_avRange400.geojson",
 )
 geojsons["Energy Demand from Electrified Trucking"] = os.path.join(
     geojson_directory, "trucking_energy_demand.geojson"
@@ -231,7 +231,7 @@ def get_geojson(request, geojson_name=""):
             os.path.splitext(os.path.basename(geojson_path))[0] + ".geojson"
         )
         with default_storage.open(
-            f"/geojsons_simplified/{geojson_filename}", mode="r"
+            f"/geojson_files/{geojson_filename}", mode="r"
         ) as geojson_file:
             geojson_data = json.load(geojson_file)
         return HttpResponse(json.dumps(geojson_data), content_type="application/json")

@@ -588,9 +588,9 @@ box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0
 <script>
   const GET_GEOJSONS = '{% url "get-geojsons" %}';
   const GET_GEOJSON = '{% url "get-geojson" %}';
-  const STORAGE_URL = "https://mcsc-datahub-public.s3.us-west-2.amazonaws.com/";
+  const STORAGE_URL = "https://mcsc-geotide-geojson-files.s3.us-west-2.amazonaws.com/";
   const CSV_URL =
-    "https://raw.githubusercontent.com/mcsc-impact-climate/FAF5-Analysis/main/data/incentives_and_regulations/state_level/";
+    "https://mcsc-geotide-geojson-files.s3.us-west-2.amazonaws.com/csv_files/";
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 <script type="module" src='{% static "main.js"%}'></script>

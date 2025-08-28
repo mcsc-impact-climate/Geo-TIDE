@@ -12,6 +12,7 @@ import {
   showStateRegulations,
   getAreaLayerName,
   createZefFilenames,
+  showHourlyGridEmissions,
 } from './ui.js';
 import {
   legendLabels,

@@ -1,7 +1,7 @@
 [project]
-name = "Geo-FTADS"
+name = "Geo-TIDE"
 version = "0.1.0"
-description = "MCSC Geospatial Fleet Transition Assessment and Decision Support Tool"
+description = "MCSC Geospatial Trucking Industry Decarbonization Explorer"
 authors = ["Danika MacDonell <danikam@mit.edu>"]
 channels = ["conda-forge"]
 platforms = ["osx-arm64", "osx-64", "linux-64", "win-64"]

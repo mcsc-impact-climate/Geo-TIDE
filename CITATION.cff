@@ -1,14 +1,16 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 authors:
-- family-names: "MacDonell"
+- family-names: "Eamer"
   given-names: "Danika"
   orcid: "https://orcid.org/0000-0001-5533-6300"
 - family-names: "Kasami"
   given-names: "Brilant"
+- family-names: "Bao"
+  given-names: "Brooke"
   
-title: "Geo-FTADS"
+title: "Geospatial Trucking Industry Decarbonization Explorer (Geo-TIDE)"
 version: v0.1.0
-#doi: zzz
-date-released: 2024-08-03
-url: "https://github.com/mcsc-impact-climate/geo_ftads"
+doi: https://doi.org/10.5281/zenodo.14804045
+date-released: 2025-02-04
+url: "https://github.com/mcsc-impact-climate/Geo_TIDE"

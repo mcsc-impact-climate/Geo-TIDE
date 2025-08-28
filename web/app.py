@@ -36,7 +36,7 @@ def serve_js(filename):
 # Create an ordered dictionary to maintain the order of items
 geojsons = OrderedDict()
 
-geojson_directory = "geojsons_simplified"
+geojson_directory = "geojson_files"
 
 # Total domestic Imports and Exports
 geojsons["Truck Imports and Exports"] = os.path.join(
@@ -135,7 +135,7 @@ def get_geojson():
 
     geojson_path = geojsons[geojson_name]
     geojson_directory = os.path.abspath(
-        os.path.join(os.path.dirname(__file__), "../geojsons_simplified")
+        os.path.join(os.path.dirname(__file__), "../geojson_files")
     )
     if filename == "":
         geojson_filename = os.path.join(

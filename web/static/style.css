@@ -714,5 +714,25 @@ ul {
   justify-content: space-between;
   width: 100%;
   height: 80%; /* Ensures the graphs take up 80% of the modal height */
+  padding: 0;
+  margin: 0;
+}
+
+
+.graph-wrapper {
+  display: flex;
+  gap: 10px;           /* space between charts */
+  flex-wrap: wrap;     /* allows wrapping on small screens */
+}
+
+.chart-container {
+  flex: 1;
+  min-width: 300px;
+  max-width: 600px;
+}
+
+.chart-container canvas {
+  width: 100%;
+  height: auto;
 }
 

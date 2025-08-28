@@ -633,7 +633,7 @@ async function showHourlyGridEmissions(zoneName, properties, layerName) {
 
   const hourlyCsvFileName = `${zoneName}_avg_std_dist.csv`  // 24 hour chart
   const dailyCsvFileName = `${zoneName}_daily_avg_std.csv`  // over the years
-
+  const weeklyCsvFileName = `${zoneName}_weekly_summary.csv` 
   // HTML for display
   content.innerHTML = `
   <span class="close-hourly-grid-emissions">&times;</span>
@@ -652,8 +652,10 @@ async function showHourlyGridEmissions(zoneName, properties, layerName) {
 </div>
 
   <p>Data sources for <strong>${zoneName}</strong>:<br>
-  <a href="${CSV_URL_HOURLYEMISSIONS}${hourlyCsvFileName}" target="_blank">${hourlyCsvFileName}24 Hour Grid Emissions</a><br>
-  <a href="${CSV_URL_DAILYEMISSIONS}${dailyCsvFileName}" target="_blank">${dailyCsvFileName}Yearly Grid Emissions</a>
+  <a href="${CSV_URL_HOURLYEMISSIONS}${hourlyCsvFileName}" target="_blank">24 Hour Grid Emissions (${hourlyCsvFileName})</a><br>
+  <a href="${CSV_URL_DAILYEMISSIONS}${dailyCsvFileName}" target="_blank">Yearly Grid Emissions by Day (${dailyCsvFileName})</a><br>
+  <a href="${CSV_URL_WEEKLYEMISSIONS}${weeklyCsvFileName}" target="_blank">Yearly Grid Emissions by Week (${weeklyCsvFileName})</a>
+
   </p>
 `;
   try {
@@ -667,9 +669,9 @@ async function showHourlyGridEmissions(zoneName, properties, layerName) {
     const csvText = await response.text();
 
     // Parse CSV data (using PapaParse or manual processing)
-    const data = Papa.parse(csvText, { header: true }).data; // Ensure PapaParse is included in your project
+    const data = Papa.parse(csvText, { header: true }).data; // Ensure PapaParse is included in project
 
-    // Extract relevant data for the graph
+    // Extract relevant data for the graph, daily
     const labels = data.map(row => row.datetime); // Column for time of day, called datetime in csv
     const emissions = data.map(row => parseFloat(row.mean)); // Column for mean emissions, called mean in csv
     const hourlystd = data.map(row => parseFloat(row.std));
@@ -677,12 +679,13 @@ async function showHourlyGridEmissions(zoneName, properties, layerName) {
     const hourly_upperBound = emissions.map((val, i) => val + hourlystd[i]); //values that will become shaded region
     const hourly_lowerBound = emissions.map((val, i) => val - hourlystd[i]);
 
-    //daily emissions
+    //hourly emissions
     const dailyResponse = await fetch(`${CSV_URL_DAILYEMISSIONS}${dailyCsvFileName}`);
+    console.log(`${CSV_URL_DAILYEMISSIONS}${dailyCsvFileName}`)
     if (!dailyResponse.ok) throw new Error(`Failed to fetch daily CSV: ${dailyResponse.statusText}`);
     const dailyCsvText = await dailyResponse.text();
     const dailyData = Papa.parse(dailyCsvText, { header: true }).data;
-
+    console.log(dailyData)
     const dailyLabels = dailyData.map(row => row.datetime);
     const dailyEmissions = dailyData.map(row => parseFloat(row.mean));
 
@@ -699,8 +702,18 @@ async function showHourlyGridEmissions(zoneName, properties, layerName) {
     const titleElement = content.querySelector('h1');
     titleElement.textContent = `Hourly & Weekly Grid Emissions for ${zoneName} from ${dateRangeString}`;
     
+    // downloads and parses weekly csv file
+      const weeklyPercentileResponse = await fetch(`${CSV_URL_WEEKLYEMISSIONS}${weeklyCsvFileName}`);
+      if (!weeklyPercentileResponse.ok) throw new Error(`Failed to fetch weekly percentile CSV: ${weeklyPercentileResponse.statusText}`);
+      const weeklyCsvText = await weeklyPercentileResponse.text();
+      const weeklyParsedData = Papa.parse(weeklyCsvText, { header: true }).data;
+    
+
     // Remove the loading indicator
     content.querySelector('p').remove();
+const graphWrapper = document.querySelector(".graph-wrapper");
+
+
 
     // Render the hourly emissions chart
     const ctx = document.getElementById('emissionsChart').getContext('2d');
@@ -716,14 +729,14 @@ async function showHourlyGridEmissions(zoneName, properties, layerName) {
           borderWidth: 1,
         },
         {
-          label: 'Standard Dev: Upper Bound',
+          label: 'Mean + 1σ',
           data: hourly_upperBound,
           borderColor: 'rgba(181, 245, 245, 0.5)',
           borderWidth: 1,
           backgroundColor: 'rgba(181, 245, 245, 0.2)'
         },
         {
-          label: 'Standard Dev: Lower Bound',
+          label: 'Mean - 1σ',
           data: hourly_lowerBound,
           borderColor: 'rgba(181, 245, 245, 0.5)',
           borderWidth: 1,
@@ -757,10 +770,106 @@ async function showHourlyGridEmissions(zoneName, properties, layerName) {
         }
       }
     });
+  
+
+
+//Weekly over the year
+// Extract data
+const weekLabels = weeklyParsedData.map(row => row.week);
+const weeklyMean = weeklyParsedData.map(row => parseFloat(row.mean));
+//const p5 = weeklyParsedData.map(row => parseFloat(row["5%"]));  //conts for percentile
+//const p95 = weeklyParsedData.map(row => parseFloat(row["95%"]));
+const weeklyStd   = weeklyParsedData.map(row => {
+  const v = parseFloat(row.std ?? row.STD ?? row.standard_deviation);
+  return Number.isFinite(v) ? v : 0; // if missing
+});
+
+// shading on chart
+const weeklyUpper = weeklyMean.map((m, i) => m + weeklyStd[i]);
+const weeklyLower = weeklyMean.map((m, i) => m - weeklyStd[i]);
+
+// Render new chart
+const ctxWeeklyPercentile = document.getElementById('dailyEmissionsChart').getContext('2d');
+
+new Chart(ctxWeeklyPercentile, {
+  type: 'line',
+  data: {
+    labels: weekLabels,
+    datasets: [
+      {
+        label: 'Weekly Mean Emissions',
+        data: weeklyMean,
+        borderColor: 'blue',
+        borderWidth: 2,
+        tension: 0.3,
+        fill: false
+      },
+      {
+        label: 'Mean + 1σ',
+        data: weeklyUpper,
+        borderColor: 'rgba(100, 100, 255, 0)',
+        backgroundColor: 'rgba(100, 100, 255, 0.2)',
+        fill: '-1'
+      },
+      {
+        label: 'Mean - 1σ',
+        data: weeklyLower,
+        borderColor: 'rgba(100, 100, 255, 0)',
+        backgroundColor: 'rgba(100, 100, 255, 0.2)',
+        fill: '-1'
+      }
+      /*{
+        label: '5th Percentile',                        //for percentiles
+        data: p5,
+        borderColor: 'rgba(100, 100, 255, 0)',
+        backgroundColor: 'rgba(100, 100, 255, 0.2)',
+        fill: '-1'
+      },
+      {
+        label: '95th Percentile',
+        data: p95,
+        borderColor: 'rgba(100, 100, 255, 0)',
+        backgroundColor: 'rgba(100, 100, 255, 0.2)',
+        fill: '-1'
+      }*/
+    ]
+  },
+  
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      title: {
+        display: true,
+        text: 'Weekly Mean & Percentile Range',
+        font: { size: 18 }
+      }
+    },
+    scales: {
+      x: {
+        title: { display: true, text: 'Week Starting Date' },
+      ticks: {
+        callback: function(value, index) {
+          // Only show every 2nd label (adjust number as needed)
+          return index % 8 === 0 ? this.getLabelForValue(value) : '';
+        }
+      }
+
+
+      },
+      y: {
+        title: { display: true, text: 'Emissions (gCO₂e/kWh)' }
+      }
+    }
+  }
+});
+
+/*
+
 // Function to group data by week and compute averages
 function aggregateByWeek(data) {
   const weeklyData = {};
-  
+  //console.log(data);
   data.forEach(row => {
     const date = new Date(row.datetime);
     const weekStartDate = getMondayOfWeek(date); // Get the first day (Monday) of the week
@@ -778,6 +887,7 @@ function aggregateByWeek(data) {
   const weeklyLabels = Object.keys(weeklyData).sort((a, b) => new Date(a) - new Date(b)); // Sort weeks chronologically
   const weeklyAverages = weeklyLabels.map(key => weeklyData[key].sum / weeklyData[key].count);
   const weeklyStdDev = weeklyLabels.map(key => weeklyData[key].stdSum / weeklyData[key].count);
+  //console.log(weeklyData);
   
   return { weeklyLabels, weeklyAverages, weeklyStdDev };
 }
@@ -797,6 +907,7 @@ function formatDate(date) {
 }
 
 // Aggregate daily emissions into weekly averages with formatted labels
+console.log(dailyData)
 const { weeklyLabels, weeklyAverages, weeklyStdDev } = aggregateByWeek(dailyData);
 
 // Calculate upper and lower bounds for standard deviation shading
@@ -805,7 +916,7 @@ const lowerBound = weeklyAverages.map((val, i) => val - weeklyStdDev[i]);
 
 
 // Render weekly emissions chart
-const ctxWeekly = document.getElementById('dailyEmissionsChart').getContext('2d');
+/* const ctxWeekly = document.getElementById('dailyEmissionsChart').getContext('2d');
 new Chart(ctxWeekly, {
   type: 'line',
   data: {
@@ -851,8 +962,7 @@ new Chart(ctxWeekly, {
       y: { title: { display: true, text: 'Weekly Average Emissions (gCO₂e/kWh)' } }
     }
   }
-});
-
+}); */
 
   } catch (error) {
     content.innerHTML += `<p>Error loading data: ${error.message}</p>`;

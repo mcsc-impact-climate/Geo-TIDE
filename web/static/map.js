@@ -12,6 +12,7 @@ import {
   showStateRegulations,
   getAreaLayerName,
   createZefFilenames,
+  showHourlyGridEmissions,
 } from './ui.js';
 import {
   legendLabels,
@@ -161,7 +162,16 @@ function handleMapClick(event) {
         }
       }
     }
-  });
+    else if (layerName == 'Hourly Grid Emissions') {
+      if (feature) {
+        const properties = feature.getProperties();
+        const zoneName = properties.zoneName;
+        //console.log(zoneName);
+        showHourlyGridEmissions(zoneName, properties, layerName);
+      }
+    }
+  }
+);
 }
 
 // Initialize an empty layer cache
@@ -875,7 +885,7 @@ if (isNew) {
   updateLegendWidth();
 }
 
-async function fetchCSVData(csvFileName) {
+async function fetchCSVData(csvFileName, CSV_URL) {
   const csvUrl = `${CSV_URL}${csvFileName}`;
   console.log(`Fetching CSV from URL: ${csvUrl}`); // Debug logging
   try {
@@ -1102,7 +1112,6 @@ function enforceLayerOrder(layerNames) {
     }
   });
 }
-
 export {
   initMap,
   updateSelectedLayers,

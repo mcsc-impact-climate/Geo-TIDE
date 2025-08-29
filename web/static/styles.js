@@ -47,6 +47,8 @@ function hslToRgb(h, s, l) {
     const hue2rgb = function (p, q, t) {
       if (t < 0) t += 1;
       if (t > 1) t -= 1;
+      
+      
       if (t < 1 / 6) return p + (q - p) * 6 * t;
       if (t < 1 / 2) return q;
       if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
@@ -294,6 +296,7 @@ function isLineStringLayer(layer) {
   const geometryType = features[0].getGeometry().getType();
   return geometryType === 'LineString' || geometryType === 'MultiLineString';
 }
+
 
 export {
   createStyleFunction,

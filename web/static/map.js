@@ -22,24 +22,19 @@ import {
   zefOptions,
   selectedZefOptions,
   selectedZefSubLayers,
-} from './name_maps.js';
-
-import {
   faf5Options,
   selectedFaf5Options,
-  gridEmissionsOptions, 
-  selectedGridEmissionsOptions, 
-  hourlyEmissionsOptions, 
-  selectedHourlyEmissionsOptions, 
-  stateSupportOptions, 
+  gridEmissionsOptions,
+  selectedGridEmissionsOptions,
+  hourlyEmissionsOptions,
+  selectedHourlyEmissionsOptions,
+  stateSupportOptions,
   selectedStateSupportOptions,
-  tcoOptions, 
-  selectedTcoOptions, 
-  emissionsOptions, 
-  selectedEmissionsOptions, 
+  tcoOptions,
+  selectedTcoOptions,
+  emissionsOptions,
+  selectedEmissionsOptions,
 } from './name_maps.js';
-
-
 
 var vectorLayers = [];
 var map;

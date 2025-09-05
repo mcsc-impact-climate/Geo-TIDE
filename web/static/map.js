@@ -22,6 +22,18 @@ import {
   zefOptions,
   selectedZefOptions,
   selectedZefSubLayers,
+  faf5Options,
+  selectedFaf5Options,
+  gridEmissionsOptions,
+  selectedGridEmissionsOptions,
+  hourlyEmissionsOptions,
+  selectedHourlyEmissionsOptions,
+  stateSupportOptions,
+  selectedStateSupportOptions,
+  tcoOptions,
+  selectedTcoOptions,
+  emissionsOptions,
+  selectedEmissionsOptions,
 } from './name_maps.js';
 
 var vectorLayers = [];
@@ -70,14 +82,489 @@ async function attachEventListeners() {
       }
     });
   });
+}
+ function convertDropdownIdToLabel(dropdownId) {
+    let label = dropdownId.replace('-dropdown', '');
+  
+    label = label.replace(/-/g, ' ');
+  
+    label = label.toLowerCase();
+  
+    return label;
+  }
 
-  // Automatically update when area layer dropdown changes
+  function createExtraAttributes(s, k, c, e, p) {
+    const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 5 5" fill="none"style="width: 0.27344rem; height: 0.27344rem; flex-shrink: 0; margin-right: 4px;">
+    <path d="M2.5 4.13C2.1 4.13 1.73 4.03 1.4 3.84C1.07 3.64 0.8 3.37 0.6 3.04C0.41 2.71 0.31 2.34 0.31 1.94C0.31 1.54 0.41 1.17 0.6 0.84C0.8 0.51 1.07 0.25 1.4 0.05C1.73 -0.14 2.1 -0.24 2.5 -0.24C2.9 -0.24 3.27 -0.14 3.6 0.05C3.93 0.25 4.19 0.51 4.39 0.84C4.59 1.17 4.69 1.54 4.69 1.94C4.69 2.34 4.59 2.71 4.39 3.04C4.19 3.37 3.93 3.64 3.6 3.84C3.27 4.03 2.9 4.13 2.5 4.13Z" fill="#62748E"/>
+ </svg>
+`.trim();
+      if ((k === "geojsons_simplified/faf5_freight_flows/mode_truck_commodity_all_origin_all_dest_all.geojson") || (k === "Truck Imports and Exports")){
+        const label1HTML = `<span>${svgIcon}Commodity: </span>`;
+        let value1HTML = p["Commodity"]
+        if (s != "default") {
+        value1HTML = c; 
+        }
+        return `${label1HTML}&${value1HTML}&&&&`;
+      }
+
+
+      else if ((k ==="geojsons_simplified/grid_emission_intensity/eia2022_state_merged.geojson") || (k === "Grid Emission Intensity")){
+
+        const label1HTML = `<span>${svgIcon}Visualize by: </span>`;
+
+        let value1HTML = p["Visualize By"]; 
+
+        if (s != "default") {
+          value1HTML = c; 
+          }
+        return `${label1HTML}&${value1HTML}&&&&`;
+      }
+
+      else if ((
+        k ===
+        "geojsons_simplified/daily_grid_emission_profiles/daily_grid_emission_profile_hour0.geojson"
+      )  || (k === "Hourly Grid Emissions")){
+  
+        const label1HTML = `<span>${svgIcon}Hour of day: </span>`;
+        let value1HTML = p["Hour of Day"]; 
+
+        if (s != "default") {
+          value1HTML = c; 
+          }
+  
+        return `${label1HTML}&${value1HTML}&&&&`;
+      }
+
+      else if ((
+        k ===
+        "geojsons_simplified/incentives_and_regulations/all_incentives_and_regulations.geojson"
+      ) || (k === "State-Level Incentives and Regulations")) {
+  
+        const label1HTML = `<span>${svgIcon}Support type: </span>`;
+        const label1Text = "support type"
+        let value1HTML = p["Support Type"]; 
+        if (value1HTML == null) {
+          value1HTML = "Incentives and Regulations"; 
+        }
+        if (label1Text in p){
+          value1HTML = p[label1Text]; 
+        }
+        const label2HTML = `<span>${svgIcon}Support target: </span>`; 
+        let value2HTML = p["Support Target"]; 
+        if (value2HTML == null) {
+          value2HTML = "All Targets"; 
+        }
+        const label2Text = "support target"
+
+        if (label2Text in p){
+          value2HTML = p[label2Text]; 
+        }
+
+        
+  
+        if (s != "default") {
+
+          if (convertDropdownIdToLabel(e) === label1Text){
+            value1HTML = c; 
+          }
+          else if (convertDropdownIdToLabel(e)=== label2Text){
+            value2HTML = c; 
+          }
+          }
+        return `${label1HTML}&${value1HTML}&${label2HTML}&${value2HTML}&&`;
+      }
+
+      else if ((
+        k === "geojsons_simplified/costs_and_emissions/state_emissions_per_mile_payload40000_avVMT100000.geojson"
+       
+      ) || (k === "Lifecycle Truck Emissions")) {
+
+       
+
+
+  
+        const label1HTML = `<span>${svgIcon}Average payload: </span>`;
+        const label1Text = "average payload"; 
+        
+
+         let value1HTML = p["Average Payload"]
+        if (value1HTML == null){
+          value1HTML = "40,000 lb";
+        }
+
+        if (label1Text in p){
+          value1HTML = p[label1Text]; 
+        }
+
+
+
+        const label2HTML = `<span>${svgIcon}Average VMT: </span>`; 
+        const label2Text = "average vmt"; 
+        let value2HTML = p["Average VMT"]
+        if (value2HTML == null){
+          value2HTML = "100,000 miles";
+        }
+
+        if (label2Text in p){
+          value2HTML = p[label2Text]; 
+        }
+
+        const label3HTML = `<span>${svgIcon}Visualize by: </span>`; 
+        const label3Text = "visualize by"; 
+
+        let value3HTML = p["Visualize By"]
+        if (value3HTML == null){
+          value3HTML = "State";
+        } 
+
+        if (label3Text in p){
+          value3HTML = p[label3Text]; 
+        }
+
+        if (s != "default") {
+          if (convertDropdownIdToLabel(e) === label1Text){
+            value1HTML = c; 
+          }
+          else if (convertDropdownIdToLabel(e)=== label2Text){
+            value2HTML = c; 
+          }
+          else if (convertDropdownIdToLabel(e)=== label3Text){
+            value3HTML = c; 
+          }
+          }
+  
+        return `${label1HTML}&${value1HTML}&${label2HTML}&${value2HTML}&${label3HTML}&${value3HTML}`;
+      }
+
+      else if ((
+        k === "geojsons_simplified/costs_and_emissions/costs_per_mile_payload40000_avVMT100000_maxChP400.geojson"
+       
+      ) || (k === "Total Cost of Truck Ownership")) {
+  
+        const label1HTML = `<span>${svgIcon}Average payload: </span>`;
+        const label1Text = "average payload"; 
+        let value1HTML = p["Average Payload"]
+        if (value1HTML == null){
+          value1HTML = "40,000 lb";
+        }
+        if (label1Text in p){
+          value1HTML = p[label1Text]; 
+        }
+
+        const label2HTML = `<span>${svgIcon}Average VMT: </span>`; 
+        const label2Text = "average vmt"; 
+
+        let value2HTML = p["Average VMT"]
+        if (value2HTML == null){
+          value2HTML = "100,000 miles";
+        }
+
+        if (label2Text in p){
+          value2HTML = p[label2Text]; 
+        }
+
+
+        const label3HTML = `<span>${svgIcon}Max charging power: </span>`; 
+        const label3Text = "charging power"; 
+        let value3HTML = p["Max Charging Power"];
+        if (value3HTML == null){
+          value3HTML =   "400 kW"; 
+        }
+        
+        if (label3Text in p){
+          value3HTML = p[label3Text]; 
+        }
+
+        if (s != "default") {
+          if (convertDropdownIdToLabel(e) === label1Text){
+            value1HTML = c; 
+          }
+          else if (convertDropdownIdToLabel(e)=== label2Text){
+            value2HTML = c; 
+          }
+          else if (convertDropdownIdToLabel(e)=== label3Text){
+            value3HTML = c; 
+          }
+          }
+        return `${label1HTML}&${value1HTML}&${label2HTML}&${value2HTML}&${label3HTML}&${value3HTML}`;
+    }
+
+    else if ((
+      k === "Savings from Pooled Charging Infrastructure")) {
+
+      const label1HTML = `<span>${svgIcon}Truck Range: </span>`;
+      const label1Text = "range"; 
+      let value1HTML = "250 miles";
+      
+      if (label1Text in p){
+        value1HTML = p[label1Text]; 
+      }
+
+      const label2HTML = `<span>${svgIcon}Charging Time: </span>`; 
+      const label2Text = "chargingtime"; 
+
+      let value2HTML = "4 hours";
+      
+
+      if (label2Text in p){
+        value2HTML = p[label2Text]; 
+      }
+
+
+      const label3HTML = `<span>${svgIcon}Max allowed wait time: </span>`; 
+      const label3Text = "maxwaittime"; 
+      let value3HTML =  "30 minutes"; 
+      
+      
+      if (label3Text in p){
+        value3HTML = p[label3Text]; 
+      }
+
+      if (s != "default") {
+        if (convertDropdownIdToLabel(e) === label1Text){
+          value1HTML = c; 
+        }
+        else if (convertDropdownIdToLabel(e)=== label2Text){
+          value2HTML = c; 
+        }
+        else if (convertDropdownIdToLabel(e)=== label3Text){
+          value3HTML = c; 
+        }
+        }
+      return `${label1HTML}&${value1HTML}&${label2HTML}&${value2HTML}&${label3HTML}&${value3HTML}`;
+  }
+
+
+    return "&&&&&&"; 
+  }
+ function updateLabels(m, selectedValue, c, k, p){
+    const firstsectDiv = document.getElementById("firstsect"); 
+    const secsectDiv = document.getElementById("secsect");
+    const thirdsectDiv = document.getElementById("thirdsect"); 
+
+    const label1Span = document.querySelector("#public .label1"); 
+    const value1Span = document.querySelector("#public .value1"); 
+
+    const label2Span = document.querySelector("#public .label2"); 
+    const value2Span = document.querySelector("#public .value2"); 
+
+    const label3Span = document.querySelector("#public .label3"); 
+    const value3Span = document.querySelector("#public .value3"); 
+
+
+    const extraAttributes = createExtraAttributes(m, selectedValue, c, k, p);
+
+    const parts = extraAttributes.split("&");
+    const label1html = parts[0] || "";
+    const value1html = parts[1] || "";
+    const label2html = parts[2]|| "";
+    const value2html = parts[3] || "";
+    const label3html = parts[4]|| "";
+    const value3html = parts[5]|| "";
+
+    label1Span.innerHTML = label1html; 
+    value1Span.innerHTML = value1html;
+    label2Span.innerHTML = label2html; 
+    value2Span.innerHTML = value2html;
+    label3Span.innerHTML = label3html; 
+    value3Span.innerHTML = value3html;
+
+if (firstsectDiv) {
+  firstsectDiv.style.display = (label1html || value1html) ? "block" : "none";
+}
+
+if (secsectDiv) {
+  secsectDiv.style.display = (label2html || value2html) ? "block" : "none";
+}
+
+if (thirdsectDiv) {
+  thirdsectDiv.style.display = (label3html || value3html) ? "block" : "none";
+}
+};
+
+
+function updateLabels2(m, selectedValue, c, k, p){
+  const firstsectDiv = document.getElementById("firstsect-2"); 
+  const secsectDiv = document.getElementById("secsect-2");
+  const thirdsectDiv = document.getElementById("thirdsect-2"); 
+  const label1Span = document.querySelector("#public-2 .label1-2"); 
+  const value1Span = document.querySelector("#public-2 .value1-2"); 
+
+  const label2Span = document.querySelector("#public-2 .label2-2"); 
+  const value2Span = document.querySelector("#public-2 .value2-2"); 
+
+  const label3Span = document.querySelector("#public-2 .label3-2"); 
+  const value3Span = document.querySelector("#public-2 .value3-2"); 
+
+
+  const extraAttributes = createExtraAttributes(m, selectedValue, c, k, p);
+  const parts = extraAttributes.split("&");
+  const label1html = parts[0] || "";
+  const value1html = parts[1] || "";
+  const label2html = parts[2]|| "";
+  const value2html = parts[3] || "";
+  const label3html = parts[4]|| "";
+  const value3html = parts[5]|| "";
+
+
+  label1Span.innerHTML = label1html; 
+  value1Span.innerHTML = value1html;
+  label2Span.innerHTML = label2html; 
+  value2Span.innerHTML = value2html;
+  label3Span.innerHTML = label3html; 
+  value3Span.innerHTML = value3html;
+
+if (firstsectDiv) {
+firstsectDiv.style.display = (label1html || value1html) ? "block" : "none";
+}
+
+if (secsectDiv) {
+secsectDiv.style.display = (label2html || value2html) ? "block" : "none";
+}
+
+if (thirdsectDiv) {
+thirdsectDiv.style.display = (label3html || value3html) ? "block" : "none";
+}
+};
+
+
+  const transformEmissionsDict = gridEmissionsOptions["Visualize By"]; 
+  const transformFafDict = faf5Options["Commodity"]; 
+  const transformHourlyDict = hourlyEmissionsOptions["Hour of Day"]; 
+  const transformStateTypeDict = stateSupportOptions["Support Type"]; 
+  const transformStateTargetDict = stateSupportOptions["Support Target"]; 
+  const transformTco1Dict = tcoOptions["Average Payload"]; 
+  const transformTco2Dict = tcoOptions["Average VMT"]; 
+  const transformTco3Dict = tcoOptions["Max Charging Power"]; 
+  const transformE1Dict = emissionsOptions["Average Payload"]; 
+  const transformE2Dict = emissionsOptions["Average VMT"]; 
+  const transformE3Dict = emissionsOptions["Visualize By"]; 
+
+
+  function transformOneOptions(opt, transform, key){
+    const reversed = Object.fromEntries(
+      Object.entries(transform).map(([key, value]) => [value, key])
+    );
+    const newOpt = { ...opt };
+
+  newOpt[key] = reversed[newOpt[key]];
+
+  return newOpt;
+
+  }
+
+
+
+  function transformTwoOptions(opt, transform1, transform2, key1, key2){
+    const reversed1 = Object.fromEntries(
+      Object.entries(transform1).map(([key, value]) => [value, key])
+    );
+
+    const reversed2 = Object.fromEntries(
+      Object.entries(transform2).map(([key, value]) => [value, key])
+    );
+
+    const newOpt = { ...opt };
+
+    newOpt[key1] = reversed1[newOpt[key1]];
+    newOpt[key2] = reversed2[newOpt[key2]]; 
+
+  return newOpt;
+
+  }
+
+  function transformThreeOptions(opt, transform1, transform2, transform3, key1, key2, key3){
+    const reversed1 = Object.fromEntries(
+      Object.entries(transform1).map(([key, value]) => [value, key])
+    );
+
+    const reversed2 = Object.fromEntries(
+      Object.entries(transform2).map(([key, value]) => [value, key])
+    );
+
+    const reversed3 = Object.fromEntries(
+      Object.entries(transform3).map(([key, value]) => [value, key])
+    );
+
+    const newOpt = { ...opt };
+
+    newOpt[key1] = reversed1[newOpt[key1]];
+    newOpt[key2] = reversed2[newOpt[key2]]; 
+    newOpt[key3] = reversed3[newOpt[key3]]; 
+
+  return newOpt;
+
+  }
+
+  function updateSectionMargin1() {
+    const container = document.querySelector('.header-container'); 
+      container.style.marginTop = '1rem';
+  }
+
+
+  function updateSectionMargin2() {
+    const container = document.querySelector('.header-container'); 
+      container.style.marginTop = '3.5rem';
+  }
+  
+
+
   const areaDropdown = document.getElementById('area-layer-dropdown');
   if (areaDropdown) {
     areaDropdown.addEventListener('change', async () => {
       try {
         await updateSelectedLayers();
         updateLegend();
+
+        if (areaDropdown.value == "geojsons_simplified/faf5_freight_flows/mode_truck_commodity_all_origin_all_dest_all.geojson"){
+          const selected = transformOneOptions(selectedFaf5Options, transformFafDict, "Commodity")
+          updateLabels("default", areaDropdown.value, "", "", selected);
+          updateSectionMargin1(); 
+        }
+
+        else if (areaDropdown.value == "geojsons_simplified/grid_emission_intensity/eia2022_state_merged.geojson"){
+          const selected = transformOneOptions(selectedGridEmissionsOptions, transformEmissionsDict, "Visualize By")
+          updateLabels("default", areaDropdown.value, "", "", selected);
+          updateSectionMargin1(); 
+        }
+
+        else if (areaDropdown.value == "geojsons_simplified/daily_grid_emission_profiles/daily_grid_emission_profile_hour0.geojson" ){
+          const selected = transformOneOptions(selectedHourlyEmissionsOptions, transformHourlyDict, "Hour of Day")
+          updateLabels("default", areaDropdown.value, "", "", selected);
+          updateSectionMargin1(); 
+        }
+        else if (areaDropdown.value == "geojsons_simplified/incentives_and_regulations/all_incentives_and_regulations.geojson" ){
+          const selected = transformTwoOptions(selectedStateSupportOptions, transformStateTypeDict, transformStateTargetDict, "Support Type", "Support Target")
+          updateLabels("default", areaDropdown.value, "", "", selected);
+          updateSectionMargin1(); 
+        }
+
+        else if (areaDropdown.value == "geojsons_simplified/costs_and_emissions/costs_per_mile_payload40000_avVMT100000_maxChP400.geojson"){
+          const selected = transformThreeOptions(selectedTcoOptions, transformTco1Dict, transformTco2Dict, transformTco3Dict, "Average Payload", "Average VMT", "Max Charging Power")
+          updateLabels("default", areaDropdown.value, "", "", selected);
+          updateSectionMargin1(); 
+        }
+
+        else if (areaDropdown.value == "geojsons_simplified/costs_and_emissions/state_emissions_per_mile_payload40000_avVMT100000.geojson"){
+          const selected = transformThreeOptions(selectedEmissionsOptions, transformE1Dict, transformE2Dict, transformE3Dict, "Average Payload", "Average VMT", "Visualize By")
+          updateLabels("default", areaDropdown.value, "", "", selected);
+          updateSectionMargin1(); 
+        }
+
+
+        
+        else{
+
+          updateLabels("default", areaDropdown.value, "", "", {});
+          updateSectionMargin2(); 
+        }
+          
+        
+
+        
+       
+         
+        
       } catch (error) {
         console.error('Auto-update on area layer change failed:', error);
       }
@@ -92,7 +579,7 @@ async function attachEventListeners() {
         e.preventDefault(); // Block dropdown from opening
         window.lastClickWasMoreButton = false; // Reset the flag
       }
-    });
+    }); 
 
     // Use select2's specific events for handling changes
     uploadedLayerDropdown.on('select2:select', async (e) => {
@@ -117,7 +604,6 @@ async function attachEventListeners() {
   } else {
     console.error('usefiles-data-ajax not found in the DOM');
   }
-}
 
 let lastFeature = null;
 function handleMapHover(event) {
@@ -248,7 +734,6 @@ async function loadLayer(layerName, layerUrl = null, showApplySpinner = true) {
 }
 
 function removeLayer(layerName) {
-  console.log('In removeLayer'); 
   const layerIndex = vectorLayers.findIndex((layer) => layer.get('key') === layerName);
 
   if (layerIndex !== -1) {
@@ -911,7 +1396,6 @@ function isDictionary(obj) {
 document.getElementById('clear-button').addEventListener('click', function () {
 
   console.log('Clear button clicked');
-  console.log('new console line'); 
   event.stopPropagation(); // Prevent outside click handler from firing
 
   // Show confirmation modal
@@ -1120,4 +1604,8 @@ export {
   toggleZefSubLayer,
   layerCache,
   getAttributesForLayer,
+  updateLabels,
+  updateLabels2, 
+  convertDropdownIdToLabel,  
 };
+

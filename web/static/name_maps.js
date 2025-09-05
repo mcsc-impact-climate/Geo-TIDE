@@ -287,12 +287,20 @@ export const tcoOptions = {
     '400 kW': '400',
     '800 kW': '800',
   },
+  'Design Range': {
+    '100 miles': '100',
+    '200 miles': '200',
+    '300 miles': '300',
+    '400 miles': '400',
+    '500 miles': '500',
+  },
 };
 
 export let selectedTcoOptions = {
   'Average Payload': '40000',
   'Average VMT': '100000',
   'Max Charging Power': '400',
+  'Design Range': '400',
 };
 
 export const emissionsOptions = {
@@ -312,16 +320,24 @@ export const emissionsOptions = {
     '160,000 miles': '160000',
     '190,000 miles': '190000',
   },
-  'Visualize By': {
-    State: 'state_',
-    'Balancing Authority': 'ba_',
+  'Design Range': {
+    '100 miles': '100',
+    '200 miles': '200',
+    '300 miles': '300',
+    '400 miles': '400',
+    '500 miles': '500',
   },
+//  'Visualize By': {
+//    State: 'state_',
+//    'Balancing Authority': 'ba_',
+//  },
 };
 
 export let selectedEmissionsOptions = {
   'Average Payload': '40000',
   'Average VMT': '100000',
-  'Visualize By': 'state_',
+  'Design Range': '400',
+//  'Visualize By': 'state_',
 };
 
 export const gridEmissionsOptions = {

@@ -811,21 +811,21 @@ async function updateSelectedLayers() {
     if (selectedZefSubLayers['Hubs']) {
       zefSubLayers.push({
         name: `ZEF Corridor Strategy Phase ${phase} Hubs`,
-        url: `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Hubs.geojson`,
+        url: `${STORAGE_URL}geojson_files/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Hubs.geojson`,
       });
     }
 
     if (selectedZefSubLayers['Corridors']) {
       zefSubLayers.push({
         name: `ZEF Corridor Strategy Phase ${phase} Corridors`,
-        url: `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Corridors.geojson`,
+        url: `${STORAGE_URL}geojson_files/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Corridors.geojson`,
       });
     }
 
     if (selectedZefSubLayers['Facilities']) {
       zefSubLayers.push({
         name: `ZEF Corridor Strategy Phase ${phase} Facilities`,
-        url: `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Facilities.geojson`,
+        url: `${STORAGE_URL}geojson_files/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Facilities.geojson`,
       });
     }
 
@@ -1523,7 +1523,7 @@ async function applyLayerOptions(layerName, gradientAttribute) {
 
 async function toggleZefSubLayer(subName, checked) {
   const layerName = `ZEF Corridor Strategy Phase ${selectedZefOptions['Phase']} ${subName}`;
-  const layerUrl = `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${selectedZefOptions['Phase']}_${subName}.geojson`;
+  const layerUrl = `${STORAGE_URL}geojson_files/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${selectedZefOptions['Phase']}_${subName}.geojson`;
 
   // **Check if National ZEF Corridor Strategy is visible on the map**
   const parentLayerVisible = Object.keys(layerCache).some(

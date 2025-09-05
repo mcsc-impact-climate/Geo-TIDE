@@ -530,7 +530,7 @@ function convertToTitleCase(str) {
 
 function createTruckChargingFilename(selected_options_list) {
   return (
-    'geojsons_simplified/infrastructure_pooling_thought_experiment/' +
+    'geojson_files/infrastructure_pooling_thought_experiment/' +
     'Truck_Stop_Parking_Along_Interstate_with_min_chargers_range_' +
     selected_options_list['Range'] +
     '_chargingtime_' +
@@ -543,7 +543,7 @@ function createTruckChargingFilename(selected_options_list) {
 
 function createStateSupportFilename(selected_options_list) {
   return (
-    'geojsons_simplified/incentives_and_regulations/' +
+    'geojson_files/incentives_and_regulations/' +
     selected_options_list['Support Target'] +
     '_' +
     selected_options_list['Support Type'] +
@@ -562,32 +562,45 @@ function createStateSupportCSVFilename(selected_options_list) {
 
 function createTcoFilename(selected_options_list) {
   return (
-    'geojsons_simplified/costs_and_emissions/' +
+    'geojson_files/costs_and_emissions_new/' +
     'costs_per_mile_payload' +
     selected_options_list['Average Payload'] +
     '_avVMT' +
     selected_options_list['Average VMT'] +
     '_maxChP' +
     selected_options_list['Max Charging Power'] +
+    '_avRange' +
+    selected_options_list['Design Range'] +
     '.geojson'
   );
 }
 
 function createEmissionsFilename(selected_options_list) {
+  console.log('geojson_files/costs_and_emissions_new/state_' +
+              //    selected_options_list['Visualize By'] +
+                  'emissions_per_mile_payload' +
+                  selected_options_list['Average Payload'] +
+                  '_avVMT' +
+                  selected_options_list['Average VMT'] +
+                  '_avRange' +
+                  selected_options_list['Design Range'] +
+                  '.geojson')
   return (
-    'geojsons_simplified/costs_and_emissions/' +
-    selected_options_list['Visualize By'] +
+    'geojson_files/costs_and_emissions_new/state_' +
+//    selected_options_list['Visualize By'] +
     'emissions_per_mile_payload' +
     selected_options_list['Average Payload'] +
     '_avVMT' +
     selected_options_list['Average VMT'] +
+    '_avRange' +
+    selected_options_list['Design Range'] +
     '.geojson'
   );
 }
 
 function createGridEmissionsFilename(selected_options_list) {
   return (
-    'geojsons_simplified/grid_emission_intensity/' +
+    'geojson_files/grid_emission_intensity/' +
     selected_options_list['Visualize By'] +
     '_merged.geojson'
   );
@@ -595,7 +608,7 @@ function createGridEmissionsFilename(selected_options_list) {
 
 function createHourlyEmissionsFilename(selected_options_list) {
   return (
-    'geojsons_simplified/daily_grid_emission_profiles/daily_grid_emission_profile_hour' +
+    'geojson_files/daily_grid_emission_profiles/daily_grid_emission_profile_hour' +
     selected_options_list['Hour of Day'] +
     '.geojson'
   );
@@ -603,7 +616,7 @@ function createHourlyEmissionsFilename(selected_options_list) {
 
 function createFaf5Filename(selected_options_list) {
   return (
-    'geojsons_simplified/faf5_freight_flows/mode_truck_commodity_' +
+    'geojson_files/faf5_freight_flows/mode_truck_commodity_' +
     selected_options_list['Commodity'] +
     '_origin_all_dest_all.geojson'
   );
@@ -617,19 +630,19 @@ function createZefFilenames(selected_options_list) {
 
   if (selectedZefSubLayers['Corridors']) {
     filenames.push(
-      `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Corridors.geojson`
+      `${STORAGE_URL}geojson_files/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Corridors.geojson`
     );
     layerNames.push(`ZEF Corridor Strategy Phase ${phase} Corridors`);
   }
   if (selectedZefSubLayers['Facilities']) {
     filenames.push(
-      `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Facilities.geojson`
+      `${STORAGE_URL}geojson_files/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Facilities.geojson`
     );
     layerNames.push(`ZEF Corridor Strategy Phase ${phase} Facilities`);
   }
   if (selectedZefSubLayers['Hubs']) {
     filenames.push(
-      `${STORAGE_URL}geojsons_simplified/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Hubs.geojson`
+      `${STORAGE_URL}geojson_files/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${phase}_Hubs.geojson`
     );
     layerNames.push(`ZEF Corridor Strategy Phase ${phase} Hubs`);
   }
@@ -676,6 +689,7 @@ function createTcoDropdowns(key) {
       ['average-payload', 'Average Payload', 'Average payload: '],
       ['average-vmt', 'Average VMT', 'Average VMT: '],
       ['charging-power', 'Max Charging Power', 'Max charging power: '],
+      ['average-range', 'Design Range', 'Design Range: '],
     ],
     key,
     tcoOptions,
@@ -689,7 +703,8 @@ function createEmissionsDropdowns(key) {
     [
       ['average-payload', 'Average Payload', 'Average payload: '],
       ['average-vmt', 'Average VMT', 'Average VMT: '],
-      ['visualize-by', 'Visualize By', 'Visualize by: '],
+//      ['visualize-by', 'Visualize By', 'Visualize by: '],
+      ['average-range', 'Design Range', 'Design Range: '],
     ],
     key,
     emissionsOptions,

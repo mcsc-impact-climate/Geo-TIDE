@@ -5,85 +5,45 @@
   href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
   rel="stylesheet"
 />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 
 <div id="map" class="map"></div>
 
 <div id="legend">
-<div>
-  <h3 style="margin: 0; display: flex; align-items: center; justify-content: space-between; width: 100%; ">
-    <b style="
-      position: absolute;
-      top: 6px; 
-      left: 1rem; 
-      color: var(--theme-foreground, #020618);
-      font-family: var(--font-family-sans, Inter);
-      font-size: var(--font-size-xl, 1.25rem);
-      font-style: normal;
-      font-weight: var(--font-weight-semibold, 600);
-      line-height: var(--font-leading-7, 1.75rem);
-      letter-spacing: var(--font-tracking-normal, 0rem);
-    ">Legend</b>
-  </h3>
-  <button id="legend-toggle" style="
-        display: flex; 
-        align-items: center;
-        justify-content: center;
-        width: 1.5rem;
-        height: 1.5rem;
-        border: none;
-        background: transparent;
-        padding: 0;
-        position: absolute; 
-        top: 7px; 
-        right: 10px; 
-  ">
-    <svg id="chevron-toggle" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" style="transition: transform 0.3s ease;">
-      <path id="legend-chevron-path" d="m6 6 6 6 6-6M6 12l6 6 6-6"/>
-    </svg>
-  </button>
+  <div class="legend-header">
+    <h2 class="legend-title">Legend</h2>
+    <button id="legend-toggle" class="legend-toggle" aria-label="Toggle legend">
+      <svg id="chevron-toggle" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"
+           viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+           style="transition: transform 0.3s ease;">
+        <path id="legend-chevron-path" d="m6 6 6 6 6-6M6 12l6 6 6-6"/>
+      </svg>
+    </button>
+  </div>
+  <br>
+  <div id="legend-content" class="font-sans font-normal text-sm leading-5 tracking-normal align-middle"></div>
 </div>
 
-  <div id="legend-content" class="font-sans font-normal text-sm leading-5 tracking-normal align-middle">
-  </div>
-</div>
 
 
 <div
   id="layer-selection"
   style="
-    position: absolute;
-    bottom: 7rem; 
-    right: 1rem; 
-    padding: 10px;
-    width: 26.75rem;
-    height:35rem; 
-    flex-shrink: 0; 
-    border-radius: var(--Corner-Small, 0.5rem);
-    background: #FFF;
-    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
-    box-sizing: border-box;
+    bottom: 7rem;
+    height:35rem;
   "
 >
 
 
 <div style="display: flex; align-items: center; justify-content: space-between;">
-  <h2 style="
-  position: absolute;
-  top: 0.05rem;
-  left: 1.25rem;
-  color: var(--theme-foreground, #020618);
-  font-family: var(--font-family-sans, Inter);
-  font-size: var(--font-size-xl, 1.25rem);
-  font-style: normal;
-  font-weight: var(--font-weight-semibold, 600);
-  line-height: var(--font-leading-7, 1.75rem);
-  letter-spacing: var(--font-tracking-normal, 0rem);
-  margin: 0;
-">
+  <h2>
   Public Data
-</h2>
+  </h2>
   <button id="Public-toggle" class = "public-toggle">
 
 
@@ -406,24 +366,11 @@ letter-spacing: var(--font-tracking-normal, 0rem);
   </div>
 </div>
 <div
-  id="uploaded-layer-selection"
-  style = "position: absolute;
-  top: 275px; 
-  right: 10px;
-  width: 26.75rem;
-  height: 6.75rem;
-  flex-shrink: 0;
-  border-radius: var(--Corner-Small, 0.5rem);
-  background: #FFF;
-  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);">
+  id="uploaded-layer-selection">
   
-  <h2 style = "color: var(--theme-foreground, #020618);
-  font-family: var(--font-family-sans, Inter);
-  font-size: var(--font-size-xl, 1.25rem);
-  font-style: normal;
-  font-weight: var(--font-weight-semibold, 600);
-  line-height: var(--font-leading-7, 1.75rem); /* 140% */
-  letter-spacing: var(--font-tracking-normal, 0rem);">Uploaded Data</h2>
+  <h2>
+    Uploaded Data</h2>
+    <br>
   <select
     id="usefiles-data-ajax"
     multiple="multiple"

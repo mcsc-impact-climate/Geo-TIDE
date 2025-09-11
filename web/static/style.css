@@ -83,12 +83,35 @@ time,
 mark,
 audio,
 video {
-  font-family: Arial, sans-serif !important;
+  font-family: Inter, sans-serif !important;
+}
+
+html { font-size: 16px; }
+
+:root {
+  /* If Figma’s "xl" = 20px, set it explicitly: */
+  --font-size-xl: 1.25rem; /* or 1.25rem if html = 16px */
+}
+
+h2 {
+  font-family: var(--font-family-sans, 'Inter', system-ui, -apple-system, "Segoe UI",
+                   Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif) !important;
+  font-weight: var(--font-weight-semibold, 600);
+  font-size: var(--font-size-xl);
+  font-style: normal;
+  line-height: var(--font-leading-7, 1.75rem);
+  letter-spacing: var(--font-tracking-normal, 0rem);
+  text-align: left;
+  color: var(--theme-foreground, #020618);
+  top: 1.089375rem;
+  left: 1.089375rem;
+  margin: 0;
+  position: absolute;
 }
 
 body {
   font-weight: normal;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 #legend h3 {
@@ -105,16 +128,6 @@ body {
 #uploaded-layer-selection h3 {
   font-weight: bold;
   font-size: 16px;
-  padding-top: 5px;
-}
-
-#uploaded-layer-selection h2,
-#layer-selection h2 {
-  font-weight: bold;
-  font-size: 20px;
-  padding-top: 5px;
-  color: navy;
-  text-align: center;
 }
 
 #details-modal h2 {
@@ -787,6 +800,34 @@ ul {
   transition: background-color 1.5s ease;
 }
 
+/* Position the whole header block where your designer wants */
+#legend .legend-header {
+  position: absolute;
+  top: 0.5rem;       /* adjust to designer spec */
+  left: 1rem;        /* align header with box content */
+  right: 0.5rem;     /* chevron will anchor 0.5rem from right edge */
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* push title left, chevron right */
+}
+
+#legend .legend-header .legend-title {
+  position: static !important;
+  margin: 0;
+}
+
+/* Chevron button */
+#legend .legend-toggle {
+  all: unset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  cursor: pointer;
+}
+
+
 #legend {
   display: flex;
   flex-direction: column;
@@ -827,7 +868,6 @@ ul {
   box-sizing: border-box;
 }
 
-
 .legend-entry {
   display: flex;
   align-items: center;
@@ -851,9 +891,16 @@ ul {
 
 #layer-selection,
 #uploaded-layer-selection {
-  min-width: 100px;
-  max-width: 95vw; /* prevent overflow on small screens */
-  width: fit-content;
+  position: absolute;
+  width: 26.75rem;
+  flex-shrink: 0;
+  border-radius: var(--Corner-Small, 0.5rem);
+  background: #FFF;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+  padding: 10px;
+  right: 1rem;
+  box-sizing: border-box;
+
 }
 
 #uploaded-layer-selection .select2-selection--multiple {
@@ -867,7 +914,7 @@ ul {
 
 .separator {
   display: block;
-  left: 0.75rem; 
+  left: 0.75rem;
   border: 1px; 
   width: 29.75rem;
   height: 0.0625rem;
@@ -901,6 +948,7 @@ ul {
 #legend-content {
   display: flex;
   flex-direction: column;
+  padding-top: 1.25rem;
 }
 
 
@@ -911,11 +959,6 @@ ul {
   margin-bottom:0.45rem;
 
 }
-
-
-
-
-
 
 
 .firstsect,
@@ -1024,7 +1067,7 @@ ul {
                        Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif) !important;
       font-size: var(--font-size-sm, 1rem);
       font-style: normal;
-      font-weight: var (--font-weight-medium, 500);
+      font-weight: var(--font-weight-medium, 500);
       line-height: var(--font-leading-5, 1.25rem);
       letter-spacing: var(--font-tracking-normal, 0rem);
 }

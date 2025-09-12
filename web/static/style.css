@@ -89,8 +89,11 @@ video {
 html { font-size: 16px; }
 
 :root {
-  /* If Figma’s "xl" = 20px, set it explicitly: */
-  --font-size-xl: 1.25rem; /* or 1.25rem if html = 16px */
+  --font-size-xl: 1.25rem; /*20px*/
+  --font-size-sm: 0.875rem; /*14px*/
+  --legend-header-h: 1.75rem;   /* your h2 line-height */
+  --legend-header-pad: 0.5rem; /* top padding you use */
+  --legend-gap: 1rem;           /* desired gap below the title */
 }
 
 h2 {
@@ -173,69 +176,67 @@ body {
 
 .toggle-button {
   font-weight: normal;
-  font-size: 14px; 
+  font-size: 14px;
   padding-right: 5px;
-  padding-left: 5px; 
-
-
+  padding-left: 5px;
 }
 
 
 .button-container {
   display: flex;
-  flex-direction: column; 
-  gap: 0rem; 
+  flex-direction: column;
+  gap: 0rem;
   padding-top: 0rem;
-  margin-top: 50rem; 
+  margin-top: 50rem;
 
 }
 
 
 .button-container-2 {
   display: flex;
-  flex-direction: column; 
-  gap: 0rem; 
+  flex-direction: column;
+  gap: 0rem;
 }
 
 
 .button-row-1 {
   display: flex;
   align-items: center;
-  justify-content: space-between; 
-  padding-left: 1.5rem; 
-  gap: 10rem; 
+  justify-content: space-between;
+  padding-left: 1.5rem;
+  gap: 10rem;
 }
 
 .button-row-2 {
   display: flex;
   align-items: center;
-  justify-content: space-between; 
-  padding-left: 1.5rem; 
-  gap: 4.5rem; 
+  justify-content: space-between;
+  padding-left: 1.5rem;
+  gap: 4.5rem;
 }
 
 .button-row-3 {
   display: flex;
   align-items: center;
-  justify-content: space-between; 
-  padding-left: 1.5rem; 
-  gap: 8rem; 
+  justify-content: space-between;
+  padding-left: 1.5rem;
+  gap: 8rem;
 }
 
 .button-row-4 {
   display: flex;
   align-items: center;
-  justify-content: space-between; 
-  padding-left: 1.5rem; 
-  gap: 5rem; 
+  justify-content: space-between;
+  padding-left: 1.5rem;
+  gap: 5rem;
 }
 
 .button-row-5 {
   display: flex;
   align-items: center;
-  justify-content: space-between; 
-  padding-left: 1.5rem; 
-  gap: 5rem; 
+  justify-content: space-between;
+  padding-left: 1.5rem;
+  gap: 5rem;
 }
 
 .button-text-style {
@@ -245,15 +246,15 @@ body {
   font-size: var(--font-size-base, 1rem);
   font-style: normal;
   font-weight: var(--font-weight-normal, 400);
-  line-height: var(--font-leading-6, 1.5rem); 
+  line-height: var(--font-leading-6, 1.5rem);
   letter-spacing: var(--font-tracking-normal, 0rem);
-  white-space: nowrap; 
+  white-space: nowrap;
   margin-left: 0.75rem;
 
 }
 
 .show-button {
-  all: unset; 
+  all: unset;
   width: 1rem;
   height: 1rem;
   flex-shrink: 0;
@@ -428,10 +429,10 @@ body {
   position: relative;
   font-size: 14px;
   display: flex;
-  align-items: flex-start;  
+  align-items: flex-start;
   justify-content: flex-start;
   width: 100%;
-  gap: 0.75rem; 
+  gap: 0.75rem;
 }
 
 .checkbox-container input[type='checkbox']{
@@ -445,14 +446,14 @@ flex-shrink: 0;
 border-radius: var(--radius-sm, 0.25rem);
 border: 1px solid var(--theme-primary, #155DFC);
 background: var(--theme-background, #FFF);
-  accent-color: #155DFC; 
+  accent-color: #155DFC;
 }
 
 .checkbox-container label {
   vertical-align: middle;
-  flex: 1;               
-  min-width: 0;            
-  overflow-wrap: anywhere; 
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 /* Style for the 'Details' button */
@@ -466,27 +467,27 @@ background: var(--theme-background, #FFF);
   gap: var(--spacing-1-5, 0.375rem);
   flex-shrink: 0;
   border-radius: var(--radius-md, 0.375rem);
-  background: var(--theme-primary, #155DFC);  
+  background: var(--theme-primary, #155DFC);
   color: var(--theme-primary-foreground, #F8FAFC);
   text-align: center;
   font-family: var(--font-family-sans, Inter);
   font-size: var(--font-size-sm, 1rem);
   font-style: normal;
   font-weight: var(--font-weight-medium, 500);
-  line-height: var(--font-leading-5, 1.25rem); 
+  line-height: var(--font-leading-5, 1.25rem);
   letter-spacing: var(--font-tracking-normal, 0rem);
   cursor: pointer;
-  border: none; 
+  border: none;
   outline: none;
-  margin-left: 1rem; 
+  margin-left: 1rem;
   position: static;
-  opacity: 0; 
-  pointer-events: none; 
+  opacity: 0;
+  pointer-events: none;
 }
 
 .checkbox-container:hover .details-btn {
-  opacity: 1;             
-  pointer-events: auto;   
+  opacity: 1;
+  pointer-events: auto;
 }
 
 
@@ -747,7 +748,7 @@ ul {
 }
 
 #uploaded-layer-selection .select2-container {
-  margin-left:10px; 
+  margin-left:10px;
   min-width: 250px !important; /* Set your desired minimum */
   width: auto !important; /* Allow it to expand beyond the minimum */
   max-width: 100%; /* Prevent overflow beyond parent container */
@@ -796,20 +797,21 @@ ul {
 
 /* Transition to transparent or original bg color */
 .legend-fadeout-start.fadeout {
-  background-color: transparent; 
+  background-color: transparent;
   transition: background-color 1.5s ease;
 }
 
-/* Position the whole header block where your designer wants */
 #legend .legend-header {
   position: absolute;
-  top: 0.5rem;       /* adjust to designer spec */
-  left: 1rem;        /* align header with box content */
-  right: 0.5rem;     /* chevron will anchor 0.5rem from right edge */
+  top: var(--legend-header-pad);
+  left: 1rem;
+  right: 0.625rem;
+  height: var(--legend-header-h);
   display: flex;
   align-items: center;
-  justify-content: space-between; /* push title left, chevron right */
+  justify-content: space-between;
 }
+
 
 #legend .legend-header .legend-title {
   position: static !important;
@@ -834,10 +836,10 @@ ul {
   position: absolute;
   bottom: 1rem;
   left: 0.75rem;
-  padding: 0.5rem 0.75rem 0.5rem 1rem;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 0.5rem;
+/*  padding: 0.5rem 0.75rem 0.5rem 1rem;*/
+  justify-content: flex-start;
+  align-items: stretch;           /* was center */
+  gap: 0;                         /* no extra spacing above content */
   border-radius: var(--Corner-Small, 0.5rem);
   background: #fff;
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
@@ -849,38 +851,57 @@ ul {
   scroll-behavior: smooth;
   word-wrap: break-word;
   white-space: normal;
+  padding-top: calc(
+    var(--legend-header-pad) +
+    var(--legend-header-h) +
+    var(--legend-gap-below-title)
+  );
+  --legend-right-inset: 0.75rem;
+  --legend-gap: 1.8125rem;
+  --legend-text-w: 17rem;   /* DME: Reduced the width slightly to fit all icons */
 }
+
 
 #legend.closed {
   width: 8.3125rem;
 }
 
 #legend.open {
-  width: 31.25rem; 
+  width: 31.25rem;
 }
 
 .legend-group {
-  padding: 5px;
-  margin-top: 0px; 
-  margin-bottom: 0px; 
-  border-radius: 5px;
-  width: 100%;
-  box-sizing: border-box;
+  padding: 0rem;
+  margin-top: 0rem;
+  margin-bottom: 0rem;
+  border-radius: 0rem;
+/*  width: 100%;*/
+/*  box-sizing: border-box;*/
 }
 
+/* ROW */
 .legend-entry {
   display: flex;
-  align-items: center;
-  flex-wrap: wrap;
+  align-items: flex-start;      /* was center; rows hug the top edge */
+  flex-wrap: nowrap;            /* keep wrapper + text on one line */
+  justify-content: flex-end;    /* pack both columns to the RIGHT */
   margin-bottom: 4px;
   box-sizing: border-box;
+
+  /* your existing font settings */
   font-family: var(--font-family-sans, Inter);
   font-size: var(--font-size-sm, 1rem);
   font-style: normal;
   font-weight: var(--font-weight-normal, 400);
-  line-height: var(--font-leading-5, 1.25rem); 
+  line-height: var(--font-leading-5, 1.25rem);
   letter-spacing: var(--font-tracking-normal, 0rem);
+
+  /* right anchoring + fixed separation */
+  width: 100%;
+  padding-right: var(--legend-right-inset); /* anchors row 0.75rem from box edge */
+  column-gap: var(--legend-gap);            /* exact gap between wrapper and text */
 }
+
 
 #layer-selection {
   max-height: 60vh; /* Layer selection can grow taller */
@@ -900,7 +921,6 @@ ul {
   padding: 10px;
   right: 1rem;
   box-sizing: border-box;
-
 }
 
 #uploaded-layer-selection .select2-selection--multiple {
@@ -915,40 +935,75 @@ ul {
 .separator {
   display: block;
   left: 0.75rem;
-  border: 1px; 
+  border: 1px;
   width: 29.75rem;
   height: 0.0625rem;
   border: 0.0625rem;
   background: var(--theme-border, #E2E8F0);
 }
+
 .legend-text {
-  white-space: normal;  
+  white-space: normal;
   word-break: break-word;
   overflow-wrap: anywhere;
-  flex: 1;   
   width: 17.875rem;
   color: var(--theme-foreground, #020618);
   font-family: var(--font-family-sans, Inter);
   font-size: var(--font-size-sm, 1rem);
   font-style: normal;
   font-weight: var(--font-weight-normal, 400);
-  line-height: var(--font-leading-5, 1.25rem); 
+  line-height: var(--font-leading-5, 1.25rem);
   letter-spacing: var(--font-tracking-normal, 0rem);
 }
 
 .legend-entry-wrapper {
-  position: relative;
-  width: 17.875rem;
-  margin-right: 2rem; 
-  display: flex; 
-  align-items: center; 
-  justify-content: flex-end; 
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  /* geometry */
+  flex: 0 1 auto;     /* do NOT grow (prevents drifting left); may shrink if tight */
+  min-width: 0;
+  width: auto;        /* drop width:100% so it won’t steal space */
+  box-sizing: border-box;
+  padding-right: 0;   /* gap handles spacing; no manual padding */
 }
 
 #legend-content {
   display: flex;
   flex-direction: column;
-  padding-top: 1.25rem;
+  padding-top: 0;
+}
+
+/* add spacer only if any row exists */
+#legend:has(#legend-content .legend-entry) #legend-content {
+  padding-top: calc(var(--legend-header-pad) + var(--legend-header-h) + var(--legend-gap));
+}
+
+/* Make the first row’s contents hug the top edge of the group */
+.legend-entry {
+  align-items: flex-start;      /* was center */
+/*  margin-left: 3.2rem;*/
+}
+
+/* Remove any default paragraph margins & shrink the half-leading feel */
+.legend-text {
+  /* your existing typographic bits */
+  margin: 0;
+  line-height: 1.2;
+  display: block;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+
+  /* geometry: fixed width, flush to the row’s right edge */
+  flex: 0 0 var(--legend-text-w);
+  width: auto;        /* neutralizes any earlier fixed width rules */
+}
+
+/* (If needed) prevent any margin-collapsing tricks at the group edge */
+.legend-group {
+  overflow: hidden;             /* or: display: flow-root; */
 }
 
 
@@ -963,15 +1018,15 @@ ul {
 
 .firstsect,
 .firstsect span  {
-  margin-top: 3rem; 
+  margin-top: 3rem;
   color: var(--theme-muted-foreground, #62748E);
   font-family: var(--font-family-sans, Inter);
   font-size: var(--font-size-sm, 1rem);
   font-style: normal;
   font-weight: var(--font-weight-normal, 400);
-  line-height: var(--font-leading-5, 1.25rem); 
+  line-height: var(--font-leading-5, 1.25rem);
   letter-spacing: var(--font-tracking-normal, 0);
-  border: None; 
+  border: None;
   padding: 0;
 }
 
@@ -982,9 +1037,9 @@ ul {
   font-size: var(--font-size-sm, 1rem);
   font-style: normal;
   font-weight: var(--font-weight-normal, 400);
-  line-height: var(--font-leading-5, 1.25rem); 
+  line-height: var(--font-leading-5, 1.25rem);
   letter-spacing: var(--font-tracking-normal, 0);
-  border: None; 
+  border: None;
   padding: 0;
 }
 
@@ -995,16 +1050,16 @@ ul {
   font-size: var(--font-size-sm, 1rem);
   font-style: normal;
   font-weight: var(--font-weight-normal, 400);
-  line-height: var(--font-leading-5, 1.25rem); 
+  line-height: var(--font-leading-5, 1.25rem);
   letter-spacing: var(--font-tracking-normal, 0);
-  border: None; 
+  border: None;
   padding: 0;
 
 }
 
-.extra_butes_style 
+.extra_butes_style
 {
-  margin-left: 1.5rem; 
+  margin-left: 1.5rem;
 
 }
 
@@ -1020,12 +1075,12 @@ ul {
 
 .public-data-box{
   margin-top: 2rem;
-    display: flex; 
-    align-items: flex-start; 
+    display: flex;
+    align-items: flex-start;
     gap: 0.5rem;
 }
-.public-toggle{ 
-  display: flex; 
+.public-toggle{
+  display: flex;
   align-items: center;
   justify-content: center;
   width: 1.5rem;
@@ -1042,7 +1097,7 @@ ul {
   width: 1.5rem;
   height: 1.5rem;
   padding: 0;
-  background: transparent; 
+  background: transparent;
   border: none;
   display: flex;
   align-items: center;
@@ -1051,9 +1106,9 @@ ul {
 
 .area-layer-dropdown{
 
-  position: absolute; 
+  position: absolute;
       top: 4.5rem;
-      margin-top: 0.75rem; 
+      margin-top: 0.75rem;
       left: 2.5rem;
       width: 16.9375rem;
       height: var(--spacing-10, 2.5rem);
@@ -1062,7 +1117,7 @@ ul {
       align-items: center;
       flex-shrink: 0;
       color: var(--theme-accent-foreground, #0F172B);
-      text-align: center; 
+      text-align: center;
       font-family: var(--font-family-sans, 'Inter', system-ui, -apple-system, "Segoe UI",
                        Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif) !important;
       font-size: var(--font-size-sm, 1rem);
@@ -1073,9 +1128,9 @@ ul {
 }
 
 .area-details-button{
-  position: absolute; 
-    right: 1rem; 
-    margin-top: 0.25rem; 
+  position: absolute;
+    right: 1rem;
+    margin-top: 0.25rem;
     height: 1.5rem;
     width: 4.1875rem;
     padding: var(--spacing-2, 0.5rem) var(--spacing-4, 1rem);
@@ -1091,7 +1146,7 @@ ul {
 
 .uploaded-data-container{
   position: absolute;
-  top: 275px; 
+  top: 275px;
   right: 10px;
   width: 50rem;
   height: 6.75rem;
@@ -1100,7 +1155,3 @@ ul {
   background: #FFF;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
 }
-
-
-
-

@@ -47,6 +47,8 @@ function hslToRgb(h, s, l) {
     const hue2rgb = function (p, q, t) {
       if (t < 0) t += 1;
       if (t > 1) t -= 1;
+      
+      
       if (t < 1 / 6) return p + (q - p) * 6 * t;
       if (t < 1 / 2) return q;
       if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
@@ -91,8 +93,8 @@ function createStyleFunction(layerName, boundaryColor = 'gray', boundaryWidth = 
 function createHoverStyle(layerName, feature, boundaryColor = 'white', boundaryWidth = 3) {
   const geometryType = feature.getGeometry().getType();
 
-  // Special case for State-Level Incentives and Regulations
-  if (layerName === 'State-Level Incentives and Regulations') {
+  // Special case
+  if (layerName === 'State-Level Incentives and Regulations' || layerName === 'Hourly Grid Emissions') {
     if (geometryType === 'Polygon' || geometryType === 'MultiPolygon') {
       return new ol.style.Style({
         stroke: new ol.style.Stroke({
@@ -294,6 +296,7 @@ function isLineStringLayer(layer) {
   const geometryType = features[0].getGeometry().getType();
   return geometryType === 'LineString' || geometryType === 'MultiLineString';
 }
+
 
 export {
   createStyleFunction,

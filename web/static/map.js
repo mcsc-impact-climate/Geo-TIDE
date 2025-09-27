@@ -616,11 +616,10 @@ function handleMapHover(event) {
     const selectedLayer = getAreaLayerName(document.getElementById('area-layer-dropdown').value);
     const layerName = feature.get('layerName') || selectedLayer;
 
-    if (layerName === 'State-Level Incentives and Regulations') {
+    if (layerName === 'State-Level Incentives and Regulations' || layerName === 'Hourly Grid Emissions') {
       if (lastFeature && lastFeature !== feature) {
         lastFeature.setStyle(null); // Clear previous hover
       }
-
       feature.setStyle(createHoverStyle(layerName, feature));
       lastFeature = feature;
     }

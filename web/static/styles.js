@@ -93,8 +93,8 @@ function createStyleFunction(layerName, boundaryColor = 'gray', boundaryWidth = 
 function createHoverStyle(layerName, feature, boundaryColor = 'white', boundaryWidth = 3) {
   const geometryType = feature.getGeometry().getType();
 
-  // Special case for State-Level Incentives and Regulations
-  if (layerName === 'State-Level Incentives and Regulations') {
+  // Special case
+  if (layerName === 'State-Level Incentives and Regulations' || layerName === 'Hourly Grid Emissions') {
     if (geometryType === 'Polygon' || geometryType === 'MultiPolygon') {
       return new ol.style.Style({
         stroke: new ol.style.Stroke({

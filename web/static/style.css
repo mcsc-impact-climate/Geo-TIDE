@@ -160,9 +160,95 @@ body {
 
 .toggle-button {
   font-weight: normal;
-  font-size: 14px;
+  font-size: 14px; 
   padding-right: 5px;
-  padding-left: 5px;
+  padding-left: 5px; 
+
+
+}
+
+
+.button-container {
+  display: flex;
+  flex-direction: column; 
+  gap: 0rem; 
+  padding-top: 0rem;
+  margin-top: 50rem; 
+
+}
+
+
+.button-container-2 {
+  display: flex;
+  flex-direction: column; 
+  gap: 0rem; 
+}
+
+
+.button-row-1 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; 
+  padding-left: 1.5rem; 
+  gap: 10rem; 
+}
+
+.button-row-2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; 
+  padding-left: 1.5rem; 
+  gap: 4.5rem; 
+}
+
+.button-row-3 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; 
+  padding-left: 1.5rem; 
+  gap: 8rem; 
+}
+
+.button-row-4 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; 
+  padding-left: 1.5rem; 
+  gap: 5rem; 
+}
+
+.button-row-5 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; 
+  padding-left: 1.5rem; 
+  gap: 5rem; 
+}
+
+.button-text-style {
+  color: var(--theme-foreground, #020618);
+
+  font-family: var(--font-family-sans, Inter);
+  font-size: var(--font-size-base, 1rem);
+  font-style: normal;
+  font-weight: var(--font-weight-normal, 400);
+  line-height: var(--font-leading-6, 1.5rem); 
+  letter-spacing: var(--font-tracking-normal, 0rem);
+  white-space: nowrap; 
+  margin-left: 0.75rem;
+
+}
+
+.show-button {
+  all: unset; 
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
 }
 
 .lds-default {
@@ -255,23 +341,31 @@ body {
 .button-container {
   display: flex;
   justify-content: center;
-  margin-top: 10px; /* Adjust the margin to separate buttons from other elements */
+  margin-top: 5px;
 }
 
 /* Additional styles for the "Clear" button (you can customize these styles) */
 .clear-button {
-  display: block; /* Always on its own line */
-  background-color: red; /* background color */
-  color: white; /* White text color */
-  padding: 5px 5px; /* Padding to make it bigger */
-  font-size: 14px; /* Font size */
-  border: 2px solid black; /* Remove border */
-  cursor: pointer; /* Add a pointer cursor on hover */
-  margin-top: 20px;
+  display: inline-flex;
+height: var(--spacing-10, 2.5rem);
+padding: var(--spacing-2, 0.5rem) var(--spacing-4, 1rem);
+justify-content: center;
+align-items: center;
+gap: var(--spacing-1-5, 0.375rem);
+flex-shrink: 0;
+border-radius: var(--radius-md, 0.375rem);
+opacity: var(--opacity-100, 1);
+background: var(--theme-destructive, #E7000B);
+box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+border: none; 
+outline: none; 
+position: absolute; 
+bottom: 3.5rem; 
+right: 1rem; 
 }
 
 .clear-button:hover {
-  background-color: darkred;
+  opacity: var(--opacity-90, 0.9);
 }
 
 .modal {
@@ -308,17 +402,34 @@ body {
 }
 
 .checkbox-container {
+  position: relative;
   font-size: 14px;
   display: flex;
+  align-items: flex-start;  
   justify-content: flex-start;
-  align-items: center;
   width: 100%;
+  gap: 0.75rem; 
 }
 
-.checkbox-container input[type='checkbox'],
+.checkbox-container input[type='checkbox']{
+display: inline-flex;
+width: var(--spacing-4, 1rem);
+height: var(--spacing-4, 1rem);
+flex-direction: column;
+justify-content: center;
+align-items: center;
+flex-shrink: 0;
+border-radius: var(--radius-sm, 0.25rem);
+border: 1px solid var(--theme-primary, #155DFC);
+background: var(--theme-background, #FFF);
+  accent-color: #155DFC; 
+}
+
 .checkbox-container label {
-  margin: 2px;
-  vertical-align: middle; /* this can help with inline elements like inline-block */
+  vertical-align: middle;
+  flex: 1;               
+  min-width: 0;            
+  overflow-wrap: anywhere; 
 }
 
 /* Style for the 'Details' button */
@@ -332,7 +443,6 @@ body {
   gap: var(--spacing-1-5, 0.375rem);
   flex-shrink: 0;
   border-radius: var(--radius-md, 0.375rem);
-  opacity: var(--opacity-100, 1);
   background: var(--theme-primary, #155DFC);  
   color: var(--theme-primary-foreground, #F8FAFC);
   text-align: center;
@@ -343,10 +453,22 @@ body {
   line-height: var(--font-leading-5, 1.25rem); 
   letter-spacing: var(--font-tracking-normal, 0rem);
   cursor: pointer;
+  border: none; 
+  outline: none;
+  margin-left: 1rem; 
+  position: static;
+  opacity: 0; 
+  pointer-events: none; 
 }
 
-.details-btn:hover {
-  background-color: #457df8; 
+.checkbox-container:hover .details-btn {
+  opacity: 1;             
+  pointer-events: auto;   
+}
+
+
+.checkbox-container:hover .details-btn:hover {
+  opacity: var(--opacity-90, 0.9);
 }
 
 .details-title {
@@ -710,7 +832,8 @@ ul {
 }
 
 #uploaded-layer-selection .select2-container {
-  min-width: 324px !important; /* Set your desired minimum */
+  margin-left:10px; 
+  min-width: 250px !important; /* Set your desired minimum */
   width: auto !important; /* Allow it to expand beyond the minimum */
   max-width: 100%; /* Prevent overflow beyond parent container */
 }
@@ -758,7 +881,7 @@ ul {
 
 /* Transition to transparent or original bg color */
 .legend-fadeout-start.fadeout {
-  background-color: transparent; /* transparent */
+  background-color: transparent; 
   transition: background-color 1.5s ease;
 }
 
@@ -877,3 +1000,151 @@ ul {
   display: flex;
   flex-direction: column;
 }
+
+.flow-checkboxes {
+
+  margin-top: 0.2rem;
+  margin-left: 2.25rem;
+  margin-bottom:0.45rem;
+
+}
+
+.firstsect,
+.firstsect span  {
+  margin-top: 3rem; 
+  color: var(--theme-muted-foreground, #62748E);
+  font-family: var(--font-family-sans, Inter);
+  font-size: var(--font-size-sm, 0.875rem);
+  font-style: normal;
+  font-weight: var(--font-weight-normal, 400);
+  line-height: var(--font-leading-5, 1.25rem); 
+  letter-spacing: var(--font-tracking-normal, 0);
+  border: None; 
+  padding: 0;
+}
+
+.secsect,
+.secsect span  {
+  color: var(--theme-muted-foreground, #62748E);
+  font-family: var(--font-family-sans, Inter);
+  font-size: var(--font-size-sm, 0.875rem);
+  font-style: normal;
+  font-weight: var(--font-weight-normal, 400);
+  line-height: var(--font-leading-5, 1.25rem); 
+  letter-spacing: var(--font-tracking-normal, 0);
+  border: None; 
+  padding: 0;
+}
+
+.thirdsect,
+.thirdsect span  {
+  color: var(--theme-muted-foreground, #62748E);
+  font-family: var(--font-family-sans, Inter);
+  font-size: var(--font-size-sm, 0.875rem);
+  font-style: normal;
+  font-weight: var(--font-weight-normal, 400);
+  line-height: var(--font-leading-5, 1.25rem); 
+  letter-spacing: var(--font-tracking-normal, 0);
+  border: None; 
+  padding: 0;
+
+}
+
+.extra_butes_style 
+{
+  margin-left: 1.5rem; 
+
+}
+
+
+.header-container {
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0;
+}
+
+.public-data-box{
+  margin-top: 2rem;
+    display: flex; 
+    align-items: flex-start; 
+    gap: 0.5rem;
+}
+.public-toggle{ 
+  display: flex; 
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+  position: absolute;
+  top: 0.5rem;
+  right: 1rem;
+  border: none;
+  background: transparent;
+}
+
+.public-icon{
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  background: transparent; 
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.area-layer-dropdown{
+
+  position: absolute; 
+      top: 4.5rem;
+      margin-top: 0.75rem; 
+      left: 2.5rem;
+      width: 16.9375rem;
+      height: var(--spacing-10, 2.5rem);
+      padding: var(--spacing-2, 0.5rem);
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+      color: var(--theme-accent-foreground, #0F172B);
+      text-align: center; 
+      font-family: var(--font-family-sans, Inter);
+      font-size: var(--font-size-sm, 0.875rem);
+      font-style: normal;
+      font-weight: var (--font-weight-medium, 500);
+      line-height: var(--font-leading-5, 1.25rem);
+      letter-spacing: var(--font-tracking-normal, 0rem);
+}
+
+.area-details-button{
+  position: absolute; 
+    right: 1rem; 
+    margin-top: 0.25rem; 
+    height: 1.5rem;
+    width: 4.1875rem;
+    padding: var(--spacing-2, 0.5rem) var(--spacing-4, 1rem);
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--spacing-1-5, 0.375rem);
+    flex-shrink: 0;
+    border-radius: var(--radius-md, 0.375rem);
+    border: 1px solid var(--theme-input, #E2E8F0);
+    opacity: var(--opacity-100, 1);
+    background: var(--theme-background, #FFF);
+}
+
+.uploaded-data-container{
+  position: absolute;
+  top: 275px; 
+  right: 10px;
+  width: 50rem;
+  height: 6.75rem;
+  flex-shrink: 0;
+  border-radius: var(--Corner-Small, 0.5rem);
+  background: #FFF;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+}
+

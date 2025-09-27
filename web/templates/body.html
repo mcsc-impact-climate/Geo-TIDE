@@ -54,19 +54,16 @@
   id="layer-selection"
   style="
     position: absolute;
-    top: 36.6rem;
-    bottom: 4rem; 
+    bottom: 7rem; 
     right: 1rem; 
     padding: 10px;
-    width: 23.625rem;
-    height: 29.6875rem; 
+    width: 26.75rem;
+    height:35rem; 
     flex-shrink: 0; 
     border-radius: var(--Corner-Small, 0.5rem);
     background: #FFF;
     box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
     box-sizing: border-box;
-
-    
   "
 >
 
@@ -75,7 +72,7 @@
   <h2 style="
   position: absolute;
   top: 0.05rem;
-  left: 1rem;
+  left: 1.25rem;
   color: var(--theme-foreground, #020618);
   font-family: var(--font-family-sans, Inter);
   font-size: var(--font-size-xl, 1.25rem);
@@ -87,19 +84,7 @@
 ">
   Public Data
 </h2>
-  <button id="Public-toggle" style="  
-  display: flex; 
-  align-items: center;
-  justify-content: center;
-        width: 1.5rem;
-        height: 1.5rem;
-        flex-shrink: 0;
-position: absolute;
-top: 0.5rem;
-right: 1rem;
-    border: none;
-    background: transparent;
-  ">
+  <button id="Public-toggle" class = "public-toggle">
 
 
     <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -115,24 +100,9 @@ right: 1rem;
 
   <div id="public-data-content">
 
-    <div style=
-    
-    "margin-top: 2rem;
-    display: flex; 
-    align-items: flex-start; 
-    gap: 0.5rem; "
-    >
+    <div class = "public-data-box">
 
-    <button id="area-icon" style= "
-      width: 1.5rem;
-      height: 1.5rem;
-      padding: 0;
-      background: transparent; 
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    ">
+    <button id="area-icon" class = "public-icon">
        <svg width="1.5rem" height="1.5rem" style="width: 1.5rem; height: 1.5rem;" fill="none" stroke="currentColor" stroke-width="1.5"
        viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
        xmlns="http://www.w3.org/2000/svg">
@@ -170,53 +140,17 @@ right: 1rem;
 </div>
 
   <select id="area-layer-dropdown" 
-    style = "
-      position: absolute; 
-      margin-top: 0.75rem; 
-      left: 1rem;
-      width: 16.9375rem;
-      height: var(--spacing-10, 2.5rem);
-      padding: var(--spacing-2, 0.5rem);
-      justify-content: space-between;
-      align-items: center;
-      flex-shrink: 0;
-      color: var(--theme-accent-foreground, #0F172B);
-      text-align: center; 
-      font-family: var(--font-family-sans, Inter);
-      font-size: var(--font-size-sm, 0.875rem);
-      font-style: normal;
-      font-weight: var (--font-weight-medium, 500);
-      line-height: var(--font-leading-5, 1.25rem); /* 142.857% */
-      letter-spacing: var(--font-tracking-normal, 0rem);
-    "
-  
+    class = "area-layer-dropdown"
   >
     <option>Select Area Feature</option>
     <!-- Add options for area layers -->
   </select>
 
   <button
-    class="details-btn"
     id="area-details-button"
-    style = "
-    position: absolute; 
-    right: 1rem; 
-    margin-top: 0.75rem; 
-    height: 1.5rem;
-    width: 4.1875rem;
-    padding: var(--spacing-2, 0.5rem) var(--spacing-4, 1rem);
-    justify-content: flex-end;
-    align-items: center;
-    gap: var(--spacing-1-5, 0.375rem);
-    flex-shrink: 0;
-    border-radius: var(--radius-md, 0.375rem);
-    border: 1px solid var(--theme-input, #E2E8F0);
-    opacity: var(--opacity-100, 1);
-    background: var(--theme-background, #FFF);
-    "
-   
-  onmouseover="this.style.backgroundColor='#F1F5F9';"
-  onmouseout="this.style.backgroundColor='var(--theme-background, #FFF)';"
+    class = "area-details-button"
+    onmouseover="this.style.backgroundColor='#F1F5F9';"
+    onmouseout="this.style.backgroundColor='var(--theme-background, #FFF)';"
   >
   
   <span style="
@@ -236,24 +170,27 @@ right: 1rem;
 </span>
 </button>
 
-<div style=
-    
-" 
-margin-top: 4.5rem;
-display: flex; 
-align-items: flex-start; 
-gap: 0.5rem; "
->
+<div id="public" class = "extra_butes_style">
+  <div id="firstsect" class="firstsect"> 
+  <span class="label1"></span><span class="value1"></span>
+  </div>
 
-<button id="highway-icon" style= "
-  width: 1.5rem;
-  height: 1.5rem;
-  padding: 0;
-  background: transparent; 
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  <div id="secsect" class = "secsect"> 
+    <span class="label2"></span><span class="value2"></span>
+  </div>
+
+  <div id="thirdsect" class = "thirdsect"> 
+    <span class="label3"></span><span class="value3"></span>
+  </div>
+
+</div>
+
+
+
+
+<div class="header-container">
+
+<button id="highway-icon" class = "public-icon"
 ">
    <svg width="1.5rem" height="1.5rem" style="width: 1.5rem; height: 1.5rem;" fill="none" stroke="currentColor" stroke-width="1.5"
    viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
@@ -264,6 +201,7 @@ gap: 0.5rem; "
 
 
   <h3 style="
+    margin:0;
     padding: 0; 
     color: var(--theme-foreground, #020618);
     font-family: var(--font-family-sans, Inter);
@@ -275,6 +213,8 @@ gap: 0.5rem; "
   ">
     Highway Features
     <span style="
+      margin:0;
+      padding:0;
       color: var(--theme-foreground, #020618);
       font-family: var(--font-family-sans, Inter);
       font-size: var(--font-size-base, 1rem);
@@ -288,61 +228,55 @@ gap: 0.5rem; "
   </h3>
 
 </div>
-  <button class="toggle-button" data-target="highway-flow-checkboxes" 
-  
-  style = "color: var(--theme-foreground, #020618);
 
-  font-family: var(--font-family-sans, Inter);
-  font-size: var(--font-size-base, 1rem);
-  font-style: normal;
-  font-weight: var(--font-weight-normal, 400);
-  line-height: var(--font-leading-6, 1.5rem); 
-  letter-spacing: var(--font-tracking-normal, 0rem);">
-    Show Highway Flows
+<div class="button-container">
+
+<div class ="button-row-1" >
+  <span class = "button-text-style"> Highway Flows</span>
+
+  <button class="show-button" data-target="highway-flow-checkboxes">
+
+
+    <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 0 16 16" fill="none">
+      <path id = "highway-chevron-path-2" d="M4 6L8 10L12 6" stroke="#020618" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
   </button>
-  <div id="highway-flow-checkboxes" style="display: none">
+
+</div>
+
+  <div id="highway-flow-checkboxes" class = "flow-checkboxes" style = "display: none">
     <!-- Add checkboxes for highway flows -->
   </div>
 
-  <br />
-  <br />
-  <button class="toggle-button" data-target="highway-infra-checkboxes"
+<div class ="button-row-2">
+    <span class = "button-text-style"> Planned Infrastructure Corridors</span>
   
-  style = "color: var(--theme-foreground, #020618);
-
-  font-family: var(--font-family-sans, Inter);
-  font-size: var(--font-size-base, 1rem);
-  font-style: normal;
-  font-weight: var(--font-weight-normal, 400);
-  line-height: var(--font-leading-6, 1.5rem); 
-  letter-spacing: var(--font-tracking-normal, 0rem);">
-    Show Planned Infrastructure Corridors
-  </button>
-  <div id="highway-infra-checkboxes" style="display: none">
-    <!-- Add checkboxes for highway flows -->
+    <button class="show-button" data-target="highway-infra-checkboxes">
+  
+  
+      <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 0 16 16" fill="none">
+        <path id = "highway-chevron-path" d="M4 6L8 10L12 6" stroke="#020618" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  
   </div>
 
 
+  <div id="highway-infra-checkboxes" class = "flow-checkboxes" style="display: none;" >
+    <!-- Add checkboxes for highway flows -->
+  </div>
 
-  <div style=
-    
+</div>
+
+  <div style=   
 " 
-margin-top: 4.5rem;
+margin-top: 0.5rem;
 display: flex; 
 align-items: flex-start; 
 gap: 0.5rem; "
 >
 
-<button id="point-icon" style= "
-  width: 1.5rem;
-  height: 1.5rem;
-  padding: 0;
-  background: transparent; 
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-">
+<button id="point-icon" class = "public-icon">
    <svg width="1.5rem" height="1.5rem" style="width: 1.5rem; height: 1.5rem;" fill="none" stroke="currentColor" stroke-width="1.5"
    viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
            xmlns="http://www.w3.org/2000/svg">
@@ -374,58 +308,99 @@ letter-spacing: var(--font-tracking-normal, 0rem);
 </span></h3>
 
   </div>
-  <button class="toggle-button" data-target="point-refuel-checkboxes" style = "color: var(--theme-foreground, #020618);
 
-  font-family: var(--font-family-sans, Inter);
-  font-size: var(--font-size-base, 1rem);
-  font-style: normal;
-  font-weight: var(--font-weight-normal, 400);
-  line-height: var(--font-leading-6, 1.5rem); 
-  letter-spacing: var(--font-tracking-normal, 0rem);">
-    Show Charge/Fuel Stations
+    
+
+
+  <div class = "button-container">
+
+    <div class ="button-row-3" >
+    <span class = "button-text-style">Charge/Fuel Stations</span>
+
+    <button class="show-button" data-target="point-refuel-checkboxes" > 
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 0 16 16" fill="none">
+      <path id = "highway-chevron-path-2" d="M4 6L8 10L12 6" stroke="#020618" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
   </button>
-  <div id="point-refuel-checkboxes" style="display: none">
+    </div>
+  <div id="point-refuel-checkboxes" class= "flow-checkboxes" style="display: none">
     <!-- Add checkboxes for point layers -->
   </div>
 
-  <br />
-  <br />
+    <div class ="button-row-4" >
+    <span class = "button-text-style">Hydrogen Production Facilities</span>
 
-  <button class="toggle-button" data-target="point-h2prod-checkboxes" style = "color: var(--theme-foreground, #020618);
-
-  font-family: var(--font-family-sans, Inter);
-  font-size: var(--font-size-base, 1rem);
-  font-style: normal;
-  font-weight: var(--font-weight-normal, 400);
-  line-height: var(--font-leading-6, 1.5rem); 
-  letter-spacing: var(--font-tracking-normal, 0rem);">
-    Show Hydrogen Production Facilities
+    <button class="show-button" data-target="point-h2prod-checkboxes" > 
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 0 16 16" fill="none">
+      <path id = "highway-chevron-path-4" d="M4 6L8 10L12 6" stroke="#020618" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
   </button>
-  <div id="point-h2prod-checkboxes" style="display: none">
+    </div>
+
+  
+  <div id="point-h2prod-checkboxes" class= "flow-checkboxes" style="display: none">
     <!-- Add checkboxes for point layers -->
   </div>
 
-  <br />
-  <br />
 
-  <button class="toggle-button" data-target="point-other-checkboxes" style = "color: var(--theme-foreground, #020618);
 
-  font-family: var(--font-family-sans, Inter);
-  font-size: var(--font-size-base, 1rem);
-  font-style: normal;
-  font-weight: var(--font-weight-normal, 400);
-  line-height: var(--font-leading-6, 1.5rem); 
-  letter-spacing: var(--font-tracking-normal, 0rem);">
-    Show Other Point Features
+  <div class ="button-row-5" >
+    <span class = "button-text-style">Other Points</span>
+
+    <button class="show-button" data-target="point-other-checkboxes" > 
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 0 16 16" fill="none">
+      <path id = "highway-chevron-path-5" d="M4 6L8 10L12 6" stroke="#020618" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
   </button>
-  <div id="point-other-checkboxes" style="display: none">
+    </div>
+  <div id="point-other-checkboxes" class= "flow-checkboxes" style="display: none">
     <!-- Add checkboxes for point layers -->
   </div>
 
-  <div class="button-container">
-    <button id="clear-button" class="clear-button">Clear Layers</button>
+  <div id="public-2" class = "extra_butes_style">
+    <div id="firstsect-2" class="firstsect", style = "margin-top: 0rem; margin-left: 1rem;"> 
+    <span class="label1-2"></span><span class="value1-2"></span>
+    </div>
+  
+    <div id="secsect-2" class = "secsect" , style = "margin-left: 1rem;"> 
+      <span class="label2-2"></span><span class="value2-2"></span>
+    </div>
+  
+    <div id="thirdsect-2" class = "thirdsect" , style = "margin-left: 1rem;"> 
+      <span class="label3-2"></span><span class="value3-2"></span>
+    </div>
+  
   </div>
-  </div>
+  
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+  <div class="button-container-2">
+    <button id="clear-button" class="clear-button"
+      style = "
+      color: var(--theme-destructive-foreground, #F8FAFC);
+      text-align: center;
+      font-family: var(--font-family-sans, Inter);
+      font-size: var(--font-size-sm, 0.875rem);
+      font-style: normal;
+      font-weight: var(--font-weight-medium, 500);
+      line-height: var(--font-leading-5, 1.25rem);
+      letter-spacing: var(--font-tracking-normal, 0rem);">
+      Clear Layers</button>
+
   </div>
 
   <!-- Full-screen loading spinner overlay -->
@@ -451,20 +426,17 @@ letter-spacing: var(--font-tracking-normal, 0rem);
 </div>
 <div
   id="uploaded-layer-selection"
-  style="position: absolute;
-  top: 75px; 
-  right: 20px;
-  width: 23.625rem;
+  style = "position: absolute;
+  top: 275px; 
+  right: 10px;
+  width: 26.75rem;
   height: 6.75rem;
   flex-shrink: 0;
   border-radius: var(--Corner-Small, 0.5rem);
-background: #FFF;
-box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+  background: #FFF;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);">
   
-  
-  ">
   <h2 style = "color: var(--theme-foreground, #020618);
-
   font-family: var(--font-family-sans, Inter);
   font-size: var(--font-size-xl, 1.25rem);
   font-style: normal;
@@ -521,15 +493,16 @@ box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0
         container.classList.add("uploaded-layer-pill");
         container.style.display = "flex";
         container.style.alignItems = "center";
+        container.style.width = "100%";
 
         const textNode = document.createElement("span");
         textNode.textContent = data.text;
+        textNode.style.flex = "1";
 
         const moreButton = document.createElement("button");
         moreButton.textContent = "More";
         moreButton.classList.add("details-btn");
         moreButton.setAttribute("data-key", data.text);
-        moreButton.style.marginLeft = "40px";
 
         container.appendChild(textNode);
         container.appendChild(moreButton);
@@ -721,8 +694,8 @@ box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0
 
     function updatePublicWidth() {
       if (publicContent.style.display !== 'none' && publicContent.children.length > 0) {
-        layerSelection.style.width = '23.625rem'; 
-        layerSelection.style.height = '29.6875rem'; 
+        layerSelection.style.width = '26.75rem'; 
+        layerSelection.style.height = '35rem'; 
       } else {
         layerSelection.style.width = '10.625rem';
         layerSelection.style.height = '2.75rem'; 

@@ -353,7 +353,7 @@ export let selectedGridEmissionsOptions = {
 
 export const hourlyEmissionsOptions = {
   'Hour of Day': {
-    '12am': '12',
+    '12am': '12am', 
     '1am': '1',
     '2am': '2',
     '3am': '3',
@@ -381,12 +381,12 @@ export const hourlyEmissionsOptions = {
 };
 
 export let selectedHourlyEmissionsOptions = {
-  'Hour of Day': '0',
+  'Hour of Day': '12am',
 };
 
 export const faf5Options = {
   Commodity: {
-    'All Commodities': 'all',
+    'All Commodities': 'All Commodities',
     'Alcoholic Beverages': 'Alcoholic_beverages',
     'Animal Feed': 'Animal_feed',
     'Base Metal (articles)': 'Articles-base_metal',
@@ -433,7 +433,7 @@ export const faf5Options = {
 };
 
 export let selectedFaf5Options = {
-  Commodity: 'all',
+  Commodity: 'All Commodities',
 };
 
 export const zefOptions = {

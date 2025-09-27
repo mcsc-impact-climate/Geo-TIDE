@@ -35,6 +35,9 @@ import {
   toggleZefSubLayer,
   layerCache,
   getAttributesForLayer,
+  updateLabels,
+  updateLabels2, 
+  convertDropdownIdToLabel,  
 } from './map.js';
 import { geojsonNames } from './main.js';
 import { isPointLayer, isLineStringLayer, isPolygonLayer } from './styles.js';
@@ -146,8 +149,7 @@ function populateLayerDropdown(mapping) {
     }
   }
 }
-
-function addLayerCheckbox(key, value, container) {
+function addLayerCheckbox(key, value, container) { 
   const checkboxContainer = document.createElement('div');
   checkboxContainer.classList.add('checkbox-container'); // Add this line
 
@@ -270,7 +272,40 @@ document.getElementById('layer-selection').addEventListener('click', function (e
     }
   }
 });
+let first_time = true; 
+document.getElementById('layer-selection').addEventListener('click', function (event) {
+  
+  const button = event.target.closest('.show-button');
+  
+  if (button) {
+    const targetId = button.getAttribute('data-target');
+    const target = document.getElementById(targetId);
+    const svg = button.querySelector('svg path');
 
+    if (first_time && targetId == "point-other-checkboxes"){
+      updateLabels2("default", "Savings from Pooled Charging Infrastructure", "", "", {});
+      first_time = false; 
+    }
+
+    if (target.style.display === 'none') {
+      target.style.display = 'block';
+      svg.setAttribute('d', "M12 10L8 6L4 10");
+      if (targetId == "point-other-checkboxes"){
+        document.getElementById("public-2").style.display = 'block'; 
+      }
+
+    } else {
+      target.style.display = 'none';
+      svg.setAttribute('d', "M4 6L8 10L12 6");
+      if (targetId == "point-other-checkboxes"){
+        document.getElementById("public-2").style.display = 'none'; 
+      }
+    }
+  }
+  
+});
+
+let maintain = {} 
 // Function to get the selected area layer's name based on its value
 function getAreaLayerName(selectedValue) {
   const selectedOption = Array.from(areaLayerDropdown.options).find(
@@ -415,16 +450,29 @@ function createDropdown(
 
   // Add an event listener to the dropdown to handle attribute selection
   dropdown.addEventListener('change', async function () {
+    const dropdownId = event.target.id;
+    const selectedText = dropdown.options[dropdown.selectedIndex].text; 
     selected_options_list[parameter] = dropdown.value;
-
+    maintain[convertDropdownIdToLabel(dropdownId)] = selectedText; 
     // Check if the layer is visible on the map
     if (key !== 'National ZEF Corridor Strategy') {
       // Skip visibility check for ZEF, which is not an actual layer
       const layerObj = layerCache[key];
+      const area_attribute_list = ["Truck Imports and Exports", "Grid Emission Intensity"
+        , "Hourly Grid Emissions" , "State-Level Incentives and Regulations", "Lifecycle Truck Emissions", 
+        "Total Cost of Truck Ownership"
+       ]; 
+      const other_points_list = ["Savings from Pooled Charging Infrastructure"]; 
+      if (area_attribute_list.includes(key)){
+        updateLabels("m", key, selectedText, dropdownId, maintain); 
+      }
+      else if (other_points_list.includes(key)){
+        updateLabels2("m", key, selectedText, dropdownId, maintain); 
+      }
       if (!layerObj || !layerObj.getVisible()) {
         console.log("Exiting early as the layer isn't yet visible on the map");
         return;
-      }
+      }    
     }
 
     // Proceed with reloading or updating layers

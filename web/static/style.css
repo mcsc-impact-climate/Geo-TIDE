@@ -875,8 +875,6 @@ ul {
   margin-top: 0rem;
   margin-bottom: 0rem;
   border-radius: 0rem;
-/*  width: 100%;*/
-/*  box-sizing: border-box;*/
 }
 
 /* ROW */
@@ -885,7 +883,7 @@ ul {
   align-items: flex-start;      /* was center; rows hug the top edge */
   flex-wrap: nowrap;            /* keep wrapper + text on one line */
   justify-content: flex-end;    /* pack both columns to the RIGHT */
-  margin-bottom: 4px;
+  margin-bottom: 0.25rem;
   box-sizing: border-box;
 
   /* your existing font settings */
@@ -939,6 +937,8 @@ ul {
   width: 29.75rem;
   height: 0.0625rem;
   border: 0.0625rem;
+  margin-bottom: 0.625rem;
+  margin-top: 0.375rem;
   background: var(--theme-border, #E2E8F0);
 }
 

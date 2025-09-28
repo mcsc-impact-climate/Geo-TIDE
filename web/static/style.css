@@ -657,6 +657,77 @@ ul {
   top: 10px;
   right: 20px;
 }
+/*Hourly Grid Emissions*/
+/* General Modal Styles */
+#hourly-grid-emissions-modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scrolling if needed */
+  background-color: rgba(0, 0, 0, 0.4); /* Black background with opacity */
+}
+/* Modal Content */
+#hourly-grid-emissions-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  /*gap: 0px;  Ensures no extra space between elements */
+  height: 90vh; /* Modal takes 90% of screen height */
+  width: 80vw; /* Modal width adjusts with screen */
+}
+#hourly-grid-emissions-content h1 {
+  margin-bottom: 10px; /* Reduce title spacing */
+  padding-bottom: 0;
+}
+
+#hourly-grid-emissions-content p {
+  margin-top: 5px;
+  margin-bottom: 0;
+}
+
+.graph-wrapper {
+  margin-top: 5px; /* Reduce space between the title and graphs */
+  padding-top: 0;
+}
+
+
+/* Container for the chart */
+.chart-container {
+  width: 48%; /* Each graph takes ~half the modal width */
+  height: 100%; /* Makes the graphs take up the full allocated height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Canvas to inherit container size */
+#hourlygridemissionsChart {
+  width: 100%; /* Scale to container width */
+  height: 100%; /* Scale to container height */
+}
+
+
+/* Close Button */
+.close-hourly-grid-emissions {
+  color: #aaa;
+  position: absolute; /* Position within the modal */
+  top: 10px; /* Spacing from the top */
+  right: 15px; /* Spacing from the right */
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close-hourly-grid-emissions:hover,
+.close-hourly-grid-emissions:focus {
+  color: black;
+  text-decoration: none;
+}
+
 
 /* Collapsible header styles */
 .collapsible {
@@ -681,6 +752,43 @@ ul {
   padding: 10px 15px;
   background-color: #f9f9f9;
 }
+.charts-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px; /* Space between the two graphs */
+  flex-wrap: wrap;
+}
+
+.graph-wrapper {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 80%;
+  
+  padding: 0;
+  margin: 0;
+}
+
+
+.graph-wrapper {
+  display: flex;
+  gap: 10px;           /* space between charts */
+  flex-wrap: wrap;     /* allows wrapping on small screens */
+}
+
+.chart-container {
+  flex: 1;
+  min-width: 300px;
+  max-width: 600px;
+}
+
+.chart-container canvas {
+  width: 100%;
+  height: auto;
+}
+
+=======
 
 #uploaded-layer-selection .select2-selection--multiple {
   line-height: 1 !important; /* Adjust line-height explicitly */
@@ -893,7 +1001,6 @@ ul {
   flex-direction: column;
 }
 
-
 .flow-checkboxes {
 
   margin-top: 0.2rem;
@@ -901,12 +1008,6 @@ ul {
   margin-bottom:0.45rem;
 
 }
-
-
-
-
-
-
 
 .firstsect,
 .firstsect span  {
@@ -1046,7 +1147,4 @@ ul {
   background: #FFF;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
 }
-
-
-
 

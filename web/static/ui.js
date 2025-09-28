@@ -13,7 +13,6 @@ import {
   selectedEmissionsOptions,
   gridEmissionsOptions,
   hourlyEmissionsOptions,
-  selectedHourlyEmissionsOptions,
   selectedGridEmissionsOptions,
   faf5Options,
   selectedFaf5Options,
@@ -95,6 +94,7 @@ const stateNames = {
   WI: 'Wisconsin',
   WY: 'Wyoming',
 };
+const zoneNames = ['US-CAL-BANC', 'US-CAL-CISO', 'US-CAL-LDWP', 'US-CAL-TIDC', 'US-CAR-CPLE', 'US-CAR-CPLW', 'US-CAR-DUK', 'US-CAR-SC', 'US-CAR-SCEG', 'US-CENT-SPA', 'US-CENT-SWPP', 'US-FLA-FMPP', 'US-FLA-FPC', 'US-NW-NWMT', 'US-FLA-GVL', 'US-FLA-JEA', 'US-SW-WALC', 'US-FLA-TAL', 'US-FLA-TEC', 'US-HI-OA', 'US-MIDA-PJM', 'US-MIDW-AECI', 'US-MIDW-MISO', 'US-MIDW-LGEE', 'US-NE-ISNE', 'US-NW-BPAT', 'US-NW-CHPD', 'US-NW-DOPD', 'US-NW-GCPD', 'US-NW-GRID', 'US-SW-AZPS', 'US-NW-IPCO', 'US-NW-NEVP', 'US-FLA-FPL', 'US-NW-PACE', 'US-NW-PACW', 'US-NW-PGE', 'US-NW-PSCO', 'US-NW-PSEI', 'US-NW-TPWR', 'US-NW-WACM', 'US-NY-NYIS', 'US-SE-SOCO', 'US-SW-EPE', 'US-SW-SRP', 'US-SW-PNM', 'US-SW-TEPC', 'US-TEN-TVA', 'US-TEX-ERCO', 'US-NW-SCL']
 
 window.lastClickWasMoreButton = false;
 const areaLayerDropdown = document.getElementById('area-layer-dropdown');
@@ -606,14 +606,6 @@ function createGridEmissionsFilename(selected_options_list) {
   );
 }
 
-function createHourlyEmissionsFilename(selected_options_list) {
-  return (
-    'geojson_files/daily_grid_emission_profiles/daily_grid_emission_profile_hour' +
-    selected_options_list['Hour of Day'] +
-    '.geojson'
-  );
-}
-
 function createFaf5Filename(selected_options_list) {
   return (
     'geojson_files/faf5_freight_flows/mode_truck_commodity_' +
@@ -720,16 +712,6 @@ function createGridEmissionsDropdowns(key) {
     gridEmissionsOptions,
     selectedGridEmissionsOptions,
     createGridEmissionsFilename
-  );
-}
-
-function createHourlyEmissionsDropdowns(key) {
-  createDropdownGroup(
-    [['hour-of-day', 'Hour of Day', 'Hour of day: ']],
-    key,
-    hourlyEmissionsOptions,
-    selectedHourlyEmissionsOptions,
-    createHourlyEmissionsFilename
   );
 }
 
@@ -1012,10 +994,6 @@ document.getElementById('area-details-button').addEventListener('click', functio
     if (selectedAreaLayerName === 'Grid Emission Intensity') {
       createGridEmissionsDropdowns(selectedAreaLayerName);
     }
-    // Create a dropdown to select hour of day for hourly grid emissions by ISO
-    if (selectedAreaLayerName === 'Hourly Grid Emissions') {
-      createHourlyEmissionsDropdowns(selectedAreaLayerName);
-    }
     // Create a dropdown to select whether to view truck imports and exports
     if (selectedAreaLayerName === 'Truck Imports and Exports') {
       createFaf5Dropdowns(selectedAreaLayerName);
@@ -1060,6 +1038,363 @@ function resetModalContent() {
   }
 }
 
+// Shows the popup when clicking on hourly emissions map
+async function showHourlyGridEmissions(zoneName, properties, layerName) {
+  const modal = document.getElementById('hourly-grid-emissions-modal');
+  const content = document.getElementById('hourly-grid-emissions-content');
+
+  const hourlyCsvFileName = `${zoneName}_avg_std_dist.csv`  // 24 hour chart
+  const dailyCsvFileName = `${zoneName}_daily_avg_std.csv`  // over the years
+  const weeklyCsvFileName = `${zoneName}_weekly_summary.csv` 
+  // HTML for display
+  content.innerHTML = `
+  <span class="close-hourly-grid-emissions">&times;</span>
+  <h1>Hourly & Weekly Grid Emissions for ${zoneName} from ---</h1>
+  <div class="graph-wrapper">
+    <div class="chart-container">
+        <canvas id="emissionsChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="dailyEmissionsChart"></canvas>
+    </div>
+    <p style="font-size: 0.9em; color: #555; margin-top: 1em;">
+    Data sources: <code>${CSV_URL_HOURLYEMISSIONS}${hourlyCsvFileName}</code> and <code>${CSV_URL_DAILYEMISSIONS}${dailyCsvFileName}</code>
+    </p>
+
+</div>
+
+  <p>Data sources for <strong>${zoneName}</strong>:<br>
+  <a href="${CSV_URL_HOURLYEMISSIONS}${hourlyCsvFileName}" target="_blank">24 Hour Grid Emissions (${hourlyCsvFileName})</a><br>
+  <a href="${CSV_URL_DAILYEMISSIONS}${dailyCsvFileName}" target="_blank">Yearly Grid Emissions by Day (${dailyCsvFileName})</a><br>
+  <a href="${CSV_URL_WEEKLYEMISSIONS}${weeklyCsvFileName}" target="_blank">Yearly Grid Emissions by Week (${weeklyCsvFileName})</a>
+
+  </p>
+`;
+  try {
+    const fileUrl = `${CSV_URL_HOURLYEMISSIONS}${hourlyCsvFileName}`;
+    console.log("Fetching CSV from:", fileUrl);  // Logs the full URL
+
+    const response = await fetch(`${CSV_URL_HOURLYEMISSIONS}${hourlyCsvFileName}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch CSV: ${response.statusText}`);
+    }
+    const csvText = await response.text();
+
+    // Parse CSV data (using PapaParse or manual processing)
+    const data = Papa.parse(csvText, { header: true }).data; // Ensure PapaParse is included in project
+
+    // Extract relevant data for the graph, daily
+    const labels = data.map(row => row.datetime); // Column for time of day, called datetime in csv
+    const emissions = data.map(row => parseFloat(row.mean)); // Column for mean emissions, called mean in csv
+    const hourlystd = data.map(row => parseFloat(row.std));
+
+    const hourly_upperBound = emissions.map((val, i) => val + hourlystd[i]); //values that will become shaded region
+    const hourly_lowerBound = emissions.map((val, i) => val - hourlystd[i]);
+
+    //hourly emissions
+    const dailyResponse = await fetch(`${CSV_URL_DAILYEMISSIONS}${dailyCsvFileName}`);
+    console.log(`${CSV_URL_DAILYEMISSIONS}${dailyCsvFileName}`)
+    if (!dailyResponse.ok) throw new Error(`Failed to fetch daily CSV: ${dailyResponse.statusText}`);
+    const dailyCsvText = await dailyResponse.text();
+    const dailyData = Papa.parse(dailyCsvText, { header: true }).data;
+    console.log(dailyData)
+    const dailyLabels = dailyData.map(row => row.datetime);
+    const dailyEmissions = dailyData.map(row => parseFloat(row.mean));
+
+    // get the date range
+    const firstDate = new Date(dailyData[0].datetime);
+    const lastDate = new Date(dailyData[dailyData.length - 2].datetime);
+
+    const formatDateDisplay = (date) => date.toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+    const dateRangeString = `${formatDateDisplay(firstDate)} to ${formatDateDisplay(lastDate)}`;
+    const titleElement = content.querySelector('h1');
+    titleElement.textContent = `Hourly & Weekly Grid Emissions for ${zoneName} from ${dateRangeString}`;
+    
+    // downloads and parses weekly csv file
+      const weeklyPercentileResponse = await fetch(`${CSV_URL_WEEKLYEMISSIONS}${weeklyCsvFileName}`);
+      if (!weeklyPercentileResponse.ok) throw new Error(`Failed to fetch weekly percentile CSV: ${weeklyPercentileResponse.statusText}`);
+      const weeklyCsvText = await weeklyPercentileResponse.text();
+      const weeklyParsedData = Papa.parse(weeklyCsvText, { header: true }).data;
+    
+
+    // Remove the loading indicator
+    content.querySelector('p').remove();
+const graphWrapper = document.querySelector(".graph-wrapper");
+
+
+
+    // Render the hourly emissions chart
+    const ctx = document.getElementById('emissionsChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: `Emissions for ${zoneName}`,
+          data: emissions,
+          borderColor: 'rgb(75, 192, 192)',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderWidth: 1,
+        },
+        {
+          label: 'Mean + 1σ',
+          data: hourly_upperBound,
+          borderColor: 'rgba(181, 245, 245, 0.5)',
+          borderWidth: 1,
+          backgroundColor: 'rgba(181, 245, 245, 0.2)'
+        },
+        {
+          label: 'Mean - 1σ',
+          data: hourly_lowerBound,
+          borderColor: 'rgba(181, 245, 245, 0.5)',
+          borderWidth: 1,
+          fill: '-1', // Shaded area between upper and lower bounds
+          backgroundColor: 'rgba(181, 245, 245, 0.2)'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false, //get the graph to fit the popup
+        plugins: {
+          title: {
+            display: true,
+            text: '24 Hour Average Grid Emissions', // Title for hourly chart
+            font: { size: 18 }
+          }
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Hour of the Day'
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Emissions (gCO₂e/kWh)' //is this right units
+            }
+          }
+        }
+      }
+    });
+  
+
+
+//Weekly over the year
+// Extract data
+const weekLabels = weeklyParsedData.map(row => row.week);
+const weeklyMean = weeklyParsedData.map(row => parseFloat(row.mean));
+//const p5 = weeklyParsedData.map(row => parseFloat(row["5%"]));  //conts for percentile
+//const p95 = weeklyParsedData.map(row => parseFloat(row["95%"]));
+const weeklyStd   = weeklyParsedData.map(row => {
+  const v = parseFloat(row.std ?? row.STD ?? row.standard_deviation);
+  return Number.isFinite(v) ? v : 0; // if missing
+});
+
+// shading on chart
+const weeklyUpper = weeklyMean.map((m, i) => m + weeklyStd[i]);
+const weeklyLower = weeklyMean.map((m, i) => m - weeklyStd[i]);
+
+// Render new chart
+const ctxWeeklyPercentile = document.getElementById('dailyEmissionsChart').getContext('2d');
+
+new Chart(ctxWeeklyPercentile, {
+  type: 'line',
+  data: {
+    labels: weekLabels,
+    datasets: [
+      {
+        label: 'Weekly Mean Emissions',
+        data: weeklyMean,
+        borderColor: 'blue',
+        borderWidth: 2,
+        tension: 0.3,
+        fill: false
+      },
+      {
+        label: 'Mean + 1σ',
+        data: weeklyUpper,
+        borderColor: 'rgba(100, 100, 255, 0)',
+        backgroundColor: 'rgba(100, 100, 255, 0.2)',
+        fill: '-1'
+      },
+      {
+        label: 'Mean - 1σ',
+        data: weeklyLower,
+        borderColor: 'rgba(100, 100, 255, 0)',
+        backgroundColor: 'rgba(100, 100, 255, 0.2)',
+        fill: '-1'
+      }
+      /*{
+        label: '5th Percentile',                        //for percentiles
+        data: p5,
+        borderColor: 'rgba(100, 100, 255, 0)',
+        backgroundColor: 'rgba(100, 100, 255, 0.2)',
+        fill: '-1'
+      },
+      {
+        label: '95th Percentile',
+        data: p95,
+        borderColor: 'rgba(100, 100, 255, 0)',
+        backgroundColor: 'rgba(100, 100, 255, 0.2)',
+        fill: '-1'
+      }*/
+    ]
+  },
+  
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      title: {
+        display: true,
+        text: 'Weekly Mean & Percentile Range',
+        font: { size: 18 }
+      }
+    },
+    scales: {
+      x: {
+        title: { display: true, text: 'Week Starting Date' },
+      ticks: {
+        callback: function(value, index) {
+          // Only show every 2nd label (adjust number as needed)
+          return index % 8 === 0 ? this.getLabelForValue(value) : '';
+        }
+      }
+
+
+      },
+      y: {
+        title: { display: true, text: 'Emissions (gCO₂e/kWh)' }
+      }
+    }
+  }
+});
+
+/*
+
+// Function to group data by week and compute averages
+function aggregateByWeek(data) {
+  const weeklyData = {};
+  //console.log(data);
+  data.forEach(row => {
+    const date = new Date(row.datetime);
+    const weekStartDate = getMondayOfWeek(date); // Get the first day (Monday) of the week
+    const formattedDate = formatDate(weekStartDate); // Format the date
+
+    if (!weeklyData[formattedDate]) {
+      weeklyData[formattedDate] = { sum: 0, count: 0, stdSum: 0 };
+    }
+    
+    weeklyData[formattedDate].sum += parseFloat(row.mean);
+    weeklyData[formattedDate].stdSum += parseFloat(row.std); 
+    weeklyData[formattedDate].count++;
+  });
+
+  const weeklyLabels = Object.keys(weeklyData).sort((a, b) => new Date(a) - new Date(b)); // Sort weeks chronologically
+  const weeklyAverages = weeklyLabels.map(key => weeklyData[key].sum / weeklyData[key].count);
+  const weeklyStdDev = weeklyLabels.map(key => weeklyData[key].stdSum / weeklyData[key].count);
+  //console.log(weeklyData);
+  
+  return { weeklyLabels, weeklyAverages, weeklyStdDev };
+}
+
+// Function to get the first day (Monday) of a given date’s week
+function getMondayOfWeek(date) {
+  const newDate = new Date(date);
+  const day = newDate.getDay(); // Get the day of the week (0 = Sunday, 6 = Saturday)
+  const diff = newDate.getDate() - day + (day === 0 ? -6 : 1); // Adjust to Monday
+  return new Date(newDate.setDate(diff));
+}
+
+// Function to format the date as MM/DD/YYYY
+function formatDate(date) {
+  const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+  return date.toLocaleDateString(undefined, options);
+}
+
+// Aggregate daily emissions into weekly averages with formatted labels
+console.log(dailyData)
+const { weeklyLabels, weeklyAverages, weeklyStdDev } = aggregateByWeek(dailyData);
+
+// Calculate upper and lower bounds for standard deviation shading
+const upperBound = weeklyAverages.map((val, i) => val + weeklyStdDev[i]);
+const lowerBound = weeklyAverages.map((val, i) => val - weeklyStdDev[i]);
+
+
+// Render weekly emissions chart
+/* const ctxWeekly = document.getElementById('dailyEmissionsChart').getContext('2d');
+new Chart(ctxWeekly, {
+  type: 'line',
+  data: {
+    labels: weeklyLabels, // First day of each week (e.g., 01/01/2025)
+    datasets: [
+      {
+        label: `Weekly Average Emissions for ${zoneName}`,
+        data: weeklyAverages,
+        borderColor: 'rgba(255, 99, 132, 1)',
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderWidth: 2,
+        tension: 0.4, // Smooths the line
+        fill: false, 
+      },
+      {
+        label: 'Standard Deviation: Upper Bound',
+        data: upperBound,
+        borderColor: 'rgba(255, 99, 132, 0)',
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        fill: '-1',
+      },
+      {
+        label: 'Standard Deviation: Lower Bound',
+        data: lowerBound,
+        borderColor: 'rgba(255, 99, 132, 0)',
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        fill: '-1',
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      title: {
+        display: true,
+        text: 'Weekly Grid Emissions', // Title for weekly chart
+        font: { size: 18 }
+      }
+    },
+    scales: {
+      x: { title: { display: true, text: 'Week Starting Date' } },
+      y: { title: { display: true, text: 'Weekly Average Emissions (gCO₂e/kWh)' } }
+    }
+  }
+}); */
+
+  } catch (error) {
+    content.innerHTML += `<p>Error loading data: ${error.message}</p>`;
+  }
+  // Display the modal
+  modal.style.display = 'flex';
+  // event listener for the close button
+  const closeButton = modal.querySelector('.close-hourly-grid-emissions');
+  closeButton.onclick = function() {
+    modal.style.display = 'none';
+  };
+  // Close the modal if the user clicks anywhere outside of the modal content
+  window.onclick = function(event) {
+    if (event.target === modal) {
+      modal.style.display = 'none';
+    }
+  };
+}
+
+
 async function showStateRegulations(stateAbbreviation, properties, layerName) {
   const modal = document.getElementById('regulations-modal');
   const content = document.getElementById('regulations-content');
@@ -1084,7 +1419,7 @@ async function showStateRegulations(stateAbbreviation, properties, layerName) {
   // Fetch and display additional data from the corresponding CSV file(s)
   for (const csvFileName of csvFileNames) {
     try {
-      const response = await fetch(`${CSV_URL}${csvFileName}`);
+      const response = await fetch(`${CSV_URL_STATEREGULATIONS}${csvFileName}`);
       if (!response.ok) {
         throw new Error(`Network response was not ok: ${response.statusText}`);
       }
@@ -1291,5 +1626,6 @@ export {
   getSelectedLayersValues,
   showStateRegulations,
   getAreaLayerName,
+  showHourlyGridEmissions,
   createZefFilenames,
 };

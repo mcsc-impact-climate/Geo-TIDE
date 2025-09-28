@@ -13,7 +13,6 @@ import {
   selectedEmissionsOptions,
   gridEmissionsOptions,
   hourlyEmissionsOptions,
-  selectedHourlyEmissionsOptions,
   selectedGridEmissionsOptions,
   faf5Options,
   selectedFaf5Options,
@@ -607,14 +606,6 @@ function createGridEmissionsFilename(selected_options_list) {
   );
 }
 
-function createHourlyEmissionsFilename(selected_options_list) {
-  return (
-    'geojson_files/daily_grid_emission_profiles/daily_grid_emission_profile_hour' +
-    selected_options_list['Hour of Day'] +
-    '.geojson'
-  );
-}
-
 function createFaf5Filename(selected_options_list) {
   return (
     'geojson_files/faf5_freight_flows/mode_truck_commodity_' +
@@ -721,16 +712,6 @@ function createGridEmissionsDropdowns(key) {
     gridEmissionsOptions,
     selectedGridEmissionsOptions,
     createGridEmissionsFilename
-  );
-}
-
-function createHourlyEmissionsDropdowns(key) {
-  createDropdownGroup(
-    [['hour-of-day', 'Hour of Day', 'Hour of day: ']],
-    key,
-    hourlyEmissionsOptions,
-    selectedHourlyEmissionsOptions,
-    createHourlyEmissionsFilename
   );
 }
 
@@ -1012,10 +993,6 @@ document.getElementById('area-details-button').addEventListener('click', functio
     // Create a dropdown to select whether to view grid emission by state or balancing authority
     if (selectedAreaLayerName === 'Grid Emission Intensity') {
       createGridEmissionsDropdowns(selectedAreaLayerName);
-    }
-    // Create a dropdown to select hour of day for hourly grid emissions by ISO
-    if (selectedAreaLayerName === 'Hourly Grid Emissions') {
-      createHourlyEmissionsDropdowns(selectedAreaLayerName);
     }
     // Create a dropdown to select whether to view truck imports and exports
     if (selectedAreaLayerName === 'Truck Imports and Exports') {

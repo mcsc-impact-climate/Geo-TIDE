@@ -28,7 +28,6 @@ import {
   gridEmissionsOptions,
   selectedGridEmissionsOptions,
   hourlyEmissionsOptions,
-  selectedHourlyEmissionsOptions,
   stateSupportOptions,
   selectedStateSupportOptions,
   tcoOptions,
@@ -123,7 +122,7 @@ async function attachEventListeners() {
 
       else if ((
         k ===
-        "geojsons_simplified/daily_grid_emission_profiles/daily_grid_emission_profile_hour0.geojson"
+        "geojsons_simplified/average_grid_emissions.geojson"
       )  || (k === "Hourly Grid Emissions")){
   
         const label1HTML = `<span>${svgIcon}Hour of day: </span>`;
@@ -529,11 +528,6 @@ thirdsectDiv.style.display = (label3html || value3html) ? "block" : "none";
           updateSectionMargin1(); 
         }
 
-        else if (areaDropdown.value == "geojsons_simplified/daily_grid_emission_profiles/daily_grid_emission_profile_hour0.geojson" ){
-          const selected = transformOneOptions(selectedHourlyEmissionsOptions, transformHourlyDict, "Hour of Day")
-          updateLabels("default", areaDropdown.value, "", "", selected);
-          updateSectionMargin1(); 
-        }
         else if (areaDropdown.value == "geojsons_simplified/incentives_and_regulations/all_incentives_and_regulations.geojson" ){
           const selected = transformTwoOptions(selectedStateSupportOptions, transformStateTypeDict, transformStateTargetDict, "Support Type", "Support Target")
           updateLabels("default", areaDropdown.value, "", "", selected);

@@ -32,7 +32,7 @@ export const availableGradientAttributes = {
     'E Exp Den',
   ],
   'Grid Emission Intensity': ['CO2_rate'],
-  'Hourly Grid Emissions': ['mean', 'std_up', 'std_down'],
+  'Hourly Grid Emissions': ['mean'],
   'Commercial Electricity Price': ['Cents_kWh'],
   'Maximum Demand Charge (utility-level)': ['MaxDemCh'],
   'Maximum Demand Charge (state-level)': ['Average Ma', 'Median Max', 'Max Maximu'],
@@ -101,11 +101,7 @@ export const legendLabels = {
     'E Exp Den': 'Export Emissions (tons CO2 / sq mile)',
   },
   'Grid Emission Intensity': { CO2_rate: 'CO2 intensity of power grid (lb/MWh)' },
-  'Hourly Grid Emissions': {
-    mean: 'CO2eq intensity of power grid [mean] (lb/MWh)',
-    std_up: 'CO2eq intensity of power grid [mean + 1 stdev] (lb/MWh)',
-    std_down: 'CO2eq intensity of power grid [mean - 1 stdev] (lb/MWh)',
-  },
+    'Hourly Grid Emissions': { mean: 'CO2e intensity of power grid (lb/MWh)' },
   'Commercial Electricity Price': { Cents_kWh: 'Electricity rate (cents/kWh)' },
   'Maximum Demand Charge (utility-level)': { MaxDemCh: 'Maximum Demand Charge by Utility ($/kW)' },
   'Maximum Demand Charge (state-level)': {
@@ -378,10 +374,6 @@ export const hourlyEmissionsOptions = {
     '10pm': '22',
     '11pm': '23',
   },
-};
-
-export let selectedHourlyEmissionsOptions = {
-  'Hour of Day': '12am',
 };
 
 export const faf5Options = {

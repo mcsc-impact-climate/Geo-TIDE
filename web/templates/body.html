@@ -485,13 +485,55 @@ letter-spacing: var(--font-tracking-normal, 0rem);
   </div>
 </div>
 
+
+<!-- Modal for displaying Hourly Grid Emissions -->
+<div id="hourly-grid-emissions-modal" class="modal">
+  <div id="hourly-grid-emissions-content" class="modal-content">
+    <span class="close-hourly-grid-emissions">&times;</span>
+    <h1 id="emissions-title">Hourly & Daily Grid Emissions</h1>
+
+  </div>
+</div>
+
+
+<!-- Modal for the Options -->
+<div id="options-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border:1px solid black; z-index:1000;">
+  <h3>Layer Options</h3>
+  <label for="layer-dropdown">Select uploaded layer</label>
+  <select id="layer-dropdown" style="width: 100%; margin-bottom: 10px;">
+    <option>Select uploaded layer</option>
+    <!-- Uploaded layers will be dynamically added here -->
+  </select>
+
+  <label for="gradient-dropdown">Select gradient attribute</label>
+  <select id="gradient-dropdown" style="width: 100%;">
+    <option>None</option>
+    <!-- Layer properties will be dynamically added here -->
+  </select>
+  
+  <button id="apply-options" style="margin-top: 10px;">Apply</button>
+  <button id="close-modal" style="margin-top: 10px;">Close</button>
+</div>
+
+
 <!-- Stuff Displaying DOE Plan, on pause -->
 <script>
   const GET_GEOJSONS = '{% url "get-geojsons" %}';
   const GET_GEOJSON = '{% url "get-geojson" %}';
+
+  const CSV_URL_STATEREGULATIONS = 'https://raw.githubusercontent.com/mcsc-impact-climate/FAF5-Analysis/main/data/incentives_and_regulations/state_level/';
+  const CSV_URL_HOURLYEMISSIONS = 'https://mcsc-datahub-public.s3.us-west-2.amazonaws.com/hourly_grid_emissions/'
+  //const CSV_URL_HOURLYEMISSIONS_GITHUB = 'https://raw.githubusercontent.com/mcsc-impact-climate/Geo-TIDE/refs/heads/hourly_emissions_clickfeature/web/data_hourlygridemissions/';
+  const CSV_URL_DAILYEMISSIONS ='https://mcsc-datahub-public.s3.us-west-2.amazonaws.com/weekly_grid_emissions/'
+  //const CSV_URL_DAILYEMISSIONS_GITHUB = 'https://raw.githubusercontent.com/mcsc-impact-climate/Geo-TIDE/refs/heads/hourly_emissions_clickfeature/web/daily_rates/';
+  const CSV_URL_WEEKLYEMISSIONS = 'https://mcsc-datahub-public.s3.us-west-2.amazonaws.com/weekly_grid_emissions_1/'
   const STORAGE_URL = "https://mcsc-geotide-geojson-files.s3.us-west-2.amazonaws.com/";
   const CSV_URL =
     "https://mcsc-geotide-geojson-files.s3.us-west-2.amazonaws.com/csv_files/";
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="module"  src='{% static "main.js"%}'></script>
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 <script type="module" src='{% static "main.js"%}'></script>
@@ -607,3 +649,4 @@ letter-spacing: var(--font-tracking-normal, 0rem);
     });
   });
 </script>
+

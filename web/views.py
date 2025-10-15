@@ -31,7 +31,7 @@ geojsons["Grid Emission Intensity"] = os.path.join(
 
 geojsons["Hourly Grid Emissions"] = os.path.join(
     geojson_directory,
-    "daily_grid_emission_profiles/daily_grid_emission_profile_hour0.geojson",
+    "average_grid_emissions.geojson",
 )
 
 # Grid capacity and actual energy generated for 2022

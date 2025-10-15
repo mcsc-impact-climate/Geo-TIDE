@@ -12,6 +12,7 @@ import {
   showStateRegulations,
   getAreaLayerName,
   createZefFilenames,
+  showHourlyGridEmissions,
 } from './ui.js';
 import {
   legendLabels,
@@ -27,7 +28,6 @@ import {
   gridEmissionsOptions,
   selectedGridEmissionsOptions,
   hourlyEmissionsOptions,
-  selectedHourlyEmissionsOptions,
   stateSupportOptions,
   selectedStateSupportOptions,
   tcoOptions,
@@ -122,7 +122,7 @@ async function attachEventListeners() {
 
       else if ((
         k ===
-        "geojsons_simplified/daily_grid_emission_profiles/daily_grid_emission_profile_hour0.geojson"
+        "geojsons_simplified/average_grid_emissions.geojson"
       )  || (k === "Hourly Grid Emissions")){
   
         const label1HTML = `<span>${svgIcon}Hour of day: </span>`;
@@ -528,11 +528,6 @@ thirdsectDiv.style.display = (label3html || value3html) ? "block" : "none";
           updateSectionMargin1(); 
         }
 
-        else if (areaDropdown.value == "geojsons_simplified/daily_grid_emission_profiles/daily_grid_emission_profile_hour0.geojson" ){
-          const selected = transformOneOptions(selectedHourlyEmissionsOptions, transformHourlyDict, "Hour of Day")
-          updateLabels("default", areaDropdown.value, "", "", selected);
-          updateSectionMargin1(); 
-        }
         else if (areaDropdown.value == "geojsons_simplified/incentives_and_regulations/all_incentives_and_regulations.geojson" ){
           const selected = transformTwoOptions(selectedStateSupportOptions, transformStateTypeDict, transformStateTargetDict, "Support Type", "Support Target")
           updateLabels("default", areaDropdown.value, "", "", selected);
@@ -615,11 +610,10 @@ function handleMapHover(event) {
     const selectedLayer = getAreaLayerName(document.getElementById('area-layer-dropdown').value);
     const layerName = feature.get('layerName') || selectedLayer;
 
-    if (layerName === 'State-Level Incentives and Regulations') {
+    if (layerName === 'State-Level Incentives and Regulations' || layerName === 'Hourly Grid Emissions') {
       if (lastFeature && lastFeature !== feature) {
         lastFeature.setStyle(null); // Clear previous hover
       }
-
       feature.setStyle(createHoverStyle(layerName, feature));
       lastFeature = feature;
     }
@@ -647,7 +641,16 @@ function handleMapClick(event) {
         }
       }
     }
-  });
+    else if (layerName == 'Hourly Grid Emissions') {
+      if (feature) {
+        const properties = feature.getProperties();
+        const zoneName = properties.zoneName;
+        //console.log(zoneName);
+        showHourlyGridEmissions(zoneName, properties, layerName);
+      }
+    }
+  }
+);
 }
 
 // Initialize an empty layer cache
@@ -1357,7 +1360,7 @@ if (isNew) {
   updateLegendWidth();
 }
 
-async function fetchCSVData(csvFileName) {
+async function fetchCSVData(csvFileName, CSV_URL) {
   const csvUrl = `${CSV_URL}${csvFileName}`;
   console.log(`Fetching CSV from URL: ${csvUrl}`); // Debug logging
   try {
@@ -1583,7 +1586,6 @@ function enforceLayerOrder(layerNames) {
     }
   });
 }
-
 export {
   initMap,
   updateSelectedLayers,

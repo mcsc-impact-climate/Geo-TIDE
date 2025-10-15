@@ -229,14 +229,6 @@ function getSelectedLayers() {
 
 const details_button = document.getElementById('area-details-button');
 
-areaLayerDropdown.addEventListener('change', function () {
-  if (this.value === 'None') {
-    details_button.style.visibility = 'hidden';
-  } else {
-    details_button.style.visibility = 'visible';
-  }
-});
-
 function getSelectedLayersValues() {
   const selectedLayerValues = new Map();
   const checkboxes = document.querySelectorAll('input[type="checkbox"]');

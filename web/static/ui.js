@@ -1049,7 +1049,7 @@ async function showHourlyGridEmissions(zoneName, properties, layerName) {
   // HTML for display
   content.innerHTML = `
   <span class="close-hourly-grid-emissions">&times;</span>
-  <h1>Hourly & Weekly Grid Emissions for ${zoneName} from ---</h1>
+  <h2>Hourly & Weekly Grid Emissions for ${zoneName} from ---</h2>
   <div class="graph-wrapper">
     <div class="chart-container">
         <canvas id="emissionsChart"></canvas>
@@ -1111,7 +1111,7 @@ async function showHourlyGridEmissions(zoneName, properties, layerName) {
       day: 'numeric'
     });
     const dateRangeString = `${formatDateDisplay(firstDate)} to ${formatDateDisplay(lastDate)}`;
-    const titleElement = content.querySelector('h1');
+    const titleElement = content.querySelector('h2');
     titleElement.textContent = `Hourly & Weekly Grid Emissions for ${zoneName} from ${dateRangeString}`;
     
     // downloads and parses weekly csv file
@@ -1401,7 +1401,7 @@ async function showStateRegulations(stateAbbreviation, properties, layerName) {
   const selectedFuelType = selectedGradientAttributes['State-Level Incentives and Regulations'];
 
   const stateName = stateNames[stateAbbreviation] || stateAbbreviation;
-  content.querySelector('h1').innerText = `Regulations and Incentives for ${stateName}`;
+  content.querySelector('h2').innerText = `Regulations and Incentives for ${stateName}`;
   content.querySelector('p').innerText = 'Click on targets to view more information.';
   let detailsHtml = '';
   /*   for (const key in properties) {
@@ -1537,7 +1537,7 @@ async function showStateRegulations(stateAbbreviation, properties, layerName) {
   // Set the inner HTML
   content.innerHTML = `
   <span class="close-regulations">&times;</span>
-  <h1>Regulations and Incentives for ${stateName}</h1>
+  <h2>Regulations and Incentives for ${stateName}</h2>
   <p>Click on targets to view more information.</p>
   ${detailsHtml}
   <p><em>Italicized regulations and incentives benefit multiple fuel types and appear multiple times.</em></p>

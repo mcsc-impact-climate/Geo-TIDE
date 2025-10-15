@@ -409,10 +409,11 @@ right: 10px;
   position: relative;
   font-size: 14px;
   display: flex;
-  align-items: flex-start;  
-  justify-content: flex-start;
+  align-items: center;
+  gap: 0.25rem;
+  align-self: stretch;
+  justify-content: space-between;
   width: 100%;
-  gap: 0.75rem; 
 }
 
 .checkbox-container input[type='checkbox'],
@@ -1056,7 +1057,7 @@ ul {
 .flow-checkboxes {
 
   margin-top: 0.2rem;
-  margin-left: 2.25rem;
+  margin-left: 0.75rem;
   margin-bottom:0.45rem;
 
 }
@@ -1279,6 +1280,27 @@ ul {
   margin-left: 14px;
   margin-right: 14px;
   margin-top: 0px;
+}
+
+/* Individual checkbox attribute hover effect */
+.checkbox-container {
+  position: relative;
+  transition: background-color 0.2s ease;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  margin-left: -50px;
+  margin-right: -50px;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+
+.checkbox-container:hover {
+  background-color: var(--Background-Muted, #F1F5F9);
+}
+
+.checkbox-container:hover .checkbox-more-btn {
+  opacity: 1;
+  visibility: visible;
 }
 
 .area-feature-text {

@@ -1159,6 +1159,12 @@ function updateLegendWidth() {
   const hasContent = legendContent.children.length > 0;
   let isLegendOpen = window.getComputedStyle(legendContent).display !== 'none';
 
+  // Show/hide legend based on content
+  if (hasContent) {
+    legend.classList.add('has-content');
+  } else {
+    legend.classList.remove('has-content');
+  }
   
   if (isLegendOpen) {
     if (hasContent) {

@@ -929,7 +929,7 @@ ul {
 }
 
 #legend {
-  display: flex;
+  display: none;
   flex-direction: column;
   position: absolute;
   bottom: 1rem;
@@ -951,12 +951,22 @@ ul {
   white-space: normal;
 }
 
+/* Show legend when it has the 'has-content' class */
+#legend.has-content {
+  display: flex;
+}
+
 #legend.closed {
   width: 133px;
   height: 44px;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/* Hide legend even when closed if it has no content */
+#legend.closed:not(.has-content) {
+  display: none;
 }
 
 #legend.open {
@@ -1039,6 +1049,11 @@ ul {
 #legend-content {
   display: flex;
   flex-direction: column;
+}
+
+/* Add top margin to legend content when legend is open */
+#legend:not(.closed) #legend-content {
+  margin-top: 3rem;
 }
 
 .flow-checkboxes {
@@ -1258,6 +1273,17 @@ ul {
   top: 50%;
   right: 10px;
   transform: translateY(-50%);
+}
+
+/* When legend has content, move title and toggle to top */
+#legend:not(.closed) .legend-title {
+  top: 1rem;
+  transform: translateY(0);
+}
+
+#legend:not(.closed) .legend-toggle {
+  top: 1rem;
+  transform: translateY(0);
 }
 
 /* Public data content area */

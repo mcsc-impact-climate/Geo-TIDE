@@ -108,7 +108,7 @@ h1 {
   top: 0.75rem;
   left: 0.75rem;
   margin: 0;
-  position: absolute;
+  position: static;
 }
 
 h2 {
@@ -123,7 +123,12 @@ h3 {
 
 h4 {
     font-weight: normal;
-    font-size: 0.625rem;
+    font-size: var(--font-size-sm);
+}
+
+p {
+    font-weight: normal;
+    font-size: var(--font-size-sm);
 }
 
 body {
@@ -131,19 +136,14 @@ body {
   font-size: var(--font-size-sm);
 }
 
-#layer-selection h3 {
-  font-weight: bold;
-  font-size: var(--font-size-sm);;
-  padding-top: 20px;
-}
-
-#uploaded-layer-selection h3 {
-  font-weight: bold;
-  font-size: var(--font-size-sm);
-}
-
 #details-modal p {
   font-size: var(--font-size-sm);
+}
+
+#regulations-modal h1,
+#details-modal h1 {
+  position: static;
+  margin: 0 0 0.75rem 0; /* add vertical space normally */
 }
 
 .toggle-button {
@@ -357,14 +357,6 @@ body {
   font-size: 14px;
 }
 
-.close-btn {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
 .checkbox-container {
   position: relative;
   font-size: 14px;
@@ -433,14 +425,6 @@ background: var(--theme-background, #FFF);
 
 .checkbox-container:hover .details-btn:hover {
   opacity: var(--opacity-90, 0.9);
-}
-
-.details-title {
-  font-size: 14px;
-}
-
-.regulations-title {
-  font-size: 14px;
 }
 
 .cancel-clear,
@@ -582,45 +566,31 @@ ul {
   overflow: auto; /* Enable vertical scrolling */
 }
 
-.close-regulations {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close-regulations:hover,
-.close-regulations:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-}
-
 /* State Regulations, Styles */
 
 /* The Close Button */
-.close-btn,
-.close-regulations {
+.close-btn {
   color: #aaa;
-  float: right;
-  font-size: 28px;
+  position: absolute;
+  top: 0.75rem;     /* distance from top edge */
+  right: 1.25rem;  /* distance from right edge */
+  font-size: 1.75rem;
   font-weight: bold;
+  cursor: pointer;
+  padding: 0;                  /* remove any default padding */
+  margin: 0;                   /* remove stray margins */
+  height: auto;                /* let the glyph define its own height */
+  width: auto;
+  line-height: 1;              /* remove inherited tall line-height */
 }
 
 .close-btn:hover,
-.close-btn:focus,
-.close-regulations:hover,
-.close-regulations:focus {
+.close-btn:focus {
   color: black;
   text-decoration: none;
   cursor: pointer;
 }
 
-.close-regulations {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-}
 /*Hourly Grid Emissions*/
 /* General Modal Styles */
 #hourly-grid-emissions-modal {
@@ -701,7 +671,7 @@ ul {
   border: none;
   text-align: left;
   outline: none;
-  font-size: 18px;
+  font-size: var(--font-size-sm);
   background-color: #f1f1f1;
   margin: 0;
 }

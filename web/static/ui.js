@@ -1063,7 +1063,7 @@ async function showHourlyGridEmissions(zoneName, properties, layerName) {
 
 </div>
 
-  <p>Data sources for <strong>${zoneName}</strong>:<br>
+  <p>Data sources for <b>${zoneName}</b>:<br>
   <a href="${CSV_URL_HOURLYEMISSIONS}${hourlyCsvFileName}" target="_blank">24 Hour Grid Emissions (${hourlyCsvFileName})</a><br>
   <a href="${CSV_URL_DAILYEMISSIONS}${dailyCsvFileName}" target="_blank">Yearly Grid Emissions by Day (${dailyCsvFileName})</a><br>
   <a href="${CSV_URL_WEEKLYEMISSIONS}${weeklyCsvFileName}" target="_blank">Yearly Grid Emissions by Week (${weeklyCsvFileName})</a>
@@ -1536,7 +1536,7 @@ async function showStateRegulations(stateAbbreviation, properties, layerName) {
 
   // Set the inner HTML
   content.innerHTML = `
-  <span class="close-regulations">&times;</span>
+  <span class="close-btn">&times;</span>
   <h1>Regulations and Incentives for ${stateName}</h1>
   <p>Click on targets to view more information.</p>
   ${detailsHtml}
@@ -1544,7 +1544,7 @@ async function showStateRegulations(stateAbbreviation, properties, layerName) {
 `;
   modal.style.display = 'flex';
 
-  const closeButton = modal.querySelector('.close-regulations');
+  const closeButton = modal.querySelector('.close-btn');
   closeButton.onclick = function () {
     modal.style.display = 'none';
   };

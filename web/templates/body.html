@@ -5,170 +5,92 @@
   href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
   rel="stylesheet"
 />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 
 <div id="map" class="map"></div>
 
 <div id="legend">
-<div>
-  <h3 style="margin: 0; display: flex; align-items: center; justify-content: space-between; width: 100%; ">
-    <b style="
-      position: absolute;
-      top: 6px; 
-      left: 1rem; 
-      color: var(--theme-foreground, #020618);
-      font-family: var(--font-family-sans, Inter);
-      font-size: var(--font-size-xl, 1.25rem);
-      font-style: normal;
-      font-weight: var(--font-weight-semibold, 600);
-      line-height: var(--font-leading-7, 1.75rem);
-      letter-spacing: var(--font-tracking-normal, 0rem);
-    ">Legend</b>
-  </h3>
-  <button id="legend-toggle" style="
-        display: flex; 
-        align-items: center;
-        justify-content: center;
-        width: 1.5rem;
-        height: 1.5rem;
-        border: none;
-        background: transparent;
-        padding: 0;
-        position: absolute; 
-        top: 7px; 
-        right: 10px; 
-  ">
-    <svg id="chevron-toggle" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" style="transition: transform 0.3s ease;">
-      <path id="legend-chevron-path" d="m6 6 6 6 6-6M6 12l6 6 6-6"/>
-    </svg>
-  </button>
+  <div class="legend-header">
+    <h1 class="legend-title">Legend</h1>
+    <button id="legend-toggle" class="legend-toggle" aria-label="Toggle legend">
+      <svg id="chevron-toggle" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"
+           viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+           style="transition: transform 0.3s ease;">
+        <path id="legend-chevron-path" d="m6 6 6 6 6-6M6 12l6 6 6-6"/>
+      </svg>
+    </button>
+  </div>
+  <div id="legend-content" class="font-sans font-normal text-sm leading-5 tracking-normal align-middle"></div>
 </div>
 
-  <div id="legend-content" class="font-sans font-normal text-sm leading-5 tracking-normal align-middle">
-  </div>
-</div>
 
 
 <div
   id="layer-selection"
   style="
-    position: absolute;
-    bottom: 7rem; 
-    right: 1rem; 
-    padding: 10px;
-    width: 26.75rem;
-    height:35rem; 
-    flex-shrink: 0; 
-    border-radius: var(--Corner-Small, 0.5rem);
-    background: #FFF;
-    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
-    box-sizing: border-box;
+    bottom: 7rem;
+    height:35rem;
   "
 >
 
 
-<div style="display: flex; align-items: center; justify-content: space-between;">
-  <h2 style="
-  position: absolute;
-  top: 0.05rem;
-  left: 1.25rem;
-  color: var(--theme-foreground, #020618);
-  font-family: var(--font-family-sans, Inter);
-  font-size: var(--font-size-xl, 1.25rem);
-  font-style: normal;
-  font-weight: var(--font-weight-semibold, 600);
-  line-height: var(--font-leading-7, 1.75rem);
-  letter-spacing: var(--font-tracking-normal, 0rem);
-  margin: 0;
-">
-  Public Data
-</h2>
-  <button id="Public-toggle" class = "public-toggle">
-
-
+<div class="public-data-header">
+  <h1>Public Data</h1>
+  <button id="Public-toggle" class="public-toggle">
     <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"
-      viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"
-      style="transition: transform 0.3s ease;">
-      <path id = "public-chevron-path" d="m6 6 6 6 6-6M6 12l6 6 6-6"/>
+      viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+      xmlns="http://www.w3.org/2000/svg">
+      <path id="public-chevron-path" d="m6 6 6 6 6-6M6 12l6 6 6-6"/>
     </svg>
   </button>
-
-
 </div>
 
 
-  <div id="public-data-content">
+<div id="public-data-content">
+      <div class="public-data-box" style="align-items: center !important;">
+        <button id="area-icon" class="public-icon"
+          style="padding: 0; line-height: 0; display: flex; align-items: center; justify-content: center;">
+          <svg width="1.5rem" height="1.5rem" fill="none" stroke="currentColor" stroke-width="1.5"
+            viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+            xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0"/>
+            <path d="M14 12.833 12 7.5l-2 5.333m4 0 1 2.667m-1-2.667h-4M9 15.5l1-2.667"/>
+          </svg>
+        </button>
 
-    <div class = "public-data-box">
+        <h2 style="
+          margin: 0;
+          padding: 0;
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+          line-height: 1.2; /* tighter vertical spacing for optical centering */
+        ">
+          Area Feature
+          <span style="font-weight: normal; font-size: var(--font-size-sm); color: var(--theme-accent-foreground, #0F172B);">(choose one)</span>
+        </h2>
+      </div>
 
-    <button id="area-icon" class = "public-icon">
-       <svg width="1.5rem" height="1.5rem" style="width: 1.5rem; height: 1.5rem;" fill="none" stroke="currentColor" stroke-width="1.5"
-       viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
-       xmlns="http://www.w3.org/2000/svg">
-    <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0"/>
-    <path d="M14 12.833 12 7.5l-2 5.333m4 0 1 2.667m-1-2.667h-4M9 15.5l1-2.667"/>
-   </svg>
-    </button>
+      <div class="area-controls">
+        <select id="area-layer-dropdown" class="area-layer-dropdown">
+          <option>None</option>
+          <!-- Add options for area layers -->
+        </select>
 
-  
-    
-  <h3 style = "
-    padding: 0;
-    color: var(--theme-foreground, #020618);
-    font-family: var(--font-family-sans, Inter);
-    font-size: var(--font-size-base, 1rem);
-    font-style: normal;
-    font-weight: var(--font-weight-semibold, 600);
-    line-height: var(--font-leading-6, 1.5rem); 
-    letter-spacing: var(--font-tracking-normal, 0rem);
-  "
-  >
-      Area Feature
-    <span style="
-      color: var(--theme-foreground, #020618);
-      font-family: var(--font-family-sans, Inter);
-      font-size: var(--font-size-base, 1rem);
-      font-style: normal;
-      font-weight: var(--font-weight-normal, 400);
-      line-height: var(--font-leading-6, 1.5rem);
-      letter-spacing: var(--font-tracking-normal, 0rem);
-    ">
-      (Choose one)
-    </span>
-  </h3>
-</div>
-
-  <select id="area-layer-dropdown" 
-    class = "area-layer-dropdown"
-  >
-    <option>Select Area Feature</option>
-    <!-- Add options for area layers -->
-  </select>
-
-  <button
-    id="area-details-button"
-    class = "area-details-button"
-    onmouseover="this.style.backgroundColor='#F1F5F9';"
-    onmouseout="this.style.backgroundColor='var(--theme-background, #FFF)';"
-  >
-  
-  <span style="
-  position: absolute;
-  top: 0.1rem;
-  color: var(--theme-accent-foreground, #0F172B);
-  text-align: center;
-  font-family: var(--font-family-sans, Inter);
-  font-size: var(--font-size-sm, 0.875rem);
-  font-style: normal;
-  font-weight: var(--font-weight-medium, 500);
-  line-height: var(--font-leading-5, 1.25rem);
-  letter-spacing: var(--font-tracking-normal, 0rem);
-  display: block; 
-">
-  More
-</span>
-</button>
+        <button
+          id="area-details-button"
+          class="area-details-button"
+          onmouseover="this.style.backgroundColor='#F1F5F9';"
+          onmouseout="this.style.backgroundColor='var(--theme-background, #FFF)';"
+        >
+          More
+        </button>
+      </div>
 
 <div id="public" class = "extra_butes_style">
   <div id="firstsect" class="firstsect"> 
@@ -182,56 +104,33 @@
   <div id="thirdsect" class = "thirdsect"> 
     <span class="label3"></span><span class="value3"></span>
   </div>
-
 </div>
 
+<div class="public-data-box" style="align-items: center !important; padding-top: 1rem;">
+  <button id="highway-icon" class="public-icon"
+    style="padding: 0; line-height: 0; display: flex; align-items: center; justify-content: center;">
+    <svg width="1.5rem" height="1.5rem" fill="none" stroke="currentColor" stroke-width="1.5"
+      viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+      xmlns="http://www.w3.org/2000/svg">
+              <path d='M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0M9.5 8v4m0 0v4m0-4h5m0-4v4m0 0v4'/>
+    </svg>
+  </button>
 
-
-
-<div class="header-container">
-
-<button id="highway-icon" class = "public-icon"
-">
-   <svg width="1.5rem" height="1.5rem" style="width: 1.5rem; height: 1.5rem;" fill="none" stroke="currentColor" stroke-width="1.5"
-   viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
-           xmlns="http://www.w3.org/2000/svg">
-        <path d='M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0M9.5 8v4m0 0v4m0-4h5m0-4v4m0 0v4'/>
-      </svg>
-</button>
-
-
-  <h3 style="
-    margin:0;
-    padding: 0; 
-    color: var(--theme-foreground, #020618);
-    font-family: var(--font-family-sans, Inter);
-    font-size: var(--font-size-base, 1rem);
-    font-style: normal;
-    font-weight: var(--font-weight-semibold, 600);
-    line-height: var(--font-leading-6, 1.5rem); 
-    letter-spacing: var(--font-tracking-normal, 0rem);
+  <h2 style="
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    line-height: 1.2; /* tighter vertical spacing for optical centering */
   ">
     Highway Features
-    <span style="
-      margin:0;
-      padding:0;
-      color: var(--theme-foreground, #020618);
-      font-family: var(--font-family-sans, Inter);
-      font-size: var(--font-size-base, 1rem);
-      font-style: normal;
-      font-weight: var(--font-weight-normal, 400);
-      line-height: var(--font-leading-6, 1.5rem);
-      letter-spacing: var(--font-tracking-normal, 0rem);
-    ">
-      (Choose multiple)
-    </span>
-  </h3>
-
+    <span style="font-weight: normal; font-size: var(--font-size-sm); color: var(--theme-accent-foreground, #0F172B);">(choose one)</span>
+  </h2>
 </div>
 
 <div class="button-container">
 
-<div class ="button-row-1" >
+<div class ="button-row" >
   <span class = "button-text-style"> Highway Flows</span>
 
   <button class="show-button" data-target="highway-flow-checkboxes">
@@ -248,7 +147,7 @@
     <!-- Add checkboxes for highway flows -->
   </div>
 
-<div class ="button-row-2">
+<div class ="button-row">
     <span class = "button-text-style"> Planned Infrastructure Corridors</span>
   
     <button class="show-button" data-target="highway-infra-checkboxes">
@@ -268,53 +167,34 @@
 
 </div>
 
-  <div style=   
-" 
-margin-top: 0.5rem;
-display: flex; 
-align-items: flex-start; 
-gap: 0.5rem; "
->
+<div class="public-data-box" style="align-items: center !important; padding-top: 1rem;">
+  <button id="point-icon" class="public-icon"
+    style="padding: 0; line-height: 0; display: flex; align-items: center; justify-content: center;">
+    <svg width="1.5rem" height="1.5rem" fill="none" stroke="currentColor" stroke-width="1.5"
+      viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+      xmlns="http://www.w3.org/2000/svg">
+      <path d='M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0'/>
+      <path d='M9.75 12V8.5a.5.5 0 0 1 .5-.5h3a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5zm0 0v4'/>
+    </svg>
+  </button>
 
-<button id="point-icon" class = "public-icon">
-   <svg width="1.5rem" height="1.5rem" style="width: 1.5rem; height: 1.5rem;" fill="none" stroke="currentColor" stroke-width="1.5"
-   viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
-           xmlns="http://www.w3.org/2000/svg">
-        <path d='M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0'/>
-        <path d='M9.75 12V8.5a.5.5 0 0 1 .5-.5h3a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5zm0 0v4'/>
-      </svg>
-</button>
-
-  <h3 style="
-  padding: 0; 
-  color: var(--theme-foreground, #020618);
-  font-family: var(--font-family-sans, Inter);
-  font-size: var(--font-size-base, 1rem);
-  font-style: normal;
-  font-weight: var(--font-weight-semibold, 600);
-  line-height: var(--font-leading-6, 1.5rem);
-  letter-spacing: var(--font-tracking-normal, 0rem);
-">Point Features 
-<span style="
-color: var(--theme-foreground, #020618);
-font-family: var(--font-family-sans, Inter);
-font-size: var(--font-size-base, 1rem);
-font-style: normal;
-font-weight: var(--font-weight-normal, 400);
-line-height: var(--font-leading-6, 1.5rem);
-letter-spacing: var(--font-tracking-normal, 0rem);
-">
-(Choose multiple)
-</span></h3>
-
-  </div>
-
-    
+  <h2 style="
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    line-height: 1.2; /* tighter vertical spacing for optical centering */
+  ">
+    Point Features
+    <span style="font-weight: normal; font-size: var(--font-size-sm); color: var(--theme-accent-foreground, #0F172B);">(choose one)</span>
+  </h2>
+</div>
 
 
   <div class = "button-container">
 
-    <div class ="button-row-3" >
+    <div class ="button-row" >
     <span class = "button-text-style">Charge/Fuel Stations</span>
 
     <button class="show-button" data-target="point-refuel-checkboxes" > 
@@ -328,7 +208,7 @@ letter-spacing: var(--font-tracking-normal, 0rem);
     <!-- Add checkboxes for point layers -->
   </div>
 
-    <div class ="button-row-4" >
+    <div class ="button-row" >
     <span class = "button-text-style">Hydrogen Production Facilities</span>
 
     <button class="show-button" data-target="point-h2prod-checkboxes" > 
@@ -345,8 +225,7 @@ letter-spacing: var(--font-tracking-normal, 0rem);
   </div>
 
 
-
-  <div class ="button-row-5" >
+  <div class ="button-row" >
     <span class = "button-text-style">Other Points</span>
 
     <button class="show-button" data-target="point-other-checkboxes" > 
@@ -361,15 +240,15 @@ letter-spacing: var(--font-tracking-normal, 0rem);
   </div>
 
   <div id="public-2" class = "extra_butes_style">
-    <div id="firstsect-2" class="firstsect", style = "margin-top: 0rem; margin-left: 1rem;"> 
+    <div id="firstsect-2" class="firstsect", style = "margin-top: 0rem; margin-left: 2.5rem;">
     <span class="label1-2"></span><span class="value1-2"></span>
     </div>
   
-    <div id="secsect-2" class = "secsect" , style = "margin-left: 1rem;"> 
+    <div id="secsect-2" class = "secsect" , style = "margin-left: 2.5rem;">
       <span class="label2-2"></span><span class="value2-2"></span>
     </div>
   
-    <div id="thirdsect-2" class = "thirdsect" , style = "margin-left: 1rem;"> 
+    <div id="thirdsect-2" class = "thirdsect" , style = "margin-left: 2.5rem;">
       <span class="label3-2"></span><span class="value3-2"></span>
     </div>
   
@@ -379,28 +258,9 @@ letter-spacing: var(--font-tracking-normal, 0rem);
 </div>
 </div>
 
-
-
-
-
-
-
-
-
-
   <div class="button-container-2">
-    <button id="clear-button" class="clear-button"
-      style = "
-      color: var(--theme-destructive-foreground, #F8FAFC);
-      text-align: center;
-      font-family: var(--font-family-sans, Inter);
-      font-size: var(--font-size-sm, 0.875rem);
-      font-style: normal;
-      font-weight: var(--font-weight-medium, 500);
-      line-height: var(--font-leading-5, 1.25rem);
-      letter-spacing: var(--font-tracking-normal, 0rem);">
+    <button id="clear-button" class="clear-button">
       Clear Layers</button>
-
   </div>
 
   <!-- Full-screen loading spinner overlay -->
@@ -425,24 +285,11 @@ letter-spacing: var(--font-tracking-normal, 0rem);
   </div>
 </div>
 <div
-  id="uploaded-layer-selection"
-  style = "position: absolute;
-  top: 275px; 
-  right: 10px;
-  width: 26.75rem;
-  height: 6.75rem;
-  flex-shrink: 0;
-  border-radius: var(--Corner-Small, 0.5rem);
-  background: #FFF;
-  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);">
+  id="uploaded-layer-selection">
   
-  <h2 style = "color: var(--theme-foreground, #020618);
-  font-family: var(--font-family-sans, Inter);
-  font-size: var(--font-size-xl, 1.25rem);
-  font-style: normal;
-  font-weight: var(--font-weight-semibold, 600);
-  line-height: var(--font-leading-7, 1.75rem); /* 140% */
-  letter-spacing: var(--font-tracking-normal, 0rem);">Uploaded Data</h2>
+  <h1>
+    Uploaded Data
+  </h1>
   <select
     id="usefiles-data-ajax"
     multiple="multiple"
@@ -451,6 +298,7 @@ letter-spacing: var(--font-tracking-normal, 0rem);
 </div>
 
 <!-- Initialize Select2 -->
+
 <script>
   let uploadedGeojsonNames = {};
   $(document).ready(function () {
@@ -458,7 +306,7 @@ letter-spacing: var(--font-tracking-normal, 0rem);
 
     $select.select2({
       placeholder: "Select one or more uploaded layers",
-      allowClear: true,
+      allowClear: false,
       ajax: {
         cache: false, //  Disable caching
         delay: 250,
@@ -534,7 +382,7 @@ letter-spacing: var(--font-tracking-normal, 0rem);
 <div id="details-modal" class="modal">
   <div class="modal-content">
     <span class="close-btn">&times;</span>
-    <h2 id="details-title">Details</h2>
+    <h1 id="details-title">Details</h1>
     <p id="details-content">Details content goes here.</p>
   </div>
 </div>
@@ -542,8 +390,8 @@ letter-spacing: var(--font-tracking-normal, 0rem);
 <!-- Modal for displaying regulations -->
 <div id="regulations-modal" class="modal">
   <div id="regulations-content" class="modal-content">
-    <span class="close-regulations">&times;</span>
-    <h1>Regulations and Incentives for [State Name]</h1>
+    <span class="close-btn">&times;</span>
+    <h1 style="margin-bottom: 0.75rem">Regulations and Incentives for [State Name]</h1>
     <p><em>Click on targets to view more information.</em></p>
     <div id="regulations-details">
       <p>Loading...</p>
@@ -562,7 +410,7 @@ letter-spacing: var(--font-tracking-normal, 0rem);
 <div id="hourly-grid-emissions-modal" class="modal">
   <div id="hourly-grid-emissions-content" class="modal-content">
     <span class="close-hourly-grid-emissions">&times;</span>
-    <h1 id="emissions-title">Hourly & Daily Grid Emissions</h1>
+    <h1 id="emissions-title">Hourly & Weekly Grid Emissions</h1>
 
   </div>
 </div>
@@ -614,7 +462,7 @@ letter-spacing: var(--font-tracking-normal, 0rem);
 <div id="clear-confirmation-modal" class="modal" style="display: none">
   <div class="modal-content" style="max-width: 400px">
     <span class="close-btn" id="clear-modal-close">&times;</span>
-    <h2>Confirm Clear</h2>
+    <h1>Confirm Clear</h1>
     <p>
       This will remove all displayed layers from the map and reset selections.
       Are you sure you want to continue?
@@ -694,7 +542,7 @@ letter-spacing: var(--font-tracking-normal, 0rem);
 
     function updatePublicWidth() {
       if (publicContent.style.display !== 'none' && publicContent.children.length > 0) {
-        layerSelection.style.width = '26.75rem'; 
+        layerSelection.style.width = '17.5rem';
         layerSelection.style.height = '35rem'; 
       } else {
         layerSelection.style.width = '10.625rem';

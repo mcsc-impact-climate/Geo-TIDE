@@ -193,44 +193,17 @@ body {
 }
 
 
-.button-row-1 {
-  display: flex;
-  align-items: center;
-  justify-content: space-between; 
-  padding-left: 14px; 
-  padding-right: 1rem;
-}
-
-.button-row-2 {
-  display: flex;
-  align-items: center;
-  justify-content: space-between; 
-  padding-left: 14px; 
-  padding-right: 1rem;
-}
-
-.button-row-3 {
-  display: flex;
-  align-items: center;
-  justify-content: space-between; 
-  padding-left: 14px; 
-  padding-right: 1rem;
-}
-
-.button-row-4 {
-  display: flex;
-  align-items: center;
-  justify-content: space-between; 
-  padding-left: 14px; 
-  padding-right: 1rem;
-}
-
+.button-row-1,
+.button-row-2,
+.button-row-3,
+.button-row-4,
 .button-row-5 {
   display: flex;
   align-items: center;
   justify-content: space-between; 
   padding-left: 14px; 
   padding-right: 1rem;
+  cursor: pointer;
 }
 
 .button-text-style {
@@ -1228,6 +1201,7 @@ ul {
   align-items: center;
   justify-content: space-between;
   margin: 2px 14px 8px 14px;
+  cursor: pointer;
 }
 
 .uploaded-panel-header {
@@ -1235,6 +1209,7 @@ ul {
   align-items: center;
   justify-content: space-between;
   margin: 2px 14px 0px 14px;
+  cursor: pointer;
 }
 
 .panel-title {

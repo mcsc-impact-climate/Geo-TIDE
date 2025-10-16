@@ -267,29 +267,43 @@ let first_time = true;
 document.getElementById('layer-selection').addEventListener('click', function (event) {
   
   const button = event.target.closest('.show-button');
+  const buttonRow = event.target.closest('[class^="button-row-"]');
   
-  if (button) {
-    const targetId = button.getAttribute('data-target');
-    const target = document.getElementById(targetId);
-    const svg = button.querySelector('svg path');
-
-    if (first_time && targetId == "point-other-checkboxes"){
-      updateLabels2("default", "Savings from Pooled Charging Infrastructure", "", "", {});
-      first_time = false; 
+  if (button || buttonRow) {
+    let targetId, target, svg;
+    
+    if (button) {
+      targetId = button.getAttribute('data-target');
+      target = document.getElementById(targetId);
+      svg = button.querySelector('svg path');
+    } else if (buttonRow) {
+      const showButton = buttonRow.querySelector('.show-button');
+      if (showButton) {
+        targetId = showButton.getAttribute('data-target');
+        target = document.getElementById(targetId);
+        svg = showButton.querySelector('svg path');
+      }
     }
 
-    if (target.style.display === 'none') {
-      target.style.display = 'block';
-      svg.setAttribute('d', "M12 10L8 6L4 10");
-      if (targetId == "point-other-checkboxes"){
-        document.getElementById("public-2").style.display = 'block'; 
+    if (targetId && target && svg) {
+      if (first_time && targetId == "point-other-checkboxes"){
+        updateLabels2("default", "Savings from Pooled Charging Infrastructure", "", "", {});
+        first_time = false; 
       }
 
-    } else {
-      target.style.display = 'none';
-      svg.setAttribute('d', "M4 6L8 10L12 6");
-      if (targetId == "point-other-checkboxes"){
-        document.getElementById("public-2").style.display = 'none'; 
+      if (target.style.display === 'none') {
+        target.style.display = 'block';
+        svg.setAttribute('d', "M12 10L8 6L4 10");
+        if (targetId == "point-other-checkboxes"){
+          document.getElementById("public-2").style.display = 'block'; 
+        }
+
+      } else {
+        target.style.display = 'none';
+        svg.setAttribute('d', "M4 6L8 10L12 6");
+        if (targetId == "point-other-checkboxes"){
+          document.getElementById("public-2").style.display = 'none'; 
+        }
       }
     }
   }

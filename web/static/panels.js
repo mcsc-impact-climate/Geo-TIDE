@@ -25,20 +25,20 @@ function placePanels() {
 
 function initPublicDataToggle() {
   document.addEventListener('DOMContentLoaded', function () {
-    const toggleButton = document.getElementById('Public-toggle');
+    const panelHeader = document.querySelector('.panel-header');
     const chevronPath = document.getElementById('public-chevron-path');
     const publicContent = document.getElementById('public-data-content');
 
-    if (!toggleButton || !chevronPath || !publicContent) return;
+    if (!panelHeader || !chevronPath || !publicContent) return;
 
-    toggleButton.addEventListener('click', function () {
+    panelHeader.addEventListener('click', function () {
       const isOpen = publicContent.style.display !== 'none';
       
       publicContent.style.display = isOpen ? 'none' : 'block';
       chevronPath.setAttribute('d', 
         isOpen
-          ? 'm6 6 6 6 6-6M6 12l6 6 6-6'
-          : 'm18 12-6-6-6 6m12 6-6-6-6 6'
+          ? 'm18 12-6-6-6 6m12 6-6-6-6 6'
+          : 'm6 6 6 6 6-6M6 12l6 6 6-6'
       );
       
       requestAnimationFrame(placePanels);
@@ -48,20 +48,20 @@ function initPublicDataToggle() {
 
 function initUploadedDataToggle() {
   document.addEventListener('DOMContentLoaded', function () {
-    const toggleButton = document.getElementById('Uploaded-toggle');
+    const panelHeader = document.querySelector('.uploaded-panel-header');
     const chevronPath = document.getElementById('uploaded-chevron-path');
     const uploadedContent = document.getElementById('uploaded-data-content');
 
-    if (!toggleButton || !chevronPath || !uploadedContent) return;
+    if (!panelHeader || !chevronPath || !uploadedContent) return;
 
-    toggleButton.addEventListener('click', function () {
+    panelHeader.addEventListener('click', function () {
       const isOpen = uploadedContent.style.display !== 'none';
       
       uploadedContent.style.display = isOpen ? 'none' : 'block';
       chevronPath.setAttribute('d',
         isOpen
-          ? 'm6 6 6 6 6-6M6 12l6 6 6-6'
-          : 'm18 12-6-6-6 6m12 6-6-6-6 6'
+          ? 'm18 12-6-6-6 6m12 6-6-6-6 6'
+          : 'm6 6 6 6 6-6M6 12l6 6 6-6'
       );
       
       requestAnimationFrame(placePanels);

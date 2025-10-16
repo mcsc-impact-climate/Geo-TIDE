@@ -93,7 +93,7 @@ html { font-size: 16px; }
   --font-size-sm: 0.75rem; /* 12px */
   --legend-header-h: 1.75rem;   /* h2 line-height */
   --legend-header-pad: 0.5rem; /* top padding */
-  --legend-gap: 1rem;           /* desired gap below the title */
+  --legend-gap: 0.75rem;           /* desired gap below the title */
 }
 
 h1 {
@@ -978,13 +978,9 @@ ul {
   scroll-behavior: smooth;
   word-wrap: break-word;
   white-space: normal;
-  padding-top: calc(
-    var(--legend-header-pad) +
-    var(--legend-header-h) +
-    var(--legend-gap-below-title)
-  );
+  padding-top: calc(var(--legend-header-pad) + var(--legend-header-h));
+  padding-bottom: 0.75rem;
   --legend-right-inset: 0.75rem;
-  --legend-gap: 1.8125rem;
   --legend-text-w: 17rem;   /* DME: Reduced the width slightly to fit all icons */
 }
 
@@ -1064,8 +1060,8 @@ ul {
   width: 29.75rem;
   height: 0.0625rem;
   border: 0.0625rem;
-  margin-bottom: 0.625rem;
-  margin-top: 0.375rem;
+  margin-bottom: 1.25rem;
+  margin-top: 0.5rem;
   background: var(--theme-border, #E2E8F0);
 }
 
@@ -1074,6 +1070,8 @@ ul {
   word-break: break-word;
   overflow-wrap: anywhere;
   width: 17.875rem;
+  padding-bottom: 0.3125rem;
+  padding-top: 0.3125rem;
   color: var(--theme-foreground, #020618);
   font-family: var(--font-family-sans, Inter);
   font-size: var(--font-size-sm, 1rem);
@@ -1100,11 +1098,12 @@ ul {
   display: flex;
   flex-direction: column;
   padding-top: 0;
+  padding-bottom: 0;
 }
 
 /* add spacer only if any row exists */
 #legend:has(#legend-content .legend-entry) #legend-content {
-  padding-top: calc(var(--legend-header-pad) + var(--legend-header-h) + var(--legend-gap));
+  padding-top: var(--legend-gap);
 }
 
 /* Make the first row’s contents hug the top edge of the group */

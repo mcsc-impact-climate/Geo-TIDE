@@ -83,145 +83,119 @@ time,
 mark,
 audio,
 video {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
+  font-family: Inter, sans-serif !important;
+}
+
+html { font-size: 16px; }
+
+:root {
+  --font-size-xl: 1.0625rem; /*17px*/
+  --font-size-sm: 0.75rem; /* 12px */
+  --legend-header-h: 1.75rem;   /* h2 line-height */
+  --legend-header-pad: 0.5rem; /* top padding */
+  --legend-gap: 0.75rem;           /* desired gap below the title */
+}
+
+h1 {
+  font-family: var(--font-family-sans, 'Inter', system-ui, -apple-system, "Segoe UI",
+                   Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif) !important;
+  font-weight: var(--font-weight-semibold, 600);
+  font-size: var(--font-size-xl);
+  font-style: normal;
+  letter-spacing: var(--font-tracking-normal, 0rem);
+  text-align: left;
+  color: var(--theme-foreground, #020618);
+  top: 0.75rem;
+  left: 0.75rem;
+  margin: 0;
+  position: static;
+}
+
+h2 {
+    font-weight: var(--font-weight-semibold, 600);
+    font-size: var(--font-size-sm);
+}
+
+h3 {
+    font-weight: normal;
+    font-size: var(--font-size-sm);
+}
+
+h4 {
+    font-weight: normal;
+    font-size: var(--font-size-sm);
+}
+
+p {
+    font-weight: normal;
+    font-size: var(--font-size-sm);
 }
 
 body {
   font-weight: normal;
-  font-size: 14px;
-}
-
-#legend h3 {
-  font-weight: normal;
-  font-size: 16px;
-}
-
-#layer-selection h3 {
-  font-weight: 600;
-  font-size: 16px;
-  padding-top: 8px;
-}
-
-/* Helper text should be regular weight */
-#layer-selection h3 span {
-  font-weight: 400 !important;
-}
-
-/* Icons should not be bold */
-.public-icon {
-  font-weight: normal;
-}
-
-#uploaded-layer-selection h3 {
-  font-weight: 600;
-  font-size: 16px;
-  padding-top: 2px;
-}
-
-#layer-selection h2 {
-  font-weight: 600;
-  font-size: 20px;
-  color: var(--theme-foreground, #020618);
-  text-align: left;
-}
-
-#details-modal h2 {
-  font-weight: 600;
-  font-size: 22px;
+  font-size: var(--font-size-sm);
 }
 
 #details-modal p {
-  font-size: 16px;
+  font-size: var(--font-size-sm);
 }
 
-#regulations-content h1 {
-  font-weight: 600;
-  font-size: 22px;
-}
-
-#regulations-content h2 {
-  font-weight: 600;
-  font-size: 18px;
-}
-
-#regulations-content h3 {
-  font-size: 17px;
-}
-
-#regulations-content h4 {
-  font-weight: 600;
-  font-size: 16px;
-}
-
-#regulations-content p {
-  font-size: 16px;
-}
-
-#clear-confirmation-modal h2 {
-  font-weight: 600;
-  font-size: 22px;
-}
-
-#clear-confirmation-modal p {
-  font-size: 16px;
+#regulations-modal h1,
+#details-modal h1 {
+  position: static;
+  margin: 0 0 0.75rem 0; /* add vertical space normally */
 }
 
 .toggle-button {
   font-weight: normal;
-  font-size: 14px; 
+  font-size: 14px;
   padding-right: 5px;
-  padding-left: 5px; 
-
-
+  padding-left: 5px;
 }
 
 
 .button-container {
   display: flex;
-  flex-direction: column; 
-  gap: 0rem; 
+  flex-direction: column;
+  gap: 0rem;
   padding-top: 0rem;
-  margin-top: 50rem; 
+  margin-top: 50rem;
 
 }
 
 
 .button-container-2 {
   display: flex;
-  flex-direction: column; 
-  gap: 0rem; 
+  flex-direction: column;
+  gap: 0rem;
 }
 
 
-.button-row-1,
-.button-row-2,
-.button-row-3,
-.button-row-4,
-.button-row-5 {
+.button-row {
   display: flex;
   align-items: center;
-  justify-content: space-between; 
-  padding-left: 14px; 
-  padding-right: 1rem;
-  cursor: pointer;
+  justify-content: space-between;
+  padding-left: 1.5rem;
+  gap: 0rem;
 }
 
 .button-text-style {
   color: var(--theme-foreground, #020618);
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 0.875rem;
+
+  font-family: var(--font-family-sans, Inter);
+  font-size: var(--font-size-sm);
   font-style: normal;
-  font-weight: 400;
-  line-height: 1.25rem; 
-  letter-spacing: 0;
-  white-space: nowrap; 
+  font-weight: var(--font-weight-normal, 400);
+  line-height: var(--font-leading-6, 1.5rem);
+  letter-spacing: var(--font-tracking-normal, 0rem);
+  white-space: nowrap;
   margin-left: 0.75rem;
 }
 
 .show-button {
-  all: unset; 
-  width: 1.25rem;
-  height: 1.25rem;
+  all: unset;
+  width: 1rem;
+  height: 1rem;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -324,21 +298,32 @@ body {
 
 /* Additional styles for the "Clear" button (you can customize these styles) */
 .clear-button {
-  display: inline-flex;
-height: var(--spacing-10, 2.5rem);
-padding: var(--spacing-2, 0.5rem) var(--spacing-4, 1rem);
-justify-content: center;
-align-items: center;
-gap: var(--spacing-1-5, 0.375rem);
-flex-shrink: 0;
-border-radius: var(--radius-md, 0.375rem);
-opacity: var(--opacity-100, 1);
-background: var(--theme-destructive, #E7000B);
-box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
-border: none; 
-outline: none; 
-position: absolute; 
-right: 10px; 
+    color: var(--theme-destructive-foreground, #F8FAFC);
+    text-align: center;
+    font-family: var(--font-family-sans, 'Inter', system-ui, -apple-system, "Segoe UI",
+                     Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif) !important;
+    font-size: var(--font-size-sm, 1rem);
+    font-style: normal;
+    font-weight: var(--font-weight-medium, 500);
+    line-height: var(--font-leading-5, 1.25rem);
+    letter-spacing: var(--font-tracking-normal, 0rem);
+    
+    display: inline-flex;
+    height: var(--spacing-10, 2.5rem);
+    padding: var(--spacing-2, 0.5rem) var(--spacing-4, 1rem);
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-1-5, 0.375rem);
+    flex-shrink: 0;
+    border-radius: var(--radius-md, 0.375rem);
+    opacity: var(--opacity-100, 1);
+    background: var(--theme-destructive, #E7000B);
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+    border: none;
+    outline: none;
+    position: absolute;
+    bottom: 3.5rem;
+    right: 1rem;
 }
 
 .clear-button:hover {
@@ -370,23 +355,14 @@ right: 10px;
   font-size: 14px;
 }
 
-.close-btn {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
 .checkbox-container {
   position: relative;
   font-size: 14px;
   display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  align-self: stretch;
-  justify-content: space-between;
+  align-items: flex-start;
+  justify-content: flex-start;
   width: 100%;
+  gap: 0.75rem;
 }
 
 .checkbox-container input[type='checkbox'],
@@ -400,40 +376,16 @@ justify-content: center;
 align-items: center;
 flex-shrink: 0;
 border-radius: var(--radius-sm, 0.25rem);
-border: 1px solid var(--Border-Blue, #155DFC);
-background: var(--Background-Light, #FFF);
-accent-color: #155DFC !important;
--webkit-appearance: none !important;
--moz-appearance: none !important;
-appearance: none !important;
-}
-
-.checkbox-container input[type='checkbox']:checked,
-input[type='checkbox']:checked,
-.flow-checkboxes input[type='checkbox']:checked {
-background-color: #155DFC !important;
-border-color: #155DFC !important;
-}
-
-.checkbox-container input[type='checkbox']:checked::after,
-input[type='checkbox']:checked::after,
-.flow-checkboxes input[type='checkbox']:checked::after {
-content: "✓";
-color: white;
-font-size: 12px;
-font-weight: bold;
-display: flex;
-justify-content: center;
-align-items: center;
-width: 100%;
-height: 100%;
+border: 1px solid var(--theme-primary, #155DFC);
+background: var(--theme-background, #FFF);
+  accent-color: #155DFC;
 }
 
 .checkbox-container label {
   vertical-align: middle;
-  flex: 1;               
-  min-width: 0;            
-  overflow-wrap: anywhere; 
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 /* Style for the 'Details' button */
@@ -447,40 +399,32 @@ height: 100%;
   gap: var(--spacing-1-5, 0.375rem);
   flex-shrink: 0;
   border-radius: var(--radius-md, 0.375rem);
-  background: var(--theme-primary, #155DFC);  
+  background: var(--theme-primary, #155DFC);
   color: var(--theme-primary-foreground, #F8FAFC);
   text-align: center;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: var(--font-size-sm, 0.875rem);
+  font-family: var(--font-family-sans, Inter);
+  font-size: var(--font-size-sm, 1rem);
   font-style: normal;
   font-weight: var(--font-weight-medium, 500);
-  line-height: var(--font-leading-5, 1.25rem); 
+  line-height: var(--font-leading-5, 1.25rem);
   letter-spacing: var(--font-tracking-normal, 0rem);
   cursor: pointer;
-  border: none; 
+  border: none;
   outline: none;
-  margin-left: 1rem; 
+  margin-left: 1rem;
   position: static;
-  opacity: 0; 
-  pointer-events: none; 
+  opacity: 0;
+  pointer-events: none;
 }
 
 .checkbox-container:hover .details-btn {
-  opacity: 1;             
-  pointer-events: auto;   
+  opacity: 1;
+  pointer-events: auto;
 }
 
 
 .checkbox-container:hover .details-btn:hover {
   opacity: var(--opacity-90, 0.9);
-}
-
-.details-title {
-  font-size: 14px;
-}
-
-.regulations-title {
-  font-size: 14px;
 }
 
 .cancel-clear,
@@ -632,45 +576,31 @@ ul {
   overflow: auto; /* Enable vertical scrolling */
 }
 
-.close-regulations {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: 600;
-}
-
-.close-regulations:hover,
-.close-regulations:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-}
-
 /* State Regulations, Styles */
 
 /* The Close Button */
-.close-btn,
-.close-regulations {
+.close-btn {
   color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: 600;
+  position: absolute;
+  top: 0.75rem;     /* distance from top edge */
+  right: 1.25rem;  /* distance from right edge */
+  font-size: 1.75rem;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;                  /* remove any default padding */
+  margin: 0;                   /* remove stray margins */
+  height: auto;                /* let the glyph define its own height */
+  width: auto;
+  line-height: 1;              /* remove inherited tall line-height */
 }
 
 .close-btn:hover,
-.close-btn:focus,
-.close-regulations:hover,
-.close-regulations:focus {
+.close-btn:focus {
   color: black;
   text-decoration: none;
   cursor: pointer;
 }
 
-.close-regulations {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-}
 /*Hourly Grid Emissions*/
 /* General Modal Styles */
 #hourly-grid-emissions-modal {
@@ -751,7 +681,7 @@ ul {
   border: none;
   text-align: left;
   outline: none;
-  font-size: 18px;
+  font-size: var(--font-size-sm);
   background-color: #f1f1f1;
   margin: 0;
 }
@@ -802,7 +732,6 @@ ul {
   height: auto;
 }
 
-=======
 
 /* Consolidated Select2 selection styling */
 
@@ -822,69 +751,119 @@ ul {
   margin: 5px 2px; /* Adjust spacing between pills */
   display: inline-flex;
   align-items: center; /* Vertically center contents */
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   height: 24px; /* Fixed height for the pill */
   line-height: 1; /* Remove extra line height */
   box-sizing: border-box; /* Ensure padding doesn't add height */
 }
 
+/* Custom pill container */
+.select2-container .uploaded-layer-pill,
+.select2-results__option .uploaded-layer-pill {
+  font-family: var(--font-family-sans, 'Inter', system-ui, -apple-system, "Segoe UI",
+                   Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif);
+  font-size: var(--font-size-sm);
+  font-weight: normal;
+  color: var(--theme-accent-foreground, #0F172B);
+}
+
+/* Inner text and the "More" button inherit the same font */
+.select2-container .uploaded-layer-pill > span,
+.select2-container .uploaded-layer-pill .details-btn {
+  font: inherit;
+  color: inherit;
+  line-height: var(--font-leading-5, 1.25rem);
+}
+
+/* Force smaller X and correct vertical alignment */
+.select2-container--default
+  .select2-selection--multiple
+  .select2-selection__choice__remove {
+  font-family: var(--font-family-sans, Inter, system-ui, -apple-system, "Segoe UI",
+                   Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif) !important;
+  font-size: 0.75rem !important;
+  font-weight: normal !important;
+  color: var(--theme-accent-foreground, #0F172B) !important;
+
+  /* remove absolute positioning so flex can center it */
+  position: static !important;
+  background: transparent !important;
+  border: none !important;
+  border-right: 1px solid #aaa; /* keep divider if you like */
+  padding: 0 4px !important;
+  margin-right: 0.25rem !important;
+  cursor: pointer;
+
+  /* flex-center the glyph within its own box */
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  /* subtle visual balance */
+  transform: scale(0.8) translateX(-1.7rem);
+  transform-origin: center;
+}
+
+/* set the pill font/size once */
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+  font-family: var(--font-family-sans, Inter, system-ui, -apple-system, "Segoe UI",
+                   Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif);
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: normal;
+  line-height: var(--font-leading-5, 1.25rem);
+}
+
+/* force the remove button to inherit that instead of 1em/bold */
+.select2-container--default .select2-selection--multiple .select2-selection__choice .select2-selection__choice__remove {
+  font: inherit;
+  line-height: inherit;
+}
+
+
 #uploaded-layer-selection .select2-selection--multiple {
-  min-height: 40px; /* Design system standard height */
-  height: 40px; /* Fixed height for vertical centering */
-  padding: 4px 8px; /* Reduced padding for more text space */
-  box-sizing: border-box;
-  display: flex;
-  align-items: center; /* Center content vertically */
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 13px; /* Slightly smaller font for more space */
-  color: #020618;
-  width: 100%;
-  overflow-x: visible;
-  overflow-y: hidden;
-  white-space: nowrap;
-  line-height: 1;
+  min-height: 1rem !important; /* Tighten container height */
+  height: auto !important; /* Allow content to define height */
+  padding: 2px 4px !important; /* Minimize padding */
+  box-sizing: border-box !important;
 }
 
 #uploaded-layer-selection .select2-selection__choice {
-  height: 24px; /* Compact height */
-  line-height: 22px; /* Align text vertically */
-  padding: 1px 8px; /* Reduced horizontal padding */
-  display: inline-flex; /* Match your flex layout */
-  align-items: center; /* Vertical centering */
-  box-sizing: border-box; /* Prevent padding from adding height */
-  margin: 2px;
+  height: 1.5rem !important; /* Force exact height */
+  display: inline-flex !important; /* Match your flex layout */
+  align-items: center !important; /* Vertical centering */
+  box-sizing: border-box !important; /* Prevent padding from adding height */
+  max-width: 14rem;           /* sets a horizontal cap */
+  white-space: nowrap;        /* prevent wrapping text */
+  overflow: hidden;           /* hide overflow */
+  text-overflow: ellipsis;    /* show "…" if truncated */
 }
 
 #uploaded-layer-selection .select2-container {
-  margin: 12px 14px 8px 14px; /* Match text alignment */
-  min-width: 280px; /* Reduced to fit within container */
-  width: calc(100% - 28px); /* Stay within container with updated margins */
-  max-width: calc(100% - 28px); /* Prevent overflow beyond parent container */
+  margin-top: 1rem;
+  min-width: 16rem !important; /* Set your desired minimum */
+  width: auto !important; /* Allow it to expand beyond the minimum */
+  max-width: 100%; /* Prevent overflow beyond parent container */
 }
 
 #uploaded-layer-selection .select2-search__field {
   min-width: 100%; /* Ensure it expands fully */
   width: 100%;
   box-sizing: border-box; /* Prevent overflow */
-  height: 32px;
-  line-height: 32px;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  color: #020618;
-  background: transparent;
-  border: none;
-  outline: none;
-  margin: 0;
-  padding: 0;
+  font-family: var(--font-family-sans, 'Inter', system-ui, -apple-system, "Segoe UI",
+                   Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif);
+  font-size: var(--font-size-sm);
+  font-weight: normal;
+  color: var(--theme-accent-foreground, #0F172B);
 }
 
-#uploaded-layer-selection .select2-search__field::placeholder {
-  color: #62748e;
-  font-style: normal;
+/* Dropdown options + “No results” message */
+.select2-container .select2-results__option,
+.select2-container .select2-results__message,
+.select2-container .select2-selection__choice {
+  font-family: var(--font-family-sans, 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif);
+  font-size: var(--font-size-sm);
+  font-weight: normal;
+  color: var(--theme-accent-foreground, #0F172B);
 }
 
 #map-loading-spinner {
@@ -924,9 +903,38 @@ ul {
 
 /* Transition to transparent or original bg color */
 .legend-fadeout-start.fadeout {
-  background-color: transparent; 
+  background-color: transparent;
   transition: background-color 1.5s ease;
 }
+
+#legend .legend-header {
+  position: absolute;
+  top: var(--legend-header-pad);
+  left: 1rem;
+  right: 0.625rem;
+  height: var(--legend-header-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+#legend .legend-header .legend-title {
+  position: static !important;
+  margin: 0;
+}
+
+/* Chevron button */
+#legend .legend-toggle {
+  all: unset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  cursor: pointer;
+}
+
 
 #legend {
   display: none;
@@ -934,10 +942,10 @@ ul {
   position: absolute;
   bottom: 1rem;
   left: 0.75rem;
-  padding: 0.5rem 0.75rem 0.5rem 1rem;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem;
+/*  padding: 0.5rem 0.75rem 0.5rem 1rem;*/
+  justify-content: flex-start;
+  align-items: stretch;           /* was center */
+  gap: 0;                         /* no extra spacing above content */
   border-radius: var(--Corner-Small, 0.5rem);
   background: #fff;
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
@@ -949,12 +957,12 @@ ul {
   scroll-behavior: smooth;
   word-wrap: break-word;
   white-space: normal;
+  padding-top: calc(var(--legend-header-pad) + var(--legend-header-h));
+  padding-bottom: 0.75rem;
+  --legend-right-inset: 0.75rem;
+  --legend-text-w: 17rem;   /* DME: Reduced the width slightly to fit all icons */
 }
 
-/* Show legend when it has the 'has-content' class */
-#legend.has-content {
-  display: flex;
-}
 
 #legend.closed {
   width: 133px;
@@ -970,32 +978,39 @@ ul {
 }
 
 #legend.open {
-  width: 31.25rem; 
+  width: 31.25rem;
 }
 
 .legend-group {
-  padding: 5px;
-  margin-top: 0px; 
-  margin-bottom: 0px; 
-  border-radius: 5px;
-  width: 100%;
-  box-sizing: border-box;
+  padding: 0rem;
+  margin-top: 0rem;
+  margin-bottom: 0rem;
+  border-radius: 0rem;
 }
 
-
+/* ROW */
 .legend-entry {
   display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  margin-bottom: 4px;
+  align-items: flex-start;      /* was center; rows hug the top edge */
+  flex-wrap: nowrap;            /* keep wrapper + text on one line */
+  justify-content: flex-end;    /* pack both columns to the RIGHT */
+  margin-bottom: 0.25rem;
   box-sizing: border-box;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: var(--font-size-sm, 0.875rem);
+
+  /* your existing font settings */
+  font-family: var(--font-family-sans, Inter);
+  font-size: var(--font-size-sm, 1rem);
   font-style: normal;
   font-weight: var(--font-weight-normal, 400);
-  line-height: var(--font-leading-5, 1.25rem); 
+  line-height: var(--font-leading-5, 1.25rem);
   letter-spacing: var(--font-tracking-normal, 0rem);
+
+  /* right anchoring + fixed separation */
+  width: 100%;
+  padding-right: var(--legend-right-inset); /* anchors row 0.75rem from box edge */
+  column-gap: var(--legend-gap);            /* exact gap between wrapper and text */
 }
+
 
 #layer-selection {
   max-height: 60vh; /* Layer selection can grow taller */
@@ -1006,49 +1021,96 @@ ul {
 
 #layer-selection,
 #uploaded-layer-selection {
-  min-width: 100px;
-  max-width: 95vw; /* prevent overflow on small screens */
-  width: fit-content;
+  position: absolute;
+  width: 17.5rem;
+  flex-shrink: 0;
+  border-radius: var(--Corner-Small, 0.5rem);
+  background: #FFF;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+  padding: 10px;
+  right: 1rem;
+  box-sizing: border-box;
 }
 
 /* Removed - consolidated above */
 
 .separator {
   display: block;
-  left: 0.75rem; 
-  border: 1px; 
+  left: 0.75rem;
+  border: 1px;
   width: 29.75rem;
   height: 0.0625rem;
   border: 0.0625rem;
+  margin-bottom: 1.25rem;
+  margin-top: 0.5rem;
   background: var(--theme-border, #E2E8F0);
 }
+
 .legend-text {
-  white-space: normal;  
+  white-space: normal;
   word-break: break-word;
   overflow-wrap: anywhere;
-  flex: 1;   
   width: 17.875rem;
+  padding-bottom: 0.3125rem;
+  padding-top: 0.3125rem;
   color: var(--theme-foreground, #020618);
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: var(--font-size-sm, 0.875rem);
+  font-family: var(--font-family-sans, Inter);
+  font-size: var(--font-size-sm, 1rem);
   font-style: normal;
   font-weight: var(--font-weight-normal, 400);
-  line-height: var(--font-leading-5, 1.25rem); 
+  line-height: var(--font-leading-5, 1.25rem);
   letter-spacing: var(--font-tracking-normal, 0rem);
 }
 
 .legend-entry-wrapper {
-  position: relative;
-  width: 17.875rem;
-  margin-right: 2rem; 
-  display: flex; 
-  align-items: center; 
-  justify-content: flex-end; 
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  /* geometry */
+  flex: 0 1 auto;     /* do NOT grow (prevents drifting left); may shrink if tight */
+  min-width: 0;
+  width: auto;        /* drop width:100% so it won’t steal space */
+  box-sizing: border-box;
+  padding-right: 0;   /* gap handles spacing; no manual padding */
 }
 
 #legend-content {
   display: flex;
   flex-direction: column;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* add spacer only if any row exists */
+#legend:has(#legend-content .legend-entry) #legend-content {
+  padding-top: var(--legend-gap);
+}
+
+/* Make the first row’s contents hug the top edge of the group */
+.legend-entry {
+  align-items: flex-start;      /* was center */
+/*  margin-left: 3.2rem;*/
+}
+
+/* Remove any default paragraph margins & shrink the half-leading feel */
+.legend-text {
+  /* your existing typographic bits */
+  margin: 0;
+  line-height: 1.2;
+  display: block;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+
+  /* geometry: fixed width, flush to the row’s right edge */
+  flex: 0 0 var(--legend-text-w);
+  width: auto;        /* neutralizes any earlier fixed width rules */
+}
+
+/* (If needed) prevent any margin-collapsing tricks at the group edge */
+.legend-group {
+  overflow: hidden;             /* or: display: flow-root; */
 }
 
 /* Add top margin to legend content when legend is open */
@@ -1064,53 +1126,143 @@ ul {
 
 }
 
+.public-data-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.public-toggle {
+    margin-left: auto;              /* pushes button to the far right */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: none;
+    background: transparent;
+}
+
+#public-data-content {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0;             /* header’s margin-bottom handles the separation */
+}
+
+.public-data-box {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0;             /* spacing comes from the container’s gap */
+  margin-bottom: 0;
+}
+
+
+.public-icon{
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.area-layer-dropdown{
+  position: static;
+      margin-top: 0.5rem;
+      left: 2.5rem;
+      width: 11.625rem;
+      height: var(--spacing-10, 2.5rem);
+      padding: var(--spacing-2, 0.5rem);
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+      color: var(--theme-accent-foreground, #0F172B);
+      text-align: center;
+      font-family: var(--font-family-sans, 'Inter', system-ui, -apple-system, "Segoe UI",
+                       Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif) !important;
+      font-size: var(--font-size-sm, 1rem);
+      font-style: normal;
+      font-weight: var(--font-weight-medium, 500);
+      line-height: var(--font-leading-5, 1.25rem);
+      letter-spacing: var(--font-tracking-normal, 0rem);
+      border-radius: var(--radius-md, 0.375rem);
+      background-color: var(--theme-background, #FFF);
+      border: 1px solid var(--theme-input, #E2E8F0);
+}
+
+.area-controls {
+  display: flex;
+  align-items: center;    /* vertical alignment */
+  justify-content: space-between; /* push dropdown left, button right */
+}
+
+.area-details-button{
+  position: static;
+    right: 0.75rem;
+    margin-top: 0.5rem;
+    height: 2.5rem;
+    width: 4.1875rem;
+    padding: var(--spacing-2, 0.5rem) var(--spacing-4, 1rem);
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--spacing-1-5, 0.375rem);
+    flex-shrink: 0;
+    border-radius: var(--radius-md, 0.375rem);
+    border: 1px solid var(--theme-input, #E2E8F0);
+    opacity: var(--opacity-100, 1);
+    background: var(--theme-background, #FFF);
+}
+
 .firstsect,
 .firstsect span  {
-  margin-top: 3rem; 
+  margin-top: 0.25rem;
   color: var(--theme-muted-foreground, #62748E);
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: var(--font-size-sm, 0.875rem);
+  font-family: var(--font-family-sans, Inter);
+  font-size: var(--font-size-sm, 1rem);
   font-style: normal;
   font-weight: var(--font-weight-normal, 400);
-  line-height: var(--font-leading-5, 1.25rem); 
+  line-height: var(--font-leading-5, 1.25rem);
   letter-spacing: var(--font-tracking-normal, 0);
-  border: None; 
+  border: None;
   padding: 0;
 }
 
 .secsect,
 .secsect span  {
   color: var(--theme-muted-foreground, #62748E);
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: var(--font-size-sm, 0.875rem);
+  font-family: var(--font-family-sans, Inter);
+  font-size: var(--font-size-sm, 1rem);
   font-style: normal;
   font-weight: var(--font-weight-normal, 400);
-  line-height: var(--font-leading-5, 1.25rem); 
+  line-height: var(--font-leading-5, 1.25rem);
   letter-spacing: var(--font-tracking-normal, 0);
-  border: None; 
+  border: None;
   padding: 0;
 }
 
 .thirdsect,
 .thirdsect span  {
   color: var(--theme-muted-foreground, #62748E);
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: var(--font-size-sm, 0.875rem);
+  font-family: var(--font-family-sans, Inter);
+  font-size: var(--font-size-sm, 1rem);
   font-style: normal;
   font-weight: var(--font-weight-normal, 400);
-  line-height: var(--font-leading-5, 1.25rem); 
+  line-height: var(--font-leading-5, 1.25rem);
   letter-spacing: var(--font-tracking-normal, 0);
-  border: None; 
+  border: None;
   padding: 0;
 
 }
 
-.extra_butes_style 
+.extra_butes_style
 {
-  margin-left: 1.5rem; 
+  margin-left: 1.5rem;
 
 }
-
 
 .header-container {
   margin-top: 1.5rem;
@@ -1118,51 +1270,12 @@ ul {
   align-items: flex-start;
   gap: 0.5rem;
   margin-bottom: 0.5rem;
-  margin-left: 1rem;
-  margin-right: 1rem;
   padding: 0;
 }
-
-.public-toggle{ 
-  display: flex; 
-  align-items: center;
-  justify-content: center;
-  width: 1.75rem;
-  height: 1.75rem;
-  flex-shrink: 0;
-  border: none;
-  background: transparent;
-  margin-left: auto;
-}
-
-.uploaded-toggle {
-  display: flex; 
-  align-items: center;
-  justify-content: center;
-  width: 1.75rem;
-  height: 1.75rem;
-  flex-shrink: 0;
-  border: none;
-  background: transparent;
-  margin-left: auto;
-}
-
-.public-icon{
-  width: 1.5rem;
-  height: 1.5rem;
-  padding: 0;
-  background: transparent; 
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-
 
 .uploaded-data-container{
   position: absolute;
-  top: 275px; 
+  top: 275px;
   right: 10px;
   width: 50rem;
   height: 6.75rem;
@@ -1171,162 +1284,3 @@ ul {
   background: #FFF;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
 }
-
-#uploaded-layer-selection h2 {
-  font-weight: 600;
-  font-size: 1.25rem;
-  line-height: 1.75rem;
-}
-
-/* Panel container styles */
-#layer-selection {
-  position: absolute;
-  right: 10px;
-  top: 270px; /* Fallback position */
-  width: 378px;
-  max-height: 475px;
-  overflow-y: auto;
-  flex-shrink: 0;
-  border-radius: var(--Corner-Small, 0.5rem);
-  background: #FFF;
-  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
-  box-sizing: border-box;
-  padding: 6px 6px 12px 6px;
-}
-
-#uploaded-layer-selection {
-  position: absolute;
-  top: 180px;
-  right: 10px;
-  z-index: 21;
-  width: 378px;
-  height: auto;
-  min-height: 6rem;
-  flex-shrink: 0;
-  border-radius: var(--Corner-Small, 0.5rem);
-  background: #FFF;
-  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
-  box-sizing: border-box;
-  padding: 6px;
-}
-
-/* Panel header styles */
-.panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 2px 14px 8px 14px;
-  cursor: pointer;
-}
-
-.uploaded-panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 2px 14px 0px 14px;
-  cursor: pointer;
-}
-
-.panel-title {
-  color: var(--theme-foreground, #020618);
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 1.25rem;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 1.75rem;
-  letter-spacing: 0;
-  margin: 0;
-  padding: 0;
-}
-
-/* Legend positioning and title styles */
-#legend h3 {
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.legend-title {
-  position: absolute;
-  top: 50%;
-  left: 1rem;
-  transform: translateY(-50%);
-  color: var(--theme-foreground, #020618);
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: var(--font-size-xl, 1.25rem);
-  font-style: normal;
-  font-weight: var(--font-weight-semibold, 600);
-  line-height: var(--font-leading-7, 1.75rem);
-  letter-spacing: var(--font-tracking-normal, 0rem);
-}
-
-.legend-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  background: transparent;
-  padding: 0;
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
-}
-
-/* When legend has content, move title and toggle to top */
-#legend:not(.closed) .legend-title {
-  top: 1rem;
-  transform: translateY(0);
-}
-
-#legend:not(.closed) .legend-toggle {
-  top: 1rem;
-  transform: translateY(0);
-}
-
-/* Public data content area */
-.public-data-area {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  margin-bottom: 0.5rem;
-  margin-left: 14px;
-  margin-right: 14px;
-  margin-top: 0px;
-}
-
-/* Individual checkbox attribute hover effect */
-.checkbox-container {
-  position: relative;
-  transition: background-color 0.2s ease;
-  border-radius: 0.375rem;
-  padding: 0.5rem;
-  margin-left: -50px;
-  margin-right: -50px;
-  padding-left: 50px;
-  padding-right: 50px;
-}
-
-.checkbox-container:hover {
-  background-color: var(--Background-Muted, #F1F5F9);
-}
-
-.checkbox-container:hover .checkbox-more-btn {
-  opacity: 1;
-  visibility: visible;
-}
-
-.area-feature-text {
-  margin: 0;
-  padding: 0;
-  color: var(--theme-foreground, #020618);
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 1rem;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 1.5rem;
-  letter-spacing: 0;
-}
-

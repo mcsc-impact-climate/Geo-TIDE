@@ -885,8 +885,6 @@ function reverseMapping(originalMap) {
 function createPolygonLegendEntry(layerName, bounds, layerColor) {
   const container = document.createElement('div');
   container.className = 'legend-entry-wrapper';
-  container.style.display = 'flex';
-  container.style.alignItems = 'center';
 
   const canvas = document.createElement('canvas');
   canvas.width = 50;
@@ -1298,7 +1296,6 @@ function updateLegend() {
           const svgIcon = createLetterIconSVG(letter);
           svgIcon.style.position = 'absolute';
           svgIcon.style.left = '12px';
-          layerDiv.style.marginTop = '10px'; 
           layerDiv.appendChild(svgIcon);
       }
 

@@ -1,4 +1,10 @@
 {% load static %}
+
+<!-- Include Google Fonts for Myna UI (Inter font) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
 <!-- Include jQuery and Select2 CSS/JS files -->
 <link rel="stylesheet" href="{% static 'style.css' %}">
 <link
@@ -10,6 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="{% static 'panels.js' %}"></script>
 
 
 <div id="map" class="map"></div>
@@ -34,7 +41,8 @@
   id="layer-selection"
   style="
     bottom: 7rem;
-    height:35rem;
+    height: 35rem;
+    width: 17.5rem;
   "
 >
 
@@ -97,16 +105,14 @@
   <span class="label1"></span><span class="value1"></span>
   </div>
 
-  <div id="secsect" class = "secsect"> 
-    <span class="label2"></span><span class="value2"></span>
-  </div>
+<div style="margin-top: 1rem;"></div>
 
   <div id="thirdsect" class = "thirdsect"> 
     <span class="label3"></span><span class="value3"></span>
   </div>
 </div>
 
-<div class="public-data-box" style="align-items: center !important; padding-top: 1rem;">
+<div class="public-data-box" style="align-items: center !important;">
   <button id="highway-icon" class="public-icon"
     style="padding: 0; line-height: 0; display: flex; align-items: center; justify-content: center;">
     <svg width="1.5rem" height="1.5rem" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -134,10 +140,8 @@
   <span class = "button-text-style"> Highway Flows</span>
 
   <button class="show-button" data-target="highway-flow-checkboxes">
-
-
-    <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 0 16 16" fill="none">
-      <path id = "highway-chevron-path-2" d="M4 6L8 10L12 6" stroke="#020618" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 16 16" fill="none">
+      <path id = "highway-chevron-path-2" d="M4 6L8 10L12 6" stroke="#020618" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
   </button>
 
@@ -153,8 +157,8 @@
     <button class="show-button" data-target="highway-infra-checkboxes">
   
   
-      <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 0 16 16" fill="none">
-        <path id = "highway-chevron-path" d="M4 6L8 10L12 6" stroke="#020618" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 16 16" fill="none">
+        <path id = "highway-chevron-path" d="M4 6L8 10L12 6" stroke="#020618" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
   
@@ -167,7 +171,7 @@
 
 </div>
 
-<div class="public-data-box" style="align-items: center !important; padding-top: 1rem;">
+<div class="public-data-box" style="align-items: center !important;">
   <button id="point-icon" class="public-icon"
     style="padding: 0; line-height: 0; display: flex; align-items: center; justify-content: center;">
     <svg width="1.5rem" height="1.5rem" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -199,8 +203,8 @@
 
     <button class="show-button" data-target="point-refuel-checkboxes" > 
       
-      <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 0 16 16" fill="none">
-      <path id = "highway-chevron-path-2" d="M4 6L8 10L12 6" stroke="#020618" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 16 16" fill="none">
+      <path id = "highway-chevron-path-2" d="M4 6L8 10L12 6" stroke="#020618" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
   </button>
     </div>
@@ -213,8 +217,8 @@
 
     <button class="show-button" data-target="point-h2prod-checkboxes" > 
       
-      <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 0 16 16" fill="none">
-      <path id = "highway-chevron-path-4" d="M4 6L8 10L12 6" stroke="#020618" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 16 16" fill="none">
+      <path id = "highway-chevron-path-4" d="M4 6L8 10L12 6" stroke="#020618" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
   </button>
     </div>
@@ -230,8 +234,8 @@
 
     <button class="show-button" data-target="point-other-checkboxes" > 
       
-      <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 0 16 16" fill="none">
-      <path id = "highway-chevron-path-5" d="M4 6L8 10L12 6" stroke="#020618" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 16 16" fill="none">
+      <path id = "highway-chevron-path-5" d="M4 6L8 10L12 6" stroke="#020618" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
   </button>
     </div>
@@ -284,17 +288,23 @@
     </div>
   </div>
 </div>
-<div
-  id="uploaded-layer-selection">
+<div id="uploaded-layer-selection">
   
-  <h1>
-    Uploaded Data
-  </h1>
-  <select
-    id="usefiles-data-ajax"
-    multiple="multiple"
-    style="width: 100%"
-  ></select>
+<div class="uploaded-panel-header">
+  <h1>Uploaded Data</h1>
+  <button id="Uploaded-toggle" class="uploaded-toggle">
+    <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.3s ease;">
+      <path id="uploaded-chevron-path" d="m6 6 6 6 6-6M6 12l6 6 6-6"/>
+    </svg>
+  </button>
+</div>
+
+  <div id="uploaded-data-content">
+    <select
+      id="usefiles-data-ajax"
+      multiple="multiple"
+    ></select>
+  </div>
 </div>
 
 <!-- Initialize Select2 -->
@@ -378,6 +388,8 @@
     setSearchPlaceholder();
   });
 </script>
+
+<!-- Uploaded Data Toggle Functionality moved to panels.js -->
 
 <div id="details-modal" class="modal">
   <div class="modal-content">
@@ -531,42 +543,5 @@
 
 
 
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const toggleButton = document.getElementById('Public-toggle');
-    const chevronPath = document.getElementById('public-chevron-path');
-    const publicContent = document.getElementById('public-data-content');
-    const layerSelection = document.getElementById('layer-selection');
-
-    if (!toggleButton || !chevronPath  || !publicContent || !layerSelection) return;
-
-    function updatePublicWidth() {
-      if (publicContent.style.display !== 'none' && publicContent.children.length > 0) {
-        layerSelection.style.width = '17.5rem';
-        layerSelection.style.height = '35rem'; 
-      } else {
-        layerSelection.style.width = '10.625rem';
-        layerSelection.style.height = '2.75rem'; 
-      }
-    }
-
-    updatePublicWidth();
-    publicContent.addEventListener('DOMNodeInserted', updatePublicWidth);
-    publicContent.addEventListener('DOMNodeRemoved', updatePublicWidth);
-
-    let isOpen = window.getComputedStyle(publicContent).display !== 'none';
-
-    toggleButton.addEventListener('click', function () {
-      isOpen = !isOpen;
-      publicContent.style.display = isOpen ? 'block' : 'none';
-      updatePublicWidth();
-      chevronPath.setAttribute(
-        'd',
-        isOpen
-          ? 'm6 6 6 6 6-6M6 12l6 6 6-6'
-          : 'm18 12-6-6-6 6m12 6-6-6-6 6'
-      );
-    });
-  });
-</script>
+<!-- Public Data Toggle Functionality moved to panels.js -->
 

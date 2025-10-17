@@ -267,7 +267,7 @@ let first_time = true;
 document.getElementById('layer-selection').addEventListener('click', function (event) {
   
   const button = event.target.closest('.show-button');
-  const buttonRow = event.target.closest('[class^="button-row-"]');
+  const buttonRow = event.target.closest('.button-row');
   
   if (button || buttonRow) {
     let targetId, target, svg;

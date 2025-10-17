@@ -41,7 +41,8 @@
   id="layer-selection"
   style="
     bottom: 7rem;
-    height:35rem;
+    height: 35rem;
+    width: 17.5rem;
   "
 >
 
@@ -111,7 +112,7 @@
   </div>
 </div>
 
-<div class="public-data-box" style="align-items: center !important; padding-top: 1rem;">
+<div class="public-data-box" style="align-items: center !important;">
   <button id="highway-icon" class="public-icon"
     style="padding: 0; line-height: 0; display: flex; align-items: center; justify-content: center;">
     <svg width="1.5rem" height="1.5rem" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -170,7 +171,7 @@
 
 </div>
 
-<div class="public-data-box" style="align-items: center !important; padding-top: 1rem;">
+<div class="public-data-box" style="align-items: center !important;">
   <button id="point-icon" class="public-icon"
     style="padding: 0; line-height: 0; display: flex; align-items: center; justify-content: center;">
     <svg width="1.5rem" height="1.5rem" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -287,17 +288,23 @@
     </div>
   </div>
 </div>
-<div
-  id="uploaded-layer-selection">
+<div id="uploaded-layer-selection">
   
-  <h1>
-    Uploaded Data
-  </h1>
-  <select
-    id="usefiles-data-ajax"
-    multiple="multiple"
-    style="width: 100%"
-  ></select>
+<div class="uploaded-panel-header">
+  <h1>Uploaded Data</h1>
+  <button id="Uploaded-toggle" class="uploaded-toggle">
+    <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.3s ease;">
+      <path id="uploaded-chevron-path" d="m6 6 6 6 6-6M6 12l6 6 6-6"/>
+    </svg>
+  </button>
+</div>
+
+  <div id="uploaded-data-content">
+    <select
+      id="usefiles-data-ajax"
+      multiple="multiple"
+    ></select>
+  </div>
 </div>
 
 <!-- Initialize Select2 -->
@@ -537,36 +544,4 @@
 
 
 <!-- Public Data Toggle Functionality moved to panels.js -->
-
-    if (!toggleButton || !chevronPath  || !publicContent || !layerSelection) return;
-
-    function updatePublicWidth() {
-      if (publicContent.style.display !== 'none' && publicContent.children.length > 0) {
-        layerSelection.style.width = '17.5rem';
-        layerSelection.style.height = '35rem'; 
-      } else {
-        layerSelection.style.width = '10.625rem';
-        layerSelection.style.height = '2.75rem'; 
-      }
-    }
-
-    updatePublicWidth();
-    publicContent.addEventListener('DOMNodeInserted', updatePublicWidth);
-    publicContent.addEventListener('DOMNodeRemoved', updatePublicWidth);
-
-    let isOpen = window.getComputedStyle(publicContent).display !== 'none';
-
-    toggleButton.addEventListener('click', function () {
-      isOpen = !isOpen;
-      publicContent.style.display = isOpen ? 'block' : 'none';
-      updatePublicWidth();
-      chevronPath.setAttribute(
-        'd',
-        isOpen
-          ? 'm6 6 6 6 6-6M6 12l6 6 6-6'
-          : 'm18 12-6-6-6 6m12 6-6-6-6 6'
-      );
-    });
-  });
-</script>
 

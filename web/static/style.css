@@ -93,7 +93,7 @@ html { font-size: 16px; }
   --font-size-sm: 0.75rem; /* 12px */
   --legend-header-h: 1.75rem;   /* h2 line-height */
   --legend-header-pad: 0.5rem; /* top padding */
-  --legend-gap: 0.75rem;           /* desired gap below the title */
+  --legend-gap: 0.75rem;           /* desired gap below the title (12px) */
 }
 
 h1 {
@@ -171,14 +171,19 @@ body {
 
 
 .button-row {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0;
   padding: 0.125rem 0 0.125rem 0.75rem;
   border-radius: 0.25rem;
-  transition: background-color 0.2s ease;
   cursor: pointer;
+}
+
+.button-row:hover {
+  background-color: #F1F5F9;
+  box-shadow: -0.75rem 0 0 0 #F1F5F9, 0.75rem 0 0 0 #F1F5F9;
 }
 
 
@@ -362,7 +367,7 @@ body {
   position: relative;
   font-size: 14px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-start;
   width: 100%;
   gap: 0.25rem;
@@ -409,10 +414,12 @@ height: 100%;
 }
 
 .checkbox-container label {
-  vertical-align: middle;
   flex: 1;
   min-width: 0;
   overflow-wrap: break-word;
+  width: 0; /* Force flex item to use flex-basis */
+  line-height: 1rem; /* Match checkbox height */
+  margin-top: 0;
 }
 
 /* Style for the 'Details' button */
@@ -446,10 +453,7 @@ height: 100%;
 
 .checkbox-container:hover {
   background-color: var(--Background-Muted, #F1F5F9);
-  margin-left: -2rem;
-  margin-right: -1.5rem;
-  padding-left: 2rem;
-  padding-right: 1.5rem;
+  box-shadow: -2.25rem 0 0 0 var(--Background-Muted, #F1F5F9), 0.75rem 0 0 0 var(--Background-Muted, #F1F5F9);
 }
 
 .checkbox-container:hover .checkbox-more-btn {
@@ -1029,10 +1033,15 @@ ul {
 
 #legend.closed {
   width: 133px;
-  height: 44px;
+  height: 32px;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-top: 0;
+}
+
+#legend.closed #legend-content {
+  display: none;
 }
 
 /* Hide legend even when closed if it has no content */
@@ -1078,7 +1087,7 @@ ul {
 #layer-selection {
   max-height: 60vh; /* Layer selection can grow taller */
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: visible;
   scroll-behavior: smooth;
 }
 
@@ -1199,15 +1208,14 @@ ul {
 
 /* Add top margin to legend content when legend is open */
 #legend:not(.closed) #legend-content {
-  margin-top: 3rem;
+  margin-top: 0;
 }
 
 .flow-checkboxes {
-
   margin-top: 0.2rem;
   margin-left: 1.5rem;
   margin-bottom:0.45rem;
-
+  overflow: visible;
 }
 
 .public-data-header {
@@ -1218,7 +1226,7 @@ ul {
   margin-bottom: 0.75rem;
   cursor: pointer;
   padding: 0.5rem;
-  margin: -0.5rem -0.25rem 0.25rem -0.25rem;
+  margin: -0.5rem -0.75rem 0.25rem -0.25rem;
   border-radius: 0.25rem;
   transition: background-color 0.2s ease;
 }
@@ -1241,7 +1249,7 @@ ul {
   margin-bottom: 0;
   cursor: pointer;
   padding: 0.5rem;
-  margin: -0.5rem -0.25rem -0.5rem -0.25rem;
+  margin: -0.5rem -0.75rem -0.5rem -0.25rem;
   border-radius: 0.25rem;
   transition: background-color 0.2s ease;
 }

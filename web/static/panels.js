@@ -31,8 +31,9 @@ function togglePublicData() {
   const content = document.getElementById('public-data-content');
   const chevron = document.getElementById('public-chevron-path');
   const layerSelection = document.getElementById('layer-selection');
+  const header = document.querySelector('.public-data-header');
   
-  if (!content || !chevron || !layerSelection) {
+  if (!content || !chevron || !layerSelection || !header) {
     console.log('Public data elements not found');
     return;
   }
@@ -46,12 +47,14 @@ function togglePublicData() {
     layerSelection.style.setProperty('height', '35rem', 'important');
     layerSelection.style.setProperty('width', '17.5rem', 'important');
     chevron.setAttribute('d', 'm6 6 6 6 6-6M6 12l6 6 6-6');
+    header.classList.remove('closed');
   } else {
     // Closed state
     content.style.display = 'none';
     layerSelection.style.setProperty('height', '2.75rem', 'important');
     layerSelection.style.setProperty('width', '17.5rem', 'important');
     chevron.setAttribute('d', 'm18 12-6-6-6 6m12 6-6-6-6 6');
+    header.classList.add('closed');
   }
   
   // Reposition panels

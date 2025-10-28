@@ -24,7 +24,7 @@
 <div id="legend">
   <div class="legend-header">
     <h1 class="legend-title">Legend</h1>
-    <button id="legend-toggle" class="legend-toggle" aria-label="Toggle legend">
+    <button id="legend-toggle" class="chevron-toggle" aria-label="Toggle legend">
       <svg id="chevron-toggle" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"
            viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
            style="transition: transform 0.3s ease;">
@@ -42,14 +42,14 @@
   style="
     bottom: 7rem;
     height: 35rem;
-    width: 17.5rem;
+    width: 19.5rem;
   "
 >
 
 
 <div class="public-data-header">
   <h1>Public Data</h1>
-  <button id="Public-toggle" class="public-toggle">
+  <button id="Public-toggle" class="chevron-toggle">
     <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"
       viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
       xmlns="http://www.w3.org/2000/svg">
@@ -292,7 +292,7 @@
   
 <div class="uploaded-panel-header">
   <h1>Uploaded Data</h1>
-  <button id="Uploaded-toggle" class="uploaded-toggle">
+  <button id="Uploaded-toggle" class="chevron-toggle">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.3s ease;">
       <path id="uploaded-chevron-path" d="m6 6 6 6 6-6M6 12l6 6 6-6"/>
     </svg>
@@ -505,31 +505,49 @@
     const chevronPath = document.getElementById('legend-chevron-path');
 
 
-    let isLegendOpen = window.getComputedStyle(legendContent).display !== 'none';
+    let isLegendOpen = false; // Start as closed
 
     function updateLegendWidth() {
       const hasContent = legendContent.children.length > 0;
-
-      const display = window.getComputedStyle(legendContent).display;
+      const isClosed = legend.classList.contains('closed');
       
-      if (isLegendOpen) {
+      if (isClosed || !isLegendOpen) {
+        // Closed state
+        legend.style.width = '7.125rem'; /* 114px */
+        legend.style.height = '2.5rem'; /* 40px */
+      } else {
+        // Open state
         if (hasContent) {
           legend.style.width = '31.25rem';
+          legend.style.height = 'auto';
         } else {
-          legend.style.width = '8.3125rem';
+          legend.style.width = '7.125rem';
+          legend.style.height = '2.5rem';
         }
-      } else {
-        legend.style.width = '8.3125rem';
       }
     }
 
     legendContent.addEventListener('DOMNodeInserted', updateLegendWidth);
     legendContent.addEventListener('DOMNodeRemoved', updateLegendWidth);
     
+    // Set initial closed state
+    legend.classList.add('closed');
+    legendContent.style.display = 'none';
     updateLegendWidth(); 
+    
     button.addEventListener('click', function () {
       isLegendOpen = !isLegendOpen;
-      legendContent.style.display = isLegendOpen ? 'block' : 'none';
+      
+      if (isLegendOpen) {
+        legend.classList.remove('closed');
+        legend.classList.add('open');
+        legendContent.style.display = 'block';
+      } else {
+        legend.classList.remove('open');
+        legend.classList.add('closed');
+        legendContent.style.display = 'none';
+      }
+      
       updateLegendWidth(); 
       chevronPath.setAttribute(
         'd',

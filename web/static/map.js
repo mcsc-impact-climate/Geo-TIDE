@@ -1160,6 +1160,15 @@ function updateLegendWidth() {
   // Show/hide legend based on content
   if (hasContent) {
     legend.classList.add('has-content');
+    // When content first appears, ensure legend starts in open state
+    if (legend.classList.contains('closed')) {
+      legend.classList.remove('closed');
+      legendContent.style.display = 'flex';
+      legend.style.height = 'auto';
+      legend.style.minHeight = 'auto';
+      legend.style.maxHeight = 'none';
+      isLegendOpen = true;
+    }
   } else {
     legend.classList.remove('has-content');
   }

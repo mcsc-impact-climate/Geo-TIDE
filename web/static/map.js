@@ -209,12 +209,12 @@ async function attachEventListeners() {
           value2HTML = p[label2Text]; 
         }
 
-        const label3HTML = `<span>${svgIcon}Visualize by: </span>`; 
-        const label3Text = "visualize by"; 
+        const label3HTML = `<span>${svgIcon}Design Range: </span>`; 
+        const label3Text = "average range"; 
 
-        let value3HTML = p["Visualize By"]
+        let value3HTML = p["Design Range"]
         if (value3HTML == null){
-          value3HTML = "State";
+          value3HTML = "400 miles";
         } 
 
         if (label3Text in p){
@@ -233,7 +233,24 @@ async function attachEventListeners() {
           }
           }
   
-        return `${label1HTML}&${value1HTML}&${label2HTML}&${value2HTML}&${label3HTML}&${value3HTML}`;
+        // Only include parameters that differ from defaults
+        let result = "";
+        if (value1HTML !== "40,000 lb") {
+          result += `${label1HTML}&${value1HTML}&`;
+        } else {
+          result += "&&";
+        }
+        if (value2HTML !== "100,000 miles") {
+          result += `${label2HTML}&${value2HTML}&`;
+        } else {
+          result += "&&";
+        }
+        if (value3HTML !== "400 miles") {
+          result += `${label3HTML}&${value3HTML}`;
+        } else {
+          result += "&&";
+        }
+        return result;
       }
 
       else if ((

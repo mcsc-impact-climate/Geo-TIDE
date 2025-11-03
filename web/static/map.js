@@ -35,12 +35,21 @@ import {
   emissionsOptions,
   selectedEmissionsOptions,
 } from './name_maps.js';
+import { 
+  layerCache, 
+  attributeBounds, 
+  loadLayer as utilLoadLayer,
+  removeLayer as utilRemoveLayer,
+  updateLayer as utilUpdateLayer,
+  setLayerVisibility,
+  getAttributesForLayer,
+  compareLayers
+} from './layer-utils.js';
+import { BULLET_CONFIGS, createBulletAttributes, convertDropdownIdToLabel } from './bullet-config.js';
+import { transformOneOptions, transformTwoOptions, transformThreeOptions } from './transform-utils.js';
 
 var vectorLayers = [];
 var map;
-var attributeBounds = {}; // Object to store min and max attribute values for each geojson
-
-// Declare the data variable in a higher scope
 let data;
 
 function initMap() {
@@ -69,9 +78,7 @@ function initMap() {
   let lastFeature = null;
 }
 
-// Attach the updateSelectedLayers function to the button click event
 async function attachEventListeners() {
-  // Automatically update when any checkbox changes
   document.querySelectorAll('#layer-selection input[type="checkbox"]').forEach((checkbox) => {
     checkbox.addEventListener('change', async () => {
       try {
@@ -83,281 +90,38 @@ async function attachEventListeners() {
     });
   });
 }
- function convertDropdownIdToLabel(dropdownId) {
-    let label = dropdownId.replace('-dropdown', '');
-  
-    label = label.replace(/-/g, ' ');
-  
-    label = label.toLowerCase();
-  
-    return label;
-  }
+
+
 
   function createExtraAttributes(s, k, c, e, p) {
-    const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 5 5" fill="none"style="width: 0.27344rem; height: 0.27344rem; flex-shrink: 0; margin-right: 4px;">
-    <path d="M2.5 4.13C2.1 4.13 1.73 4.03 1.4 3.84C1.07 3.64 0.8 3.37 0.6 3.04C0.41 2.71 0.31 2.34 0.31 1.94C0.31 1.54 0.41 1.17 0.6 0.84C0.8 0.51 1.07 0.25 1.4 0.05C1.73 -0.14 2.1 -0.24 2.5 -0.24C2.9 -0.24 3.27 -0.14 3.6 0.05C3.93 0.25 4.19 0.51 4.39 0.84C4.59 1.17 4.69 1.54 4.69 1.94C4.69 2.34 4.59 2.71 4.39 3.04C4.19 3.37 3.93 3.64 3.6 3.84C3.27 4.03 2.9 4.13 2.5 4.13Z" fill="#62748E"/>
- </svg>
-`.trim();
       if ((k === "geojsons_simplified/faf5_freight_flows/mode_truck_commodity_all_origin_all_dest_all.geojson") || (k === "Truck Imports and Exports")){
-        const label1HTML = `<span>${svgIcon}Commodity: </span>`;
-        let value1HTML = p["Commodity"]
-        if (s != "default") {
-        value1HTML = c; 
-        }
-        return `${label1HTML}&${value1HTML}&&&&`;
+        return createBulletAttributes("Truck Imports and Exports", s, c, e, p);
       }
-
-
       else if ((k ==="geojsons_simplified/grid_emission_intensity/eia2022_state_merged.geojson") || (k === "Grid Emission Intensity")){
-
-        const label1HTML = `<span>${svgIcon}Visualize by: </span>`;
-
-        let value1HTML = p["Visualize By"]; 
-
-        if (s != "default") {
-          value1HTML = c; 
-          }
-        return `${label1HTML}&${value1HTML}&&&&`;
+        return createBulletAttributes("Grid Emission Intensity", s, c, e, p);
       }
-
-      else if ((
-        k ===
-        "geojsons_simplified/average_grid_emissions.geojson"
-      )  || (k === "Hourly Grid Emissions")){
-  
-        const label1HTML = `<span>${svgIcon}Hour of day: </span>`;
-        let value1HTML = p["Hour of Day"]; 
-
-        if (s != "default") {
-          value1HTML = c; 
-          }
-  
-        return `${label1HTML}&${value1HTML}&&&&`;
+      else if ((k === "geojsons_simplified/average_grid_emissions.geojson") || (k === "Hourly Grid Emissions")){
+        return createBulletAttributes("Hourly Grid Emissions", s, c, e, p);
       }
-
-      else if ((
-        k ===
-        "geojsons_simplified/incentives_and_regulations/all_incentives_and_regulations.geojson"
-      ) || (k === "State-Level Incentives and Regulations")) {
-  
-        const label1HTML = `<span>${svgIcon}Support type: </span>`;
-        const label1Text = "support type"
-        let value1HTML = p["Support Type"]; 
-        if (value1HTML == null) {
-          value1HTML = "Incentives and Regulations"; 
-        }
-        if (label1Text in p){
-          value1HTML = p[label1Text]; 
-        }
-        const label2HTML = `<span>${svgIcon}Support target: </span>`; 
-        let value2HTML = p["Support Target"]; 
-        if (value2HTML == null) {
-          value2HTML = "All Targets"; 
-        }
-        const label2Text = "support target"
-
-        if (label2Text in p){
-          value2HTML = p[label2Text]; 
-        }
-
-        
-  
-        if (s != "default") {
-
-          if (convertDropdownIdToLabel(e) === label1Text){
-            value1HTML = c; 
-          }
-          else if (convertDropdownIdToLabel(e)=== label2Text){
-            value2HTML = c; 
-          }
-          }
-        return `${label1HTML}&${value1HTML}&${label2HTML}&${value2HTML}&&`;
+      else if ((k === "geojsons_simplified/incentives_and_regulations/all_incentives_and_regulations.geojson") || (k === "State-Level Incentives and Regulations")) {
+        return createBulletAttributes("State-Level Incentives and Regulations", s, c, e, p);
       }
-
-      else if ((
-        k === "geojsons_simplified/costs_and_emissions/state_emissions_per_mile_payload40000_avVMT100000.geojson"
-       
-      ) || (k === "Lifecycle Truck Emissions")) {
-
-       
-
-
-  
-        const label1HTML = `<span>${svgIcon}Average payload: </span>`;
-        const label1Text = "average payload"; 
-        
-
-         let value1HTML = p["Average Payload"]
-        if (value1HTML == null){
-          value1HTML = "40,000 lb";
-        }
-
-        if (label1Text in p){
-          value1HTML = p[label1Text]; 
-        }
-
-
-
-        const label2HTML = `<span>${svgIcon}Average VMT: </span>`; 
-        const label2Text = "average vmt"; 
-        let value2HTML = p["Average VMT"]
-        if (value2HTML == null){
-          value2HTML = "100,000 miles";
-        }
-
-        if (label2Text in p){
-          value2HTML = p[label2Text]; 
-        }
-
-        const label3HTML = `<span>${svgIcon}Design Range: </span>`; 
-        const label3Text = "average range"; 
-
-        let value3HTML = p["Design Range"]
-        if (value3HTML == null){
-          value3HTML = "400 miles";
-        } 
-
-        if (label3Text in p){
-          value3HTML = p[label3Text]; 
-        }
-
-        if (s != "default") {
-          if (convertDropdownIdToLabel(e) === label1Text){
-            value1HTML = c; 
-          }
-          else if (convertDropdownIdToLabel(e)=== label2Text){
-            value2HTML = c; 
-          }
-          else if (convertDropdownIdToLabel(e)=== label3Text){
-            value3HTML = c; 
-          }
-          }
-  
-        // Only include parameters that differ from defaults
-        let result = "";
-        if (value1HTML !== "40,000 lb") {
-          result += `${label1HTML}&${value1HTML}&`;
-        } else {
-          result += "&&";
-        }
-        if (value2HTML !== "100,000 miles") {
-          result += `${label2HTML}&${value2HTML}&`;
-        } else {
-          result += "&&";
-        }
-        if (value3HTML !== "400 miles") {
-          result += `${label3HTML}&${value3HTML}`;
-        } else {
-          result += "&&";
-        }
-        return result;
+      else if ((k === "geojsons_simplified/costs_and_emissions/state_emissions_per_mile_payload40000_avVMT100000.geojson") || (k === "Lifecycle Truck Emissions")) {
+        return createBulletAttributes("Lifecycle Truck Emissions", s, c, e, p);
       }
-
-      else if ((
-        k === "geojsons_simplified/costs_and_emissions/costs_per_mile_payload40000_avVMT100000_maxChP400.geojson"
-       
-      ) || (k === "Total Cost of Truck Ownership")) {
-  
-        const label1HTML = `<span>${svgIcon}Average payload: </span>`;
-        const label1Text = "average payload"; 
-        let value1HTML = p["Average Payload"]
-        if (value1HTML == null){
-          value1HTML = "40,000 lb";
-        }
-        if (label1Text in p){
-          value1HTML = p[label1Text]; 
-        }
-
-        const label2HTML = `<span>${svgIcon}Average VMT: </span>`; 
-        const label2Text = "average vmt"; 
-
-        let value2HTML = p["Average VMT"]
-        if (value2HTML == null){
-          value2HTML = "100,000 miles";
-        }
-
-        if (label2Text in p){
-          value2HTML = p[label2Text]; 
-        }
-
-
-        const label3HTML = `<span>${svgIcon}Max charging power: </span>`; 
-        const label3Text = "charging power"; 
-        let value3HTML = p["Max Charging Power"];
-        if (value3HTML == null){
-          value3HTML =   "400 kW"; 
-        }
-        
-        if (label3Text in p){
-          value3HTML = p[label3Text]; 
-        }
-
-        if (s != "default") {
-          if (convertDropdownIdToLabel(e) === label1Text){
-            value1HTML = c; 
-          }
-          else if (convertDropdownIdToLabel(e)=== label2Text){
-            value2HTML = c; 
-          }
-          else if (convertDropdownIdToLabel(e)=== label3Text){
-            value3HTML = c; 
-          }
-          }
-        return `${label1HTML}&${value1HTML}&${label2HTML}&${value2HTML}&${label3HTML}&${value3HTML}`;
+      else if ((k === "geojsons_simplified/costs_and_emissions/costs_per_mile_payload40000_avVMT100000_maxChP400.geojson") || (k === "Total Cost of Truck Ownership")) {
+        return createBulletAttributes("Total Cost of Truck Ownership", s, c, e, p);
     }
-
-    else if ((
-      k === "Savings from Pooled Charging Infrastructure")) {
-
-      const label1HTML = `<span>${svgIcon}Truck Range: </span>`;
-      const label1Text = "range"; 
-      let value1HTML = "250 miles";
-      
-      if (label1Text in p){
-        value1HTML = p[label1Text]; 
-      }
-
-      const label2HTML = `<span>${svgIcon}Charging Time: </span>`; 
-      const label2Text = "chargingtime"; 
-
-      let value2HTML = "4 hours";
-      
-
-      if (label2Text in p){
-        value2HTML = p[label2Text]; 
-      }
-
-
-      const label3HTML = `<span>${svgIcon}Max allowed wait time: </span>`; 
-      const label3Text = "maxwaittime"; 
-      let value3HTML =  "30 minutes"; 
-      
-      
-      if (label3Text in p){
-        value3HTML = p[label3Text]; 
-      }
-
-      if (s != "default") {
-        if (convertDropdownIdToLabel(e) === label1Text){
-          value1HTML = c; 
-        }
-        else if (convertDropdownIdToLabel(e)=== label2Text){
-          value2HTML = c; 
-        }
-        else if (convertDropdownIdToLabel(e)=== label3Text){
-          value3HTML = c; 
-        }
-        }
-      return `${label1HTML}&${value1HTML}&${label2HTML}&${value2HTML}&${label3HTML}&${value3HTML}`;
+    else if ((k === "Savings from Pooled Charging Infrastructure")) {
+      return createBulletAttributes("Savings from Pooled Charging Infrastructure", s, c, e, p);
   }
-
-
     return "&&&&&&"; 
   }
  function updateLabels(m, selectedValue, c, k, p){
     const firstsectDiv = document.getElementById("firstsect"); 
     const secsectDiv = document.getElementById("secsect");
-    const thirdsectDiv = document.getElementById("thirdsect"); 
+    const thirdsectDiv = document.getElementById("thirdsect");
+    const fourthsectDiv = document.getElementById("fourthsect");
 
     const label1Span = document.querySelector("#public .label1"); 
     const value1Span = document.querySelector("#public .value1"); 
@@ -366,44 +130,73 @@ async function attachEventListeners() {
     const value2Span = document.querySelector("#public .value2"); 
 
     const label3Span = document.querySelector("#public .label3"); 
-    const value3Span = document.querySelector("#public .value3"); 
+    const value3Span = document.querySelector("#public .value3");
+
+    const label4Span = document.querySelector("#public .label4");
+    const value4Span = document.querySelector("#public .value4");
+    
+ 
 
 
     const extraAttributes = createExtraAttributes(m, selectedValue, c, k, p);
 
     const parts = extraAttributes.split("&");
-    const label1html = parts[0] || "";
-    const value1html = parts[1] || "";
-    const label2html = parts[2]|| "";
-    const value2html = parts[3] || "";
-    const label3html = parts[4]|| "";
-    const value3html = parts[5]|| "";
-
-    label1Span.innerHTML = label1html; 
-    value1Span.innerHTML = value1html;
-    label2Span.innerHTML = label2html; 
-    value2Span.innerHTML = value2html;
-    label3Span.innerHTML = label3html; 
-    value3Span.innerHTML = value3html;
-
-if (firstsectDiv) {
-  firstsectDiv.style.display = (label1html || value1html) ? "block" : "none";
-}
-
-if (secsectDiv) {
-  secsectDiv.style.display = (label2html || value2html) ? "block" : "none";
-}
-
-if (thirdsectDiv) {
-  thirdsectDiv.style.display = (label3html || value3html) ? "block" : "none";
-}
+    
+    // Clear all spans first
+    if (label1Span) label1Span.innerHTML = "";
+    if (value1Span) value1Span.innerHTML = "";
+    if (label2Span) label2Span.innerHTML = "";
+    if (value2Span) value2Span.innerHTML = "";
+    if (label3Span) label3Span.innerHTML = "";
+    if (value3Span) value3Span.innerHTML = "";
+    if (label4Span) label4Span.innerHTML = "";
+    if (value4Span) value4Span.innerHTML = "";
+    
+    // Hide all sections initially and remove show-bullet class
+    if (firstsectDiv) {
+      firstsectDiv.classList.remove("show-bullet");
+    }
+    if (secsectDiv) {
+      secsectDiv.classList.remove("show-bullet");
+    }
+    if (thirdsectDiv) {
+      thirdsectDiv.classList.remove("show-bullet");
+    }
+    if (fourthsectDiv) {
+      fourthsectDiv.classList.remove("show-bullet");
+    }
+    
+    // Dynamically assign visible bullets to available sections
+    const spans = [
+      [label1Span, value1Span, firstsectDiv],
+      [label2Span, value2Span, secsectDiv], 
+      [label3Span, value3Span, thirdsectDiv],
+      [label4Span, value4Span, fourthsectDiv]
+    ];
+    
+    
+    let visibleCount = 0;
+    for (let i = 0; i < parts.length; i += 2) {
+      const labelHtml = parts[i] || "";
+      const valueHtml = parts[i + 1] || "";
+      
+      if (labelHtml && valueHtml && visibleCount < spans.length) {
+        const [labelSpan, valueSpan, sectionDiv] = spans[visibleCount];
+        if (labelSpan) labelSpan.innerHTML = labelHtml;
+        if (valueSpan) valueSpan.innerHTML = valueHtml;
+        if (sectionDiv) sectionDiv.classList.add("show-bullet");
+        visibleCount++;
+      }
+    }
+    
 };
 
 
 function updateLabels2(m, selectedValue, c, k, p){
   const firstsectDiv = document.getElementById("firstsect-2"); 
   const secsectDiv = document.getElementById("secsect-2");
-  const thirdsectDiv = document.getElementById("thirdsect-2"); 
+  const thirdsectDiv = document.getElementById("thirdsect-2");
+  const fourthsectDiv = document.getElementById("fourthsect-2");
   const label1Span = document.querySelector("#public-2 .label1-2"); 
   const value1Span = document.querySelector("#public-2 .value1-2"); 
 
@@ -411,37 +204,61 @@ function updateLabels2(m, selectedValue, c, k, p){
   const value2Span = document.querySelector("#public-2 .value2-2"); 
 
   const label3Span = document.querySelector("#public-2 .label3-2"); 
-  const value3Span = document.querySelector("#public-2 .value3-2"); 
+  const value3Span = document.querySelector("#public-2 .value3-2");
+
+  const label4Span = document.querySelector("#public-2 .label4-2");
+  const value4Span = document.querySelector("#public-2 .value4-2"); 
 
 
   const extraAttributes = createExtraAttributes(m, selectedValue, c, k, p);
   const parts = extraAttributes.split("&");
-  const label1html = parts[0] || "";
-  const value1html = parts[1] || "";
-  const label2html = parts[2]|| "";
-  const value2html = parts[3] || "";
-  const label3html = parts[4]|| "";
-  const value3html = parts[5]|| "";
-
-
-  label1Span.innerHTML = label1html; 
-  value1Span.innerHTML = value1html;
-  label2Span.innerHTML = label2html; 
-  value2Span.innerHTML = value2html;
-  label3Span.innerHTML = label3html; 
-  value3Span.innerHTML = value3html;
-
-if (firstsectDiv) {
-firstsectDiv.style.display = (label1html || value1html) ? "block" : "none";
-}
-
-if (secsectDiv) {
-secsectDiv.style.display = (label2html || value2html) ? "block" : "none";
-}
-
-if (thirdsectDiv) {
-thirdsectDiv.style.display = (label3html || value3html) ? "block" : "none";
-}
+  
+  // Clear all spans first
+  if (label1Span) label1Span.innerHTML = "";
+  if (value1Span) value1Span.innerHTML = "";
+  if (label2Span) label2Span.innerHTML = "";
+  if (value2Span) value2Span.innerHTML = "";
+  if (label3Span) label3Span.innerHTML = "";
+  if (value3Span) value3Span.innerHTML = "";
+  if (label4Span) label4Span.innerHTML = "";
+  if (value4Span) value4Span.innerHTML = "";
+  
+  // Hide all sections initially and remove show-bullet class
+  if (firstsectDiv) {
+    firstsectDiv.classList.remove("show-bullet");
+  }
+  if (secsectDiv) {
+    secsectDiv.classList.remove("show-bullet");
+  }
+  if (thirdsectDiv) {
+    thirdsectDiv.classList.remove("show-bullet");
+  }
+  if (fourthsectDiv) {
+    fourthsectDiv.classList.remove("show-bullet");
+  }
+  
+  // Dynamically assign visible bullets to available sections
+  const spans = [
+    [label1Span, value1Span, firstsectDiv],
+    [label2Span, value2Span, secsectDiv], 
+    [label3Span, value3Span, thirdsectDiv],
+    [label4Span, value4Span, fourthsectDiv]
+  ];
+  
+  let visibleCount = 0;
+  for (let i = 0; i < parts.length; i += 2) {
+    const labelHtml = parts[i] || "";
+    const valueHtml = parts[i + 1] || "";
+    
+    // Only show if both label and value have content
+    if (labelHtml && valueHtml && visibleCount < spans.length) {
+      const [labelSpan, valueSpan, sectionDiv] = spans[visibleCount];
+      if (labelSpan) labelSpan.innerHTML = labelHtml;
+      if (valueSpan) valueSpan.innerHTML = valueHtml;
+      if (sectionDiv) sectionDiv.classList.add("show-bullet");
+      visibleCount++;
+    }
+  }
 };
 
 
@@ -458,60 +275,6 @@ thirdsectDiv.style.display = (label3html || value3html) ? "block" : "none";
   const transformE3Dict = emissionsOptions["Visualize By"]; 
 
 
-  function transformOneOptions(opt, transform, key){
-    const reversed = Object.fromEntries(
-      Object.entries(transform).map(([key, value]) => [value, key])
-    );
-    const newOpt = { ...opt };
-
-  newOpt[key] = reversed[newOpt[key]];
-
-  return newOpt;
-
-  }
-
-
-
-  function transformTwoOptions(opt, transform1, transform2, key1, key2){
-    const reversed1 = Object.fromEntries(
-      Object.entries(transform1).map(([key, value]) => [value, key])
-    );
-
-    const reversed2 = Object.fromEntries(
-      Object.entries(transform2).map(([key, value]) => [value, key])
-    );
-
-    const newOpt = { ...opt };
-
-    newOpt[key1] = reversed1[newOpt[key1]];
-    newOpt[key2] = reversed2[newOpt[key2]]; 
-
-  return newOpt;
-
-  }
-
-  function transformThreeOptions(opt, transform1, transform2, transform3, key1, key2, key3){
-    const reversed1 = Object.fromEntries(
-      Object.entries(transform1).map(([key, value]) => [value, key])
-    );
-
-    const reversed2 = Object.fromEntries(
-      Object.entries(transform2).map(([key, value]) => [value, key])
-    );
-
-    const reversed3 = Object.fromEntries(
-      Object.entries(transform3).map(([key, value]) => [value, key])
-    );
-
-    const newOpt = { ...opt };
-
-    newOpt[key1] = reversed1[newOpt[key1]];
-    newOpt[key2] = reversed2[newOpt[key2]]; 
-    newOpt[key3] = reversed3[newOpt[key3]]; 
-
-  return newOpt;
-
-  }
 
   function updateSectionMargin1() {
     const container = document.querySelector('.header-container'); 
@@ -584,7 +347,6 @@ thirdsectDiv.style.display = (label3html || value3html) ? "block" : "none";
   }
 
   const uploadedLayerDropdown = $('#usefiles-data-ajax');
-  //console.log(uploadedLayerDropdown); // This should not be null or undefined
   if (uploadedLayerDropdown.length > 0) {
     uploadedLayerDropdown.on('select2:opening', function (e) {
       if (window.lastClickWasMoreButton) {
@@ -595,11 +357,9 @@ thirdsectDiv.style.display = (label3html || value3html) ? "block" : "none";
 
     // Use select2's specific events for handling changes
     uploadedLayerDropdown.on('select2:select', async (e) => {
-      console.log('Uploaded layer dropdown change detected via select2');
       uploadedGeojsonNames[e.params.data.id] = e.params.data.text;
 
       try {
-        // Load the uploaded layers
         await updateSelectedLayers();
         updateLegend();
       } catch (error) {
@@ -608,10 +368,9 @@ thirdsectDiv.style.display = (label3html || value3html) ? "block" : "none";
     });
 
     uploadedLayerDropdown.on('select2:unselect', async (e) => {
-      console.log('Uploaded layer dropdown change detected via select2');
       delete uploadedGeojsonNames[e.params.data.id];
-      await updateSelectedLayers(); // Call function to update layers based on uploaded files
-      updateLegend(); // Update the legend to include uploaded layers
+      await updateSelectedLayers();
+      updateLegend();
     });
   } else {
     console.error('usefiles-data-ajax not found in the DOM');
@@ -670,145 +429,25 @@ function handleMapClick(event) {
 );
 }
 
-// Initialize an empty layer cache
-const layerCache = {};
 
-// Function to compare two layers based on their geometry types
-function compareLayers(a, b) {
-  const layer1 = layerCache[a];
-  const layer2 = layerCache[b];
-
-  if (isPolygonLayer(layer1) && !isPolygonLayer(layer2)) {
-    return -1; // layer1 is a polygon layer, layer2 is not
-  } else if (!isPolygonLayer(layer1) && isPolygonLayer(layer2)) {
-    return 1; // layer2 is a polygon layer, layer1 is not
-  } else if (isLineStringLayer(layer1) && !isLineStringLayer(layer2)) {
-    return -1; // layer1 is a line layer, layer2 is not
-  } else if (!isLineStringLayer(layer1) && isLineStringLayer(layer2)) {
-    return 1; // layer2 is a line layer, layer1 is not
-  } else if (isPointLayer(layer1) && !isPointLayer(layer2)) {
-    return -1; // layer1 is a point layer, layer2 is not
-  } else if (!isPointLayer(layer1) && isPointLayer(layer2)) {
-    return 1; // layer2 is a point layer, layer1 is not
-  } else {
-    return 0; // both layers have the same geometry type
-  }
-}
 
 async function loadLayer(layerName, layerUrl = null, showApplySpinner = true) {
   const layerMap = getSelectedLayersValues();
-  let url =
-    layerUrl && layerUrl.startsWith('https://')
-      ? layerUrl
-      : `${STORAGE_URL}${layerMap.get(layerName)}`;
-
-  if (layerName.startsWith('https://')) {
-    url = layerName;
-  }
-
-  const spinnerOverlay = document.getElementById('map-loading-spinner');
-
-  if (showApplySpinner && spinnerOverlay) {
-    spinnerOverlay.style.display = 'flex'; // Show full-screen spinner
-  }
-
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-
-    const geojsonData = await response.json();
-    const features = new ol.format.GeoJSON().readFeatures(geojsonData, {
-      dataProjection: 'EPSG:3857',
-      featureProjection: 'EPSG:3857',
-    });
-
-    const attributeKey = layerName;
-    let attributeName = '';
-    if (layerName in selectedGradientAttributes) {
-      attributeName = selectedGradientAttributes[attributeKey];
-      const minVal = Math.min(...features.map((f) => f.get(attributeName) || Infinity));
-      const maxVal = Math.max(...features.map((f) => f.get(attributeName) || -Infinity));
-      attributeBounds[layerName] = { min: minVal, max: maxVal };
-    }
-
-    const vectorLayer = new ol.layer.Vector({
-      source: new ol.source.Vector({
-        features: features,
-      }),
-      style: createStyleFunction(layerName),
-      key: layerName,
-    });
-
-    layerCache[layerName] = vectorLayer;
-    vectorLayers.push(vectorLayer);
-  } catch (error) {
-    console.error('Fetch Error:', error);
-    throw error;
-  } finally {
-    if (showApplySpinner && spinnerOverlay) {
-      spinnerOverlay.style.display = 'none'; // Hide spinner after loading
-    }
-  }
+  const layer = await utilLoadLayer(layerName, layerUrl, showApplySpinner, STORAGE_URL, layerMap);
+  vectorLayers.push(layer);
 }
 
 function removeLayer(layerName) {
-  const layerIndex = vectorLayers.findIndex((layer) => layer.get('key') === layerName);
-
-  if (layerIndex !== -1) {
-    const layer = vectorLayers[layerIndex];
-
-    // Remove from OpenLayers map
-    map.removeLayer(layer);
-
-    // Remove from vectorLayers and cache
-    vectorLayers.splice(layerIndex, 1);
-    delete layerCache[layerName];
-  } else {
-    console.warn('Layer not found in vectorLayers:', layerName);
-  }
+  utilRemoveLayer(layerName, vectorLayers, map);
 }
 
-// Function to update a specific layer with a new attributeName
 async function updateLayer(layerName, attributeName) {
-  // Check if the layerName is cached
   if (!layerCache[layerName]) {
-    // If the layer is not in the cache, load it using loadLayer
     await loadLayer(layerName);
   }
-
-  // Update the attributeName and style for the layer
-  const vectorLayer = layerCache[layerName];
-  vectorLayer.setStyle(createStyleFunction(layerName, attributeName)); // Pass the new attributeName
-
-  // Update the attributeBounds for the layer if needed
-  const attributeKey = layerName;
-  if (layerName in selectedGradientAttributes) {
-    const minVal = Math.min(
-      ...vectorLayer
-        .getSource()
-        .getFeatures()
-        .map((f) => f.get(attributeName) || Infinity)
-    );
-    const maxVal = Math.max(
-      ...vectorLayer
-        .getSource()
-        .getFeatures()
-        .map((f) => f.get(attributeName) || -Infinity)
-    );
-    attributeBounds[layerName] = { min: minVal, max: maxVal };
-  }
+  await utilUpdateLayer(layerName, attributeName);
 }
 
-function setLayerVisibility(layerName, isVisible) {
-  // Find the layer by its name and update its visibility
-  const layer = vectorLayers.find((layer) => layer.get('key').split('.')[0] === layerName);
-
-  if (layer) {
-    layer.setVisible(isVisible);
-  }
-}
 
 // Function to update the selected layers on the map
 async function updateSelectedLayers() {
@@ -1495,74 +1134,36 @@ window.addEventListener('click', function (event) {
   }
 });
 
-function getAttributesForLayer(layerName) {
-  // Check if the layer is available in the cache
-  if (!layerCache[layerName]) {
-    console.error(`Layer ${layerName} not found in cache.`);
-    return [];
-  }
-
-  // Get the layer object from the cache
-  const layer = layerCache[layerName];
-
-  // Get all features from the layer
-  const features = layer.getSource().getFeatures();
-  if (!features || features.length === 0) {
-    console.warn(`No features found in layer ${layerName}.`);
-    return [];
-  }
-
-  // Assuming all features have the same properties, we can extract the properties from the first feature
-  const firstFeature = features[0];
-  const properties = firstFeature.getProperties();
-
-  // Remove geometry-related properties if needed (since we only want non-geometry attributes)
-  delete properties.geometry; // Optionally delete the geometry attribute
-
-  // Return the attribute names (keys of the properties object)
-  return Object.keys(properties);
-}
 
 async function applyLayerOptions(layerName, gradientAttribute) {
-  // This is where you apply the selected gradient or attribute to the layer
-  //console.log(`Applying gradient ${gradientAttribute} to layer ${layerName}`);
-
-  // Check if the layer is available in the cache
   if (!layerCache[layerName]) {
     console.error(`Layer ${layerName} not found in cache.`);
     return [];
   }
 
-  // Get the layer object from the cache
   const layer = layerCache[layerName];
 
   selectedGradientAttributes[layerName] = gradientAttribute;
   if (isPolygonLayer(layer)) selectedGradientTypes[layerName] = 'color';
   else selectedGradientTypes[layerName] = 'size';
 
-  // Update the layer with its new gradient attribute
   updateLayer(layerName, gradientAttribute);
 
-  // Update the map
-  await updateSelectedLayers(); // Wait for updateSelectedLayers to complete
-  updateLegend(); // Now, call updateLegend after updateSelectedLayers is done
+  await updateSelectedLayers();
+  updateLegend();
 }
 
 async function toggleZefSubLayer(subName, checked) {
   const layerName = `ZEF Corridor Strategy Phase ${selectedZefOptions['Phase']} ${subName}`;
   const layerUrl = `${STORAGE_URL}geojson_files/ZEF_Corridor_Strategy/ZEF_Corridor_Strategy_Phase${selectedZefOptions['Phase']}_${subName}.geojson`;
 
-  // **Check if National ZEF Corridor Strategy is visible on the map**
   const parentLayerVisible = Object.keys(layerCache).some(
     (layerKey) =>
       layerKey.startsWith('ZEF Corridor Strategy Phase') && layerCache[layerKey].getVisible()
   );
 
   if (!parentLayerVisible) {
-    console.log(
-      `Skipping sub-layer toggle for ${layerName} because National ZEF Corridor Strategy is not active`
-    );
-    return; // Exit early if no ZEF layers are visible
+    return;
   }
 
   // Proceed as normal
@@ -1574,13 +1175,10 @@ async function toggleZefSubLayer(subName, checked) {
     if (layerCache[layerName]) {
       const layer = layerCache[layerName];
 
-      // Ensure layer is in vectorLayers
       if (!vectorLayers.includes(layer)) {
         vectorLayers.push(layer);
       }
-
-      // Set visibility & re-add to map
-      setLayerVisibility(layerName, true);
+      setLayerVisibility(layerName, true, vectorLayers);
     } else {
       console.error('Layer failed to load and is missing from cache.');
     }
@@ -1589,29 +1187,25 @@ async function toggleZefSubLayer(subName, checked) {
     vectorLayers = vectorLayers.filter((layer) => layer.get('key') !== layerName);
   }
 
-  // **Re-enforce correct order of all active ZEF sub-layers**
   enforceLayerOrder(
     vectorLayers
-      .map((layer) => layer.get('key')) // Get layer names
-      .filter((name) => name.startsWith('ZEF Corridor Strategy Phase')) // Keep only ZEF layers
+      .map((layer) => layer.get('key'))
+      .filter((name) => name.startsWith('ZEF Corridor Strategy Phase'))
   );
 
   updateLegend();
 }
 
 function enforceLayerOrder(layerNames) {
-  // Remove all ZEF layers from the map
-  const existingLayers = map.getLayers().getArray().slice(1); // Exclude base layer
+  const existingLayers = map.getLayers().getArray().slice(1);
   existingLayers.forEach((layer) => {
     if (layer && layer.get('key') && layer.get('key').startsWith('ZEF Corridor Strategy Phase')) {
       map.removeLayer(layer);
     }
   });
 
-  // **Sort layers before re-adding**
   const sortedLayerNames = layerNames.sort(compareLayers);
 
-  // Re-add layers in the correct order
   sortedLayerNames.forEach((layerName) => {
     if (layerCache[layerName]) {
       map.addLayer(layerCache[layerName]);

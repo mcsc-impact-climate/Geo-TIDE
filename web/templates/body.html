@@ -1,19 +1,14 @@
 {% load static %}
 
-<!-- Include Google Fonts for Myna UI (Inter font) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-<!-- Include jQuery and Select2 CSS/JS files -->
 <link rel="stylesheet" href="{% static 'style.css' %}">
 <link
   href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
   rel="stylesheet"
 />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="{% static 'panels.js' %}"></script>
@@ -100,19 +95,20 @@
         </button>
       </div>
 
-<div id="public" class = "extra_butes_style" style="margin-top: -0.25rem; margin-bottom: 1rem; margin-left: 1.25rem;">
-  <div id="firstsect" class="firstsect"> 
-  <span class="label1"></span><span class="value1"></span>
-  </div>
-
-  <div id="secsect" class="secsect"> 
+<ul id="public" class="extra_butes_style">
+  <li id="firstsect" class="firstsect"> 
+    <span class="label1"></span><span class="value1"></span>
+  </li>
+  <li id="secsect" class="secsect"> 
     <span class="label2"></span><span class="value2"></span>
-  </div>
-
-  <div id="thirdsect" class = "thirdsect"> 
+  </li>
+  <li id="thirdsect" class="thirdsect"> 
     <span class="label3"></span><span class="value3"></span>
-  </div>
-</div>
+  </li>
+  <li id="fourthsect" class="fourthsect"> 
+    <span class="label4"></span><span class="value4"></span>
+  </li>
+</ul>
 
 <div class="public-data-box" style="align-items: center !important;">
   <button id="highway-icon" class="public-icon"
@@ -245,20 +241,20 @@
     <!-- Add checkboxes for point layers -->
   </div>
 
-  <div id="public-2" class = "extra_butes_style" style="margin-top: -0.45rem;">
-    <div id="firstsect-2" class="firstsect", style = "margin-left: -0.25rem; padding-top: 0; margin-top: 0;">
-    <span class="label1-2"></span><span class="value1-2"></span>
-    </div>
-  
-    <div id="secsect-2" class = "secsect" , style = "margin-left: -0.25rem;">
+  <ul id="public-2" class="extra_butes_style">
+    <li id="firstsect-2" class="firstsect">
+      <span class="label1-2"></span><span class="value1-2"></span>
+    </li>
+    <li id="secsect-2" class="secsect">
       <span class="label2-2"></span><span class="value2-2"></span>
-    </div>
-  
-    <div id="thirdsect-2" class = "thirdsect" , style = "margin-left: -0.25rem;">
+    </li>
+    <li id="thirdsect-2" class="thirdsect">
       <span class="label3-2"></span><span class="value3-2"></span>
-    </div>
-  
-  </div>
+    </li>
+    <li id="fourthsect-2" class="fourthsect">
+      <span class="label4-2"></span><span class="value4-2"></span>
+    </li>
+  </ul>
   
 </div>
 </div>
@@ -309,7 +305,6 @@
   </div>
 </div>
 
-<!-- Initialize Select2 -->
 
 <script>
   let uploadedGeojsonNames = {};
@@ -391,7 +386,6 @@
   });
 </script>
 
-<!-- Uploaded Data Toggle Functionality moved to panels.js -->
 
 <div id="details-modal" class="modal">
   <div class="modal-content">
@@ -401,7 +395,6 @@
   </div>
 </div>
 
-<!-- Modal for displaying regulations -->
 <div id="regulations-modal" class="modal">
   <div id="regulations-content" class="modal-content">
     <span class="close-btn">&times;</span>
@@ -420,7 +413,6 @@
 </div>
 
 
-<!-- Modal for displaying Hourly Grid Emissions -->
 <div id="hourly-grid-emissions-modal" class="modal">
   <div id="hourly-grid-emissions-content" class="modal-content">
     <span class="close-hourly-grid-emissions">&times;</span>
@@ -430,7 +422,6 @@
 </div>
 
 
-<!-- Modal for the Options -->
 <div id="options-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border:1px solid black; z-index:1000;">
   <h3>Layer Options</h3>
   <label for="layer-dropdown">Select uploaded layer</label>
@@ -450,7 +441,6 @@
 </div>
 
 
-<!-- Stuff Displaying DOE Plan, on pause -->
 <script>
   const GET_GEOJSONS = '{% url "get-geojsons" %}';
   const GET_GEOJSON = '{% url "get-geojson" %}';
@@ -468,11 +458,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script type="module"  src='{% static "main.js"%}'></script>
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-<script type="module" src='{% static "main.js"%}'></script>
 
-<!-- Modal for confirming layer claering -->
 <div id="clear-confirmation-modal" class="modal" style="display: none">
   <div class="modal-content" style="max-width: 400px">
     <span class="close-btn" id="clear-modal-close">&times;</span>
@@ -497,7 +483,6 @@
   </div>
 </div>
 
-<!-- Dropdown Toggle button Functionality -->
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
@@ -563,5 +548,4 @@
 
 
 
-<!-- Public Data Toggle Functionality moved to panels.js -->
 

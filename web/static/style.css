@@ -363,6 +363,7 @@ body {
   min-width: 300px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25); /* Subtle shadow */
   font-size: 0.9375rem;
+  position: relative; /* Make close button position relative to this container */
 }
 
 .checkbox-container {
@@ -1403,7 +1404,9 @@ ul {
 .secsect,
 .secsect span,
 .thirdsect,
-.thirdsect span {
+.thirdsect span,
+.fourthsect,
+.fourthsect span {
   color: var(--theme-muted-foreground, #62748E);
   font-family: var(--font-family-sans, Inter);
   font-size: var(--font-size-sm, 1rem);
@@ -1413,6 +1416,7 @@ ul {
   letter-spacing: var(--font-tracking-normal, 0);
   border: None;
   padding: 0;
+  margin-bottom: 0.125rem;
 }
 
 .firstsect,
@@ -1420,10 +1424,39 @@ ul {
   margin-top: 0.25rem;
 }
 
-.extra_butes_style
-{
-  margin-left: 1.5rem;
+.extra_butes_style {
+  margin-left: 0.875rem;
+  margin-top: -0.25rem;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+  padding-left: 1rem;
+  list-style-type: disc;
+  list-style-position: outside;
+}
 
+.extra_butes_style li {
+  margin-bottom: 0.125rem;
+  padding-left: 0.25rem;
+  display: list-item;
+}
+
+.extra_butes_style li {
+  visibility: hidden;
+  height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.extra_butes_style li.show-bullet {
+  visibility: visible;
+  height: auto;
+  margin-bottom: 0.125rem;
+  padding-left: 0.25rem;
+}
+
+/* Adjust first bullet list to align with second one */
+#public.extra_butes_style {
+  margin-left: 0.625rem;
 }
 
 .header-container {

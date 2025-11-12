@@ -15,7 +15,7 @@ The code in [web](./web) contains all functionality to visualize the geojsons in
 pixi run start
 ```
 
-If that executes without issue, you should be able to view the map in your browser at http://127.0.0.1:5000/transportation. It currently looks something like this:
+If that executes without issue, you should be able to view the map in your browser at http://127.0.0.1:8000/transportation. It currently looks something like this:
 
 ![Interactive Web Map](./images/web_map.png)
 

@@ -386,38 +386,99 @@
   });
 </script>
 
+<!-- General Feature Details Modal -->
+<div id="feature-details-modal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h1 id="feature-details-title" class="modal-title">Feature Details</h1>
+      <button class="close-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" fill="none">
+          <path d="M12.75 0.750049L0.75 12.75M0.749949 0.75L12.7499 12.75" stroke="#020618" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div id="feature-details-content">
+        <!-- Feature properties will be displayed here -->
+      </div>
+    </div>
+  </div>
+</div>
 
 <div id="details-modal" class="modal">
   <div class="modal-content">
-    <span class="close-btn">&times;</span>
-    <h1 id="details-title">Details</h1>
-    <p id="details-content">Details content goes here.</p>
+    <div class="modal-header">
+      <h1 id="details-title" class="modal-title">Details</h1>
+      <button class="close-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" fill="none">
+          <path d="M12.75 0.750049L0.75 12.75M0.749949 0.75L12.7499 12.75" stroke="#020618" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div id="details-content">Details content goes here.</div>
+      
+      <!-- Sub-layers checkbox section - shown conditionally -->
+      <div id="sublayers-section" class="modal-section modal-checkboxes" style="display: none;">
+        <span class="modal-label">Show sub-layers:</span>
+        <div>
+          <label>
+            <input type="checkbox" id="corridors-checkbox">
+            <span>Corridors</span>
+          </label>
+          <label>
+            <input type="checkbox" id="facilities-checkbox">
+            <span>Facilities</span>
+          </label>
+          <label>
+            <input type="checkbox" id="hubs-checkbox">
+            <span>Hubs</span>
+          </label>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
 <div id="regulations-modal" class="modal">
-  <div id="regulations-content" class="modal-content">
-    <span class="close-btn">&times;</span>
-    <h1 style="margin-bottom: 0.75rem">Regulations and Incentives for [State Name]</h1>
-    <p><em>Click on targets to view more information.</em></p>
-    <div id="regulations-details">
-      <p>Loading...</p>
-      <p>
-        <em>
-          Italicized regulations and incentives benefit multiple fuel types and
-          appear multiple times.
-        </em>
-      </p>
+  <div id="regulations-content" class="modal-content modal-large">
+    <div class="modal-header">
+      <h1 class="modal-title">Regulations and Incentives for [State Name]</h1>
+      <button class="close-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" fill="none">
+          <path d="M12.75 0.750049L0.75 12.75M0.749949 0.75L12.7499 12.75" stroke="#020618" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p><em>Click on targets to view more information.</em></p>
+      <div id="regulations-details">
+        <p>Loading...</p>
+        <p>
+          <em>
+            Italicized regulations and incentives benefit multiple fuel types and
+            appear multiple times.
+          </em>
+        </p>
+      </div>
     </div>
   </div>
 </div>
 
 
 <div id="hourly-grid-emissions-modal" class="modal">
-  <div id="hourly-grid-emissions-content" class="modal-content">
-    <span class="close-hourly-grid-emissions">&times;</span>
-    <h1 id="emissions-title">Hourly & Weekly Grid Emissions</h1>
-
+  <div id="hourly-grid-emissions-content" class="modal-content modal-fullscreen">
+    <div class="modal-header">
+      <h1 id="emissions-title" class="modal-title">Hourly & Weekly Grid Emissions</h1>
+      <button class="close-btn close-hourly-grid-emissions">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <!-- Content will be dynamically generated here -->
+    </div>
   </div>
 </div>
 
@@ -460,21 +521,22 @@
 <script type="module"  src='{% static "main.js"%}'></script>
 
 <div id="clear-confirmation-modal" class="modal" style="display: none">
-  <div class="modal-content" style="max-width: 400px">
-    <span class="close-btn" id="clear-modal-close">&times;</span>
-    <h1>Confirm Clear</h1>
-    <p>
-      This will remove all displayed layers from the map and reset selections.
-      Are you sure you want to continue?
-    </p>
-    <div
-      style="
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        margin-top: 20px;
-      "
-    >
+  <div class="modal-content modal-small">
+    <div class="modal-header">
+      <h1 class="modal-title">Confirm Clear</h1>
+      <button class="close-btn" id="clear-modal-close">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p>
+        This will remove all displayed layers from the map and reset selections.
+        Are you sure you want to continue?
+      </p>
+    </div>
+    <div class="modal-footer">
       <button id="cancel-clear" class="cancel-clear">Cancel</button>
       <button id="confirm-clear" class="confirm-clear">
         Yes, clear layers

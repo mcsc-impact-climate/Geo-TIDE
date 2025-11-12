@@ -340,30 +340,211 @@ body {
   opacity: var(--opacity-90, 0.9);
 }
 
+/* Base Modal Styles */
 .modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1000; /* Ensure it's on top */
+  display: none;
+  position: fixed;
+  z-index: 1000;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
   font-size: 0.9375rem;
 }
 
+.modal.show {
+  display: flex;
+}
+
+/* Standard Modal Content */
 .modal-content {
-  background-color: #f4f4f4; /* Light gray background */
-  padding: 20px;
-  border-radius: 5px; /* Rounded corners */
-  width: 90%; /* Medium size */
-  max-width: 1000px;
-  min-width: 300px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25); /* Subtle shadow */
+  display: block;
+  width: 52.3125rem;
+  padding: 2.25rem 1.25rem 1.25rem 1.25rem;
+  border-radius: 0.5rem;
+  background: var(--Background-Light, #FFF);
+  box-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.15);
   font-size: 0.9375rem;
-  position: relative; /* Make close button position relative to this container */
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-content > h1 {
+  width: 100%;
+  margin: 0;
+  clear: both;
+  display: block;
+}
+
+/* Modal content variants */
+.modal-content.modal-small {
+  width: 25rem;
+  max-width: 400px;
+}
+
+.modal-content.modal-large {
+  width: 80vw;
+  height: 90vh;
+  max-width: none;
+}
+
+.modal-content.modal-fullscreen {
+  width: 95vw;
+  height: 95vh;
+  max-width: none;
+}
+
+/* Modal structure components */
+.modal-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #000000;
+  padding-right: 2rem;
+}
+
+.modal-body {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  width: 100%;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--Border-Primary, #E5E7EB);
+}
+
+/* Feature details styling */
+.property-row {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #F3F4F6;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.property-row strong {
+  min-width: 8rem;
+  margin-right: 1rem;
+  color: var(--theme-foreground, #020618);
+  font-weight: 500;
+}
+
+.property-row:last-child {
+  border-bottom: none;
+}
+
+/* Details content wrapper styling */
+.details-content-wrapper {
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.details-content-wrapper a {
+  color: #2563EB;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.details-content-wrapper a:hover {
+  text-decoration: underline;
+}
+
+/* Modal form sections */
+.modal-section {
+  margin-bottom: 1rem;
+}
+
+.modal-section:last-child {
+  margin-bottom: 0;
+}
+
+/* Modal details content styling */
+#details-content {
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+#details-content a {
+  color: #2563EB;
+  text-decoration: none;
+}
+
+#details-content a:hover {
+  text-decoration: underline;
+}
+
+.modal-label {
+  font-weight: 500;
+  color: #000000;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+/* Checkbox section styling to match design */
+.modal-checkboxes {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.modal-checkboxes .modal-label {
+  font-family: Inter;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--Foreground-Dark, #020618);
+  min-width: 130px;
+  margin: 0;
+}
+
+.modal-checkboxes > div {
+  display: flex;
+  gap: 1rem;
+}
+
+.modal-checkboxes label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: Inter;
+  font-size: 0.875rem;
+  color: var(--Foreground-Dark, #020618);
+  margin: 0;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.modal-checkboxes label input[type="checkbox"] {
+  display: inline-block !important;
+  margin: 0;
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  vertical-align: middle;
+}
+
+.modal-checkboxes label span {
+  line-height: 1;
 }
 
 .checkbox-container {
@@ -515,33 +696,56 @@ height: 100%;
 .dropdown-container {
   font-size: 0.9375rem;
   display: flex;
-  justify-content: left;
-  align-items: center;
-  margin-top: 20px;
+  flex-direction: column;
+  align-items: stretch;
+  margin-bottom: 1rem;
+  gap: 0.5rem;
 }
 
 /* Generic dropdown label */
 .dropdown-container label {
-  margin-right: 10px;
+  font-weight: 500;
+  color: #000000;
+  margin-bottom: 0.25rem;
   font-size: 0.9375rem;
 }
 
 /* Generic select element */
 .dropdown-container select {
-  width: 60%;
-  padding: 5px;
+  width: 100%;
+  height: 2.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #E2E8F0;
+  border-radius: 0.375rem;
+  background: #FFF;
   font-size: 0.9375rem;
+  font-family: var(--font-family-sans, 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif);
+  color: #0F172B;
+  appearance: none;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M5.3335 10.667L8.00016 13.3337L10.6668 10.667M5.3335 5.33366L8.00016 2.66699L10.6668 5.33366" stroke="%2362748E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: var(--spacing-4, 1rem);
 }
 
 /* Area Feature dropdown specific styling */
 #area-layer-dropdown {
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
+  height: 2.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #E2E8F0;
+  background: #FFF;
   border-radius: 0.375rem;
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
   font-weight: normal;
+  font-family: var(--font-family-sans, 'Inter', system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif);
+  font-size: 0.9375rem;
+  color: #0F172B;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\"><path d=\"M5.3335 10.667L8.00016 13.3337L10.6668 10.667M5.3335 5.33366L8.00016 2.66699L10.6668 5.33366\" stroke=\"%2362748E\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: var(--spacing-4, 1rem);
 }
 
 /* Keep checkboxes in one row with proper spacing */
@@ -589,78 +793,47 @@ ul {
   list-style-type: disc; /* Ensures bullets are used */
 }
 
-/* New styles for the regulations modal */
-#regulations-modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enforce vertical scrolling */
-  background-color: rgb(0, 0, 0); /* Fallback color */
-  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
-}
+/* Regulations Modal - will use standard modal classes */
 
-#regulations-content {
-  background-color: #fefefe;
-  margin: 15% auto; /* 15% from the top and centered */
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%; /* Could be more or less, depending on screen size */
-  border-radius: 5px;
-  max-height: 80vh; /* Limit the height to 80% of the viewport height */
-  overflow: auto; /* Enable vertical scrolling */
-}
+/* Regulations content - will inherit from modal-content base styles */
 
 /* State Regulations, Styles */
 
 /* The Close Button */
 .close-btn {
-  color: #aaa;
   position: absolute;
-  top: 0.75rem;     /* distance from top edge */
-  right: 1.25rem;  /* distance from right edge */
-  font-size: 1.875rem;
-  font-weight: bold;
+  top: 0.75rem;
+  right: 1.25rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
   cursor: pointer;
-  padding: 0;                  /* remove any default padding */
-  margin: 0;                   /* remove stray margins */
-  height: auto;                /* let the glyph define its own height */
-  width: auto;
-  line-height: 1;              /* remove inherited tall line-height */
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.close-btn svg {
+  width: 0.75rem;
+  height: 0.75rem;
+  stroke-width: 1.5px;
+  stroke: var(--Foreground-Dark, #020618);
 }
 
 .close-btn:hover,
 .close-btn:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
+  opacity: 0.7;
+  outline: none;
 }
 
 /*Hourly Grid Emissions*/
 /* General Modal Styles */
-#hourly-grid-emissions-modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scrolling if needed */
-  background-color: rgba(0, 0, 0, 0.4); /* Black background with opacity */
-}
-/* Modal Content */
-#hourly-grid-emissions-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  /*gap: 0px;  Ensures no extra space between elements */
-  height: 90vh; /* Modal takes 90% of screen height */
-  width: 80vw; /* Modal width adjusts with screen */
-}
+/* Hourly Grid Emissions Modal - will use standard modal classes */
 #hourly-grid-emissions-content h1 {
   margin-bottom: 10px; /* Reduce title spacing */
   padding-bottom: 0;
@@ -704,21 +877,31 @@ ul {
 }
 
 
-/* Close Button */
+/* Legacy close button - use .close-btn instead */
 .close-hourly-grid-emissions {
-  color: #aaa;
-  position: absolute; /* Position within the modal */
-  top: 10px; /* Spacing from the top */
-  right: 15px; /* Spacing from the right */
-  font-size: 1.75rem;
-  font-weight: 600;
+  position: absolute;
+  top: 0.75rem;
+  right: 1.25rem;
+  width: 1.5rem;
+  height: 1.5rem;
   cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #6B7280;
+  line-height: 1;
 }
 
 .close-hourly-grid-emissions:hover,
 .close-hourly-grid-emissions:focus {
-  color: black;
-  text-decoration: none;
+  color: #374151;
+  background: #F3F4F6;
+  border-radius: 0.25rem;
 }
 
 

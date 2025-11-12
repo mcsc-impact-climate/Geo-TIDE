@@ -13,6 +13,7 @@ import {
   getAreaLayerName,
   createZefFilenames,
   showHourlyGridEmissions,
+  showFeatureDetails,
 } from './ui.js';
 import {
   legendLabels,
@@ -404,29 +405,31 @@ function handleMapHover(event) {
 // Function to handle click events
 function handleMapClick(event) {
   map.forEachFeatureAtPixel(event.pixel, function (feature) {
-    const layerName = getAreaLayerName(document.getElementById('area-layer-dropdown').value); //feature.get('layerName'); //not sure if this is correct
+    const layerName = getAreaLayerName(document.getElementById('area-layer-dropdown').value) || feature.get('layerName');
+    
     if (layerName == 'State-Level Incentives and Regulations') {
       if (feature) {
         const properties = feature.getProperties();
         const stateAbbreviation = properties.STUSPS || properties.state || properties.STATE;
-        //console.log(layerName);
         if (stateAbbreviation) {
           showStateRegulations(stateAbbreviation, properties, layerName);
         } else {
           console.log('State abbreviation not found in feature properties');
         }
       }
-    }
-    else if (layerName == 'Hourly Grid Emissions') {
+    } else if (layerName == 'Hourly Grid Emissions') {
       if (feature) {
         const properties = feature.getProperties();
         const zoneName = properties.zoneName;
-        //console.log(zoneName);
         showHourlyGridEmissions(zoneName, properties, layerName);
       }
+    } else {
+      // For all other layer types, show standardized feature details
+      if (feature && layerName) {
+        showFeatureDetails(feature, layerName);
+      }
     }
-  }
-);
+  });
 }
 
 

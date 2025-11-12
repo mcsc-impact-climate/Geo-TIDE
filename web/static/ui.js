@@ -41,6 +41,41 @@ import {
 import { geojsonNames } from './main.js';
 import { isPointLayer, isLineStringLayer, isPolygonLayer } from './styles.js';
 
+// Utility function to wrap content for details modal
+function wrapDetailsContent(htmlContent) {
+  // Wrap the content in a proper structure for consistent styling
+  return `<div class="details-content-wrapper">${htmlContent}</div>`;
+}
+
+// Utility function to generate standardized modal HTML
+function createStandardModalHTML(title, bodyContent, options = {}) {
+  const {
+    closeButtonId = 'close-btn',
+    showCloseInHeader = true,
+    footerContent = '',
+    additionalClasses = ''
+  } = options;
+
+  const closeButtonHTML = `
+    <button class="close-btn ${closeButtonId !== 'close-btn' ? closeButtonId : ''}">
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 6 6 18M6 6l12 12"/>
+      </svg>
+    </button>
+  `;
+
+  return `
+    <div class="modal-header">
+      <h1 class="modal-title">${title}</h1>
+      ${showCloseInHeader ? closeButtonHTML : ''}
+    </div>
+    <div class="modal-body ${additionalClasses}">
+      ${bodyContent}
+    </div>
+    ${footerContent ? `<div class="modal-footer">${footerContent}</div>` : ''}
+  `;
+}
+
 // Mapping of state abbreviations to full state names
 const stateNames = {
   AL: 'Alabama',
@@ -351,11 +386,12 @@ async function createAttributeDropdown(key) {
   }
 
   const attributeDropdownContainer = document.createElement('div');
-  attributeDropdownContainer.classList.add('dropdown-container');
+  attributeDropdownContainer.classList.add('modal-section');
 
-  const label = document.createElement('label');
+  const label = document.createElement('span');
   label.setAttribute('for', 'attribute-dropdown');
-  label.textContent = 'Gradient Attribute: ';
+  label.className = 'modal-label';
+  label.textContent = 'Gradient Attribute:';
 
   const attributeDropdown = document.createElement('select');
   attributeDropdown.id = 'attribute-dropdown';
@@ -413,6 +449,9 @@ async function createAttributeDropdown(key) {
   attributeDropdownContainer.appendChild(attributeDropdown);
   const modalContent = document.querySelector('.modal-content');
   modalContent.appendChild(attributeDropdownContainer);
+  
+  // Show sub-layers section when attribute dropdown is present
+  showSubLayersSection();
 }
 
 function createDropdown(
@@ -729,6 +768,11 @@ function createFaf5Dropdowns(key) {
     selectedFaf5Options,
     createFaf5Filename
   );
+  
+  // Show sub-layers section for Truck Imports and Exports
+  if (key === 'Truck Imports and Exports') {
+    showSubLayersSection();
+  }
 }
 
 function createZefDropdowns(key) {
@@ -875,7 +919,7 @@ document.body.addEventListener('click', function (event) {
         '>Link to download the geojson file</a> used to visualize this layer.';
     }
 
-    document.getElementById('details-content').innerHTML = details_content;
+    document.getElementById('details-content').innerHTML = wrapDetailsContent(details_content);
 
     document.getElementById('details-title').innerText = `${key} Details`;
 
@@ -970,7 +1014,7 @@ document.getElementById('area-details-button').addEventListener('click', functio
         '>Link to download the geojson file</a> used to visualize this layer.';
     }
 
-    document.getElementById('details-content').innerHTML = details_content;
+    document.getElementById('details-content').innerHTML = wrapDetailsContent(details_content);
 
     document.getElementById('details-title').innerText = `${selectedAreaLayerName} Details`;
 
@@ -1042,6 +1086,101 @@ function resetModalContent() {
   if (zefSubLayerContainer) {
     modalContent.removeChild(zefSubLayerContainer);
   }
+  
+  // Hide sub-layers section by default
+  hideSubLayersSection();
+}
+
+function showSubLayersSection() {
+  const sublayersSection = document.getElementById('sublayers-section');
+  if (sublayersSection) {
+    sublayersSection.style.display = 'block';
+    // Initialize checkboxes when shown
+    initializeSubLayerCheckboxes();
+  }
+}
+
+function hideSubLayersSection() {
+  const sublayersSection = document.getElementById('sublayers-section');
+  if (sublayersSection) {
+    sublayersSection.style.display = 'none';
+  }
+}
+
+// Add event listeners for sub-layer checkboxes
+function initializeSubLayerCheckboxes() {
+  const corridorsCheckbox = document.getElementById('corridors-checkbox');
+  const facilitiesCheckbox = document.getElementById('facilities-checkbox');
+  const hubsCheckbox = document.getElementById('hubs-checkbox');
+  
+  if (corridorsCheckbox) {
+    corridorsCheckbox.addEventListener('change', function() {
+      handleSubLayerToggle('corridors', this.checked);
+    });
+  }
+  
+  if (facilitiesCheckbox) {
+    facilitiesCheckbox.addEventListener('change', function() {
+      handleSubLayerToggle('facilities', this.checked);
+    });
+  }
+  
+  if (hubsCheckbox) {
+    hubsCheckbox.addEventListener('change', function() {
+      handleSubLayerToggle('hubs', this.checked);
+    });
+  }
+}
+
+function handleSubLayerToggle(subLayerType, isChecked) {
+  console.log(`${subLayerType} toggled:`, isChecked);
+  // Add logic here to show/hide actual sub-layers on the map
+  // This is where you would integrate with your layer management system
+}
+
+// Shows standardized feature details modal for any feature
+function showFeatureDetails(feature, layerName) {
+  const properties = feature.getProperties();
+  
+  // Remove geometry property as it's not useful for display
+  const displayProperties = { ...properties };
+  delete displayProperties.geometry;
+  
+  // Create a formatted properties display
+  let propertiesHtml = '';
+  for (const [key, value] of Object.entries(displayProperties)) {
+    if (key !== 'layerName' && value != null) {
+      propertiesHtml += `
+        <div class="property-row">
+          <strong>${key}:</strong> ${value}
+        </div>
+      `;
+    }
+  }
+  
+  const modal = document.getElementById('feature-details-modal');
+  const titleElement = document.getElementById('feature-details-title');
+  const contentElement = document.getElementById('feature-details-content');
+  
+  // Set title and content
+  titleElement.textContent = `${layerName} Details`;
+  contentElement.innerHTML = propertiesHtml;
+  
+  // Show modal
+  modal.style.display = 'flex';
+  
+  // Add close button handler
+  const closeButton = modal.querySelector('.close-btn');
+  closeButton.onclick = function () {
+    modal.style.display = 'none';
+  };
+  
+  // Close modal when clicking outside
+  window.onclick = function(event) {
+    if (event.target === modal) {
+      modal.style.display = 'none';
+    }
+  };
 }
 
 // Shows the popup when clicking on hourly emissions map
@@ -1052,30 +1191,31 @@ async function showHourlyGridEmissions(zoneName, properties, layerName) {
   const hourlyCsvFileName = `${zoneName}_avg_std_dist.csv`  // 24 hour chart
   const dailyCsvFileName = `${zoneName}_daily_avg_std.csv`  // over the years
   const weeklyCsvFileName = `${zoneName}_weekly_summary.csv` 
-  // HTML for display
-  content.innerHTML = `
-  <span class="close-hourly-grid-emissions">&times;</span>
-  <h1>Hourly & Weekly Grid Emissions for ${zoneName} from ---</h1>
-  <div class="graph-wrapper">
-    <div class="chart-container">
-        <canvas id="emissionsChart"></canvas>
+  // Generate standardized modal content
+  const bodyContent = `
+    <div class="graph-wrapper">
+      <div class="chart-container">
+          <canvas id="emissionsChart"></canvas>
+      </div>
+      <div class="chart-container">
+          <canvas id="dailyEmissionsChart"></canvas>
+      </div>
+      <p style="font-size: 0.9em; color: #555; margin-top: 1em;">
+      Data sources: <code>${CSV_URL_HOURLYEMISSIONS}${hourlyCsvFileName}</code> and <code>${CSV_URL_DAILYEMISSIONS}${dailyCsvFileName}</code>
+      </p>
     </div>
-    <div class="chart-container">
-        <canvas id="dailyEmissionsChart"></canvas>
-    </div>
-    <p style="font-size: 0.9em; color: #555; margin-top: 1em;">
-    Data sources: <code>${CSV_URL_HOURLYEMISSIONS}${hourlyCsvFileName}</code> and <code>${CSV_URL_DAILYEMISSIONS}${dailyCsvFileName}</code>
+    <p>Data sources for <b>${zoneName}</b>:<br>
+    <a href="${CSV_URL_HOURLYEMISSIONS}${hourlyCsvFileName}" target="_blank">24 Hour Grid Emissions (${hourlyCsvFileName})</a><br>
+    <a href="${CSV_URL_DAILYEMISSIONS}${dailyCsvFileName}" target="_blank">Yearly Grid Emissions by Day (${dailyCsvFileName})</a><br>
+    <a href="${CSV_URL_WEEKLYEMISSIONS}${weeklyCsvFileName}" target="_blank">Yearly Grid Emissions by Week (${weeklyCsvFileName})</a>
     </p>
+  `;
 
-</div>
-
-  <p>Data sources for <b>${zoneName}</b>:<br>
-  <a href="${CSV_URL_HOURLYEMISSIONS}${hourlyCsvFileName}" target="_blank">24 Hour Grid Emissions (${hourlyCsvFileName})</a><br>
-  <a href="${CSV_URL_DAILYEMISSIONS}${dailyCsvFileName}" target="_blank">Yearly Grid Emissions by Day (${dailyCsvFileName})</a><br>
-  <a href="${CSV_URL_WEEKLYEMISSIONS}${weeklyCsvFileName}" target="_blank">Yearly Grid Emissions by Week (${weeklyCsvFileName})</a>
-
-  </p>
-`;
+  content.innerHTML = createStandardModalHTML(
+    `Hourly & Weekly Grid Emissions for ${zoneName} from ---`,
+    bodyContent,
+    { closeButtonId: 'close-hourly-grid-emissions' }
+  );
   try {
     const fileUrl = `${CSV_URL_HOURLYEMISSIONS}${hourlyCsvFileName}`;
     console.log("Fetching CSV from:", fileUrl);  // Logs the full URL
@@ -1540,14 +1680,17 @@ async function showStateRegulations(stateAbbreviation, properties, layerName) {
     }
   }
 
-  // Set the inner HTML
-  content.innerHTML = `
-  <span class="close-btn">&times;</span>
-  <h1>Regulations and Incentives for ${stateName}</h1>
-  <p>Click on targets to view more information.</p>
-  ${detailsHtml}
-  <p><em>Italicized regulations and incentives benefit multiple fuel types and appear multiple times.</em></p>
-`;
+  // Generate standardized modal content
+  const bodyContent = `
+    <p><em>Click on targets to view more information.</em></p>
+    ${detailsHtml}
+    <p><em>Italicized regulations and incentives benefit multiple fuel types and appear multiple times.</em></p>
+  `;
+
+  content.innerHTML = createStandardModalHTML(
+    `Regulations and Incentives for ${stateName}`,
+    bodyContent
+  );
   modal.style.display = 'flex';
 
   const closeButton = modal.querySelector('.close-btn');
@@ -1634,4 +1777,5 @@ export {
   getAreaLayerName,
   showHourlyGridEmissions,
   createZefFilenames,
+  showFeatureDetails,
 };

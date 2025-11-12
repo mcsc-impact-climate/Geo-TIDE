@@ -1,4 +1,4 @@
-[project]
+[workspace]
 name = "Geo-TIDE"
 version = "0.1.0"
 description = "MCSC Geospatial Trucking Industry Decarbonization Explorer"

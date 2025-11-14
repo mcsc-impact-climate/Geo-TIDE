@@ -66,7 +66,7 @@ function toggleUploadedData() {
   
   if (uploadedDataOpen) {
     content.style.display = 'block';
-    uploadedPanel.style.height = '6.75rem';
+    uploadedPanel.style.height = 'auto';
     uploadedPanel.style.width = '19.5rem';
     chevron.setAttribute('d', 'm6 6 6 6 6-6M6 12l6 6 6-6');
   } else {
@@ -115,6 +115,22 @@ document.addEventListener('DOMContentLoaded', function() {
   setTimeout(() => placePanels(), 50);
   initPanelToggles();
   initH3SectionToggles();
+
+  // keep GAP consistent when panel heights change
+  if ('ResizeObserver' in window) {
+    const uploaded = document.getElementById('uploaded-layer-selection');
+    const publicPanel = document.getElementById('layer-selection');
+
+    const ro = new ResizeObserver(() => {
+      // Whenever either panel’s height changes (e.g. more pillboxes),
+      // recompute their positions so the GAP stays constant.
+      placePanels();
+    });
+
+    if (uploaded) ro.observe(uploaded);
+    if (publicPanel) ro.observe(publicPanel);
+  }
+
   window.addEventListener('resize', placePanels);
 });
 

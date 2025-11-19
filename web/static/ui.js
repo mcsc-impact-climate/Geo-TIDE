@@ -763,14 +763,22 @@ function createZefSubLayerCheckboxes(key) {
 
   const container = document.createElement('div');
   container.classList.add('zef-sub-layers-container');
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.flexWrap = 'wrap';
+  container.style.columnGap = '0.5rem';
 
   const label = document.createElement('label');
   label.textContent = 'Show sub-layers:';
+  label.style.display = 'inline-flex';
+  label.style.alignItems = 'center';
+  label.style.marginRight = '0.5rem';
   container.appendChild(label);
 
   function addSubLayerCheckbox(subName) {
     const checkboxContainer = document.createElement('div');
-    checkboxContainer.style.display = 'inline-block';
+    checkboxContainer.style.display = 'inline-flex';
+    checkboxContainer.style.alignItems = 'center';
     checkboxContainer.style.marginRight = '10px';
 
     const checkbox = document.createElement('input');
@@ -898,7 +906,7 @@ document.body.addEventListener('click', function (event) {
   }
 
   // Check if the close button of the modal was clicked
-  if (event.target.classList.contains('close-btn')) {
+  if (event.target.classList.contains('close-btn') || event.target.closest('.close-btn')) {
     //|| event.target.parentElement.tagName === 'SELECT') {
     document.getElementById('details-modal').style.display = 'none';
   }
@@ -1054,7 +1062,11 @@ async function showHourlyGridEmissions(zoneName, properties, layerName) {
   const weeklyCsvFileName = `${zoneName}_weekly_summary.csv` 
   // HTML for display
   content.innerHTML = `
-  <span class="close-hourly-grid-emissions">&times;</span>
+  <button class="close-hourly-grid-emissions">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <path d="M18 6.00005L6 18M5.99995 6L17.9999 18" stroke="#020618" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
   <h1>Hourly & Weekly Grid Emissions for ${zoneName} from ---</h1>
   <div class="graph-wrapper">
     <div class="chart-container">
@@ -1389,7 +1401,9 @@ new Chart(ctxWeekly, {
   modal.style.display = 'flex';
   // event listener for the close button
   const closeButton = modal.querySelector('.close-hourly-grid-emissions');
-  closeButton.onclick = function() {
+  closeButton.onclick = function(event) {
+    event.preventDefault();
+    event.stopPropagation();
     modal.style.display = 'none';
   };
   // Close the modal if the user clicks anywhere outside of the modal content
@@ -1542,7 +1556,11 @@ async function showStateRegulations(stateAbbreviation, properties, layerName) {
 
   // Set the inner HTML
   content.innerHTML = `
-  <span class="close-btn">&times;</span>
+  <button class="close-btn">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <path d="M18 6.00005L6 18M5.99995 6L17.9999 18" stroke="#020618" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
   <h1>Regulations and Incentives for ${stateName}</h1>
   <p>Click on targets to view more information.</p>
   ${detailsHtml}
@@ -1551,7 +1569,9 @@ async function showStateRegulations(stateAbbreviation, properties, layerName) {
   modal.style.display = 'flex';
 
   const closeButton = modal.querySelector('.close-btn');
-  closeButton.onclick = function () {
+  closeButton.onclick = function (event) {
+    event.preventDefault();
+    event.stopPropagation();
     modal.style.display = 'none';
   };
 

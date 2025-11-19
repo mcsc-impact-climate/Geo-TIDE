@@ -355,15 +355,53 @@ body {
 }
 
 .modal-content {
-  background-color: #f4f4f4; /* Light gray background */
-  padding: 20px;
-  border-radius: 5px; /* Rounded corners */
-  width: 90%; /* Medium size */
-  max-width: 1000px;
-  min-width: 300px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25); /* Subtle shadow */
+  display: flex;
+  width: 52.3125rem;
+  padding: calc(0.75rem + 1.5rem) 1.25rem 1.25rem 1.25rem;
+  flex-direction: column;
+  align-items: flex-end;
+  border-radius: 0.5rem;
+  background: var(--Background-Light, #FFF);
+  box-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.15);
   font-size: 0.9375rem;
-  position: relative; /* Make close button position relative to this container */
+  position: relative;
+}
+
+.modal-content > *:not(.close-btn):not(h1):not(h2):not(h3) {
+  width: 100%;
+  align-self: flex-start;
+  color: var(--Foreground-Dark, #020618);
+  font-family: Inter, sans-serif;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.modal-content h1 {
+  align-self: stretch;
+  text-align: left;
+  margin-bottom: 0.75rem;
+}
+
+.modal-content a {
+  color: var(--Foreground-Blue, #155DFC);
+  font-family: Inter, sans-serif;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-skip-ink: auto;
+  text-decoration-thickness: auto;
+  text-underline-offset: auto;
+  text-underline-position: from-font;
+}
+
+.modal-content a:hover,
+.modal-content a:focus {
+  color: #0B3BC4;
 }
 
 .checkbox-container {
@@ -513,24 +551,66 @@ height: 100%;
 
 /* Generic dropdown container */
 .dropdown-container {
-  font-size: 0.9375rem;
   display: flex;
-  justify-content: left;
   align-items: center;
-  margin-top: 20px;
+  gap: 0.75rem;
+  align-self: stretch;
+  margin-top: 1rem;
+  font-size: 0.9375rem;
 }
 
 /* Generic dropdown label */
 .dropdown-container label {
-  margin-right: 10px;
-  font-size: 0.9375rem;
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--theme-foreground, #020618);
 }
 
 /* Generic select element */
 .dropdown-container select {
-  width: 60%;
-  padding: 5px;
-  font-size: 0.9375rem;
+  display: flex;
+  width: 35.9375rem;
+  height: var(--spacing-10, 2.5rem);
+  padding: var(--spacing-2, 0.5rem) var(--spacing-4, 1rem);
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  border-radius: var(--radius-md, 0.375rem);
+  border: 1px solid var(--Border-Primary, #E2E8F0);
+  opacity: var(--opacity-100, 1);
+  background: var(--Background-Light, #FFF);
+  color: var(--theme-foreground, #020618);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  transition: border-color 0.2s ease;
+  box-shadow: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M5.33325 10.667L7.99992 13.3337L10.6666 10.667M5.33325 5.33366L7.99992 2.66699L10.6666 5.33366' stroke='%2362748E' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: var(--spacing-4, 1rem) var(--spacing-4, 1rem);
+  padding-right: calc(var(--spacing-4, 1rem) + 1.5rem);
+  color: var(--Foreground-Dark, #020618);
+  font-family: Inter, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.dropdown-container select option {
+  color: var(--Foreground-Dark, #020618);
+  font-family: Inter, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.dropdown-container select:focus {
+  outline: none;
+  border-color: #155DFC;
+  box-shadow: none;
 }
 
 /* Area Feature dropdown specific styling */
@@ -546,11 +626,11 @@ height: 100%;
 
 /* Keep checkboxes in one row with proper spacing */
 .zef-sub-layers-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center; /* Ensures checkboxes align with the label */
-  margin-top: 20px; /* Increase spacing between checkboxes */
-  margin-right: 30px; /* Increase spacing between checkboxes */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  width: 100%;
 }
 
 /* Ensure the label and checkboxes are aligned properly */
@@ -558,6 +638,11 @@ height: 100%;
 .zef-sub-layers-container input[type='checkbox'] {
   vertical-align: middle; /* Aligns checkboxes with the label */
   margin-right: 10px; /* Add right margin for spacing */
+}
+
+.zef-sub-layers-container label {
+  display: inline-flex;
+  margin-bottom: 0;
 }
 
 .spinner-circle {
@@ -604,39 +689,79 @@ ul {
 }
 
 #regulations-content {
-  background-color: #fefefe;
-  margin: 15% auto; /* 15% from the top and centered */
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%; /* Could be more or less, depending on screen size */
-  border-radius: 5px;
-  max-height: 80vh; /* Limit the height to 80% of the viewport height */
-  overflow: auto; /* Enable vertical scrolling */
+  display: flex;
+  width: 52.3125rem;
+  padding: calc(0.75rem + 1.5rem) 1.25rem 1.25rem 1.25rem;
+  flex-direction: column;
+  align-items: flex-end;
+  border-radius: 0.5rem;
+  background: var(--Background-Light, #FFF);
+  box-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.15);
+  max-height: 80vh;
+  overflow: auto;
+  position: relative;
+}
+
+#regulations-content > *:not(.close-btn) {
+  width: 100%;
+  align-self: flex-start;
 }
 
 /* State Regulations, Styles */
 
 /* The Close Button */
 .close-btn {
-  color: #aaa;
   position: absolute;
   top: 0.75rem;     /* distance from top edge */
   right: 1.25rem;  /* distance from right edge */
-  font-size: 1.875rem;
-  font-weight: bold;
   cursor: pointer;
   padding: 0;                  /* remove any default padding */
   margin: 0;                   /* remove stray margins */
-  height: auto;                /* let the glyph define its own height */
-  width: auto;
+  width: 1.5rem;
+  height: 1.5rem;
   line-height: 1;              /* remove inherited tall line-height */
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.close-btn:hover,
-.close-btn:focus {
-  color: black;
-  text-decoration: none;
+.close-btn svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.close-btn:hover svg path,
+.close-btn:focus svg path {
+  stroke: #000;
+}
+
+.close-hourly-grid-emissions {
+  position: absolute;
+  top: 0.75rem;
+  right: 1.25rem;
   cursor: pointer;
+  padding: 0;
+  margin: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  line-height: 1;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-hourly-grid-emissions svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.close-hourly-grid-emissions:hover svg path,
+.close-hourly-grid-emissions:focus svg path {
+  stroke: #000;
 }
 
 /*Hourly Grid Emissions*/
@@ -655,11 +780,22 @@ ul {
 /* Modal Content */
 #hourly-grid-emissions-content {
   display: flex;
+  width: 52.3125rem;
+  padding: calc(0.75rem + 1.5rem) 1.25rem 1.25rem 1.25rem;
   flex-direction: column;
-  justify-content: flex-start;
-  /*gap: 0px;  Ensures no extra space between elements */
-  height: 90vh; /* Modal takes 90% of screen height */
-  width: 80vw; /* Modal width adjusts with screen */
+  align-items: flex-end;
+  border-radius: 0.5rem;
+  background: var(--Background-Light, #FFF);
+  box-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.15);
+  height: 90vh;
+  max-height: 90vh;
+  overflow: auto;
+  position: relative;
+}
+
+#hourly-grid-emissions-content > *:not(.close-hourly-grid-emissions) {
+  width: 100%;
+  align-self: flex-start;
 }
 #hourly-grid-emissions-content h1 {
   margin-bottom: 10px; /* Reduce title spacing */
@@ -704,22 +840,6 @@ ul {
 }
 
 
-/* Close Button */
-.close-hourly-grid-emissions {
-  color: #aaa;
-  position: absolute; /* Position within the modal */
-  top: 10px; /* Spacing from the top */
-  right: 15px; /* Spacing from the right */
-  font-size: 1.75rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.close-hourly-grid-emissions:hover,
-.close-hourly-grid-emissions:focus {
-  color: black;
-  text-decoration: none;
-}
 
 
 /* Collapsible header styles */
@@ -1450,7 +1570,11 @@ ul {
   max-height: none !important;       /* parent handles the clipping */
   overflow: visible !important;      /* no need to scroll here */
 }
-
-
-
-
+.dropdown-container select option {
+  color: var(--Foreground-Dark, #020618);
+  font-family: Inter, sans-serif;
+  font-size: 0.8125rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}

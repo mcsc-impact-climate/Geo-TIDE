@@ -346,21 +346,26 @@
       templateSelection: function (data) {
         const container = document.createElement("span");
         container.classList.add("uploaded-layer-pill");
-        container.style.display = "flex";
-        container.style.alignItems = "center";
-        container.style.width = "100%";
+
+        const pillBody = document.createElement("span");
+        pillBody.classList.add("uploaded-pill-body");
 
         const textNode = document.createElement("span");
+        textNode.classList.add("uploaded-pill-name");
         textNode.textContent = data.text;
-        textNode.style.flex = "1";
+        pillBody.appendChild(textNode);
+
+        const pillActions = document.createElement("span");
+        pillActions.classList.add("uploaded-pill-actions");
 
         const moreButton = document.createElement("button");
         moreButton.textContent = "More";
         moreButton.classList.add("details-btn");
         moreButton.setAttribute("data-key", data.text);
 
-        container.appendChild(textNode);
-        container.appendChild(moreButton);
+        pillActions.appendChild(moreButton);
+        container.appendChild(pillBody);
+        container.appendChild(pillActions);
 
         return container;
       },
@@ -561,7 +566,6 @@
     });
   });
 </script>
-
 
 
 

@@ -873,30 +873,23 @@ ul {
 /* Force smaller X and correct vertical alignment */
 .select2-container--default
   .select2-selection--multiple
-  .select2-selection__choice__remove {
+.select2-selection__choice__remove {
   font-family: var(--font-family-sans, Inter, system-ui, -apple-system, "Segoe UI",
                    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif) !important;
   font-size: 0.8125rem !important;
   font-weight: normal !important;
   color: var(--theme-accent-foreground, #0F172B) !important;
 
-  /* remove absolute positioning so flex can center it */
   position: static !important;
   background: transparent !important;
   border: none !important;
-  border-right: 1px solid #aaa; /* keep divider if you like */
-  padding: 0 4px !important;
-  margin-right: 0.25rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
   cursor: pointer;
-
-  /* flex-center the glyph within its own box */
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-
-  /* subtle visual balance */
-  transform: scale(0.8) translateX(-1.7rem);
-  transform-origin: center;
+  transform: none !important;
 }
 
 /* set the pill font/size once */
@@ -1440,135 +1433,270 @@ ul {
 
 /* Styling for uploaded layer selection */
 .uploaded-layer-pill {
-  background-color: #e4e4e4;
-  border-radius: 3px;
-  padding: 1px 4px; /* Tighten horizontal padding */
-  margin: 2px 2px;
-  display: inline-flex;
-  align-items: center; /* Vertically center contents */
-  font-size: var(--font-size-sm);
-  height: 24px; /* Fixed height for the pill */
-  line-height: 1; /* Remove extra line height */
-  box-sizing: border-box; /* Ensure padding doesn't add height */
-}
-
-/* Custom pill container */
-.select2-container .uploaded-layer-pill,
-.select2-results__option .uploaded-layer-pill {
+  display: flex;
+  align-items: center;
+  width: 100%;
   font-family: var(--font-family-sans, 'Inter', system-ui, -apple-system, "Segoe UI",
                    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif);
-  font-size: var(--font-size-sm);
-  font-weight: normal;
-  color: var(--theme-accent-foreground, #0F172B);
+  font-size: 0.75rem;
+  color: var(--theme-popover-foreground, #020618);
 }
 
-/* Inner text and the "More" button inherit the same font */
-.select2-container .uploaded-layer-pill > span,
-.select2-container .uploaded-layer-pill .details-btn {
-  font: inherit;
+.uploaded-pill-body {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.25rem;
+  flex: 1 1 auto;
+  align-self: stretch;
+  background: var(--Background-Light, #FFF);
+}
+
+.uploaded-pill-name {
+  flex: 1 1 auto;
   color: inherit;
-  line-height: var(--font-leading-5, 1.25rem);
 }
 
-#uploaded-layer-selection .select2-selection__choice {
-  height: 1.5rem !important; /* Force exact height */
-  display: inline-flex !important; /* Match your flex layout */
-  align-items: center !important; /* Vertical centering */
-  box-sizing: border-box !important; /* Prevent padding from adding height */
-  max-width: 14rem;           /* sets a horizontal cap */
-  white-space: nowrap;        /* prevent wrapping text */
-  overflow: hidden;           /* hide overflow */
-  text-overflow: ellipsis;    /* show "…" if truncated */
+.uploaded-pill-attributes {
+  color: var(--Foreground-Muted, #62748E);
+  font-family: Inter;
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-top: 0.25rem;
 }
 
-#uploaded-layer-selection .select2-container {
-  margin-top: 1rem;
-  min-width: 16rem !important; /* Set your desired minimum */
-  width: auto !important; /* Allow it to expand beyond the minimum */
-  max-width: 100%; /* Prevent overflow beyond parent container */
+.uploaded-pill-attributes li,
+.uploaded-pill-body .attribute-item,
+.uploaded-pill-body li {
+  color: var(--Foreground-Muted, #62748E);
+  font-family: Inter;
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  list-style-type: disc;
+  margin-left: 1rem;
 }
 
-#uploaded-layer-selection .select2-search__field {
-  min-width: 100% !important; /* Ensure it expands fully */
-  width: 100% !important;
-  box-sizing: border-box; /* Prevent overflow */
-  font-family: var(--font-family-sans, 'Inter', system-ui, -apple-system, "Segoe UI",
-                   Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif);
-  font-size: var(--font-size-sm);
-  font-weight: normal;
-  color: var(--theme-accent-foreground, #0F172B);
+.uploaded-pill-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0.25rem 0.25rem 0.25rem 0.5rem;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+  margin-left: auto;
+  background: transparent;
+}
+
+.uploaded-pill-actions .details-btn {
+  opacity: 1;
+  pointer-events: auto;
+  margin-left: 0;
 }
 
 #uploaded-layer-selection {
   position: absolute;
   width: 19.5rem;
   flex-shrink: 0;
-  border-radius: var(--Corner-Small, 0.5rem);
-  background: #FFF;
-  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
-  padding: 10px;
+  border-radius: var(--radius-md, 0.375rem);
+  border: 1px solid var(--Background-Muted, #F1F5F9);
+  background: var(--Background-Light, #FFF);
+  box-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.15);
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75rem;
   right: 1rem;
   box-sizing: border-box;
 }
 
-.uploaded-data-container{
-  position: absolute;
-  top: 275px;
-  right: 10px;
-  width: 19.5rem;
-  height: 6.75rem;
-  flex-shrink: 0;
-  border-radius: var(--Corner-Small, 0.5rem);
-  background: #FFF;
-  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
-}
-
-/* The visible "pillbox" area */
-#uploaded-layer-selection .select2-selection--multiple {
-  align-items: flex-start;
-  box-sizing: border-box !important;
-
-  /* FIXED height – this is what stops it growing */
-  height: 4rem !important;       /* tweak to your desired two-row height */
-  max-height: 4rem !important;
-
-  padding: 2px 4px !important;
-  overflow: hidden;               /* overflow handled by inner UL */
-  
-  display: block !important;         /* undo flex */
+#uploaded-layer-selection .select2-container {
   width: 100% !important;
-  box-sizing: border-box !important;
-
-  overflow-y: auto !important;       /* scroll when there are many pills */
-  overflow-x: hidden !important;     /* no horizontal scroll */
-  
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-  height: auto !important;
-  min-height: 0 !important;
-  box-sizing: border-box !important;
-  line-height: 1 !important;
+  min-width: 0 !important;
+  display: block;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
 }
 
-/* The UL that actually contains the pills + search input */
-#uploaded-layer-selection .select2-selection__rendered {
-  flex-direction: column !important;   /* stack items vertically */
-  flex-wrap: nowrap !important;        /* ⬅ prevent new columns to the right */
-  align-items: flex-start !important;
-  width: 100%;
-  box-sizing: border-box;
-
+#uploaded-layer-selection .select2-selection--multiple {
+  display: flex !important;
+  flex-direction: column;
+  width: 100% !important;
+  min-height: var(--spacing-10, 2.5rem);
+  max-height: min(calc(100vh - 45rem), 12rem);
+  padding: var(--spacing-2, 0.25rem) 0.75rem var(--spacing-2, 0.25rem) var(--spacing-2, 0.25rem);
+  gap: var(--spacing-2, 0.5rem);
+  align-items: stretch;
+  border-radius: var(--radius-md, 0.375rem);
+  border: 1px solid var(--Border-Primary, #E2E8F0);
+  background: var(--Background-Light, #FFF);
+  box-shadow: none;
+  font-size: 0.75rem;
+  color: var(--theme-popover-foreground, #020618);
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+#uploaded-layer-selection .select2-selection__rendered {
+  display: flex !important;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
   margin: 0;
   padding: 0;
-  
-  display: block !important;         /* undo flex */
-  max-height: none !important;       /* parent handles the clipping */
-  overflow: visible !important;      /* no need to scroll here */
-  
-  max-height: none !important;       /* parent handles the clipping */
-  overflow: visible !important;      /* no need to scroll here */
+  list-style: none;
+}
+
+#uploaded-layer-selection .select2-selection__rendered > li {
+  width: 100%;
+  float: none !important;
+}
+
+#uploaded-layer-selection .select2-selection__choice {
+  display: flex !important;
+  width: 100%;
+  align-items: stretch;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 1px solid var(--Border-Primary, #E2E8F0) !important;
+  border-radius: 0 !important;
+  background: var(--Background-Light, #FFF) !important;
+  color: var(--theme-foreground, #020618);
+  font-size: 0.8125rem;
+  float: none !important;
+  overflow: hidden;
+}
+
+#uploaded-layer-selection .select2-selection__choice__display,
+#uploaded-layer-selection .uploaded-pill-name {
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+  color: var(--theme-foreground, #020618);
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  padding: 0 !important;
+  width: 100%;
+  display: block;
+}
+
+#uploaded-layer-selection .select2-selection__choice .select2-selection__choice__remove {
+  order: -1;
+  display: flex;
+  padding: 0.25rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  align-self: stretch;
+  border: none;
+  border-right: 1px solid var(--Border-Primary, #E2E8F0) !important;
+  background: var(--Background-Light, #FFF);
+  margin-right: 0.5rem;
+  transform: none;
+  width: auto;
+  height: auto;
+  min-width: 2rem;
+  min-height: 2rem;
+}
+
+#uploaded-layer-selection .select2-selection__choice__remove span {
+  display: none;
+}
+
+#uploaded-layer-selection .select2-selection__choice__remove::before {
+  content: "";
+  width: var(--spacing-4, 1rem);
+  height: var(--spacing-4, 1rem);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M12 4.00003L4 12M3.99997 4L11.9999 12' stroke='%23020618' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: inline-block;
+}
+
+#uploaded-layer-selection .select2-selection__choice__remove:hover {
+  background: var(--Background-Muted, #F1F5F9);
+}
+
+#uploaded-layer-selection .select2-search--inline {
+  width: 100%;
+}
+
+#uploaded-layer-selection .select2-search__field {
+  display: block;
+  width: 100% !important;
+  min-height: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-family: var(--font-family-sans, 'Inter', system-ui, -apple-system, "Segoe UI",
+                   Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif);
+  font-size: 0.75rem;
+  color: var(--theme-popover-foreground, #020618);
+  box-sizing: border-box;
+  line-height: 1;
+  resize: none;
+  caret-color: var(--theme-popover-foreground, #020618);
+  text-indent: 0;
+  transform: translateY(-0.25rem);
+}
+
+#uploaded-layer-selection .select2-container .selection {
+  width: 100%;
+}
+
+#uploaded-layer-selection .select2-search__field::placeholder {
+  color: var(--Foreground-Muted, #62748E);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1;
+  opacity: 1;
+}
+
+.select2-container--default .select2-dropdown {
+  display: flex;
+  padding: var(--spacing-1, 0.25rem);
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--spacing-0, 0);
+  border-radius: var(--radius-md, 0.375rem) !important;
+  border: 1px solid var(--Background-Muted, #F1F5F9);
+  background: var(--Background-Light, #FFF);
+  box-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.15);
+  margin-top: 0.25rem;
+}
+
+.select2-container--default .select2-dropdown--below {
+  border-top-left-radius: var(--radius-md, 0.375rem) !important;
+  border-top-right-radius: var(--radius-md, 0.375rem) !important;
+}
+
+.select2-container--default .select2-dropdown .select2-results__option {
+  text-align: left;
+  padding-left: 0.5rem;
+}
+
+#uploaded-layer-selection .select2-results__option {
+  display: flex;
+  min-width: 8rem;
+  padding: var(--spacing-1-5, 0.375rem) var(--spacing-2, 0.5rem);
+  align-items: center;
+  gap: var(--spacing-2, 0.5rem);
+  font-size: 0.75rem;
+  color: var(--theme-popover-foreground, #020618);
+  background: var(--theme-popover, #FFF);
+}
+
+#uploaded-layer-selection .select2-results__option--highlighted.select2-results__option--selectable {
+  background: var(--Background-Muted, #F1F5F9);
+  color: var(--Foreground-Dark, #020618);
 }
 .dropdown-container select option {
   color: var(--Foreground-Dark, #020618);

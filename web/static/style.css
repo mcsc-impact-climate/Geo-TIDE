@@ -1434,7 +1434,7 @@ ul {
 /* Styling for uploaded layer selection */
 .uploaded-layer-pill {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   width: 100%;
   font-family: var(--font-family-sans, 'Inter', system-ui, -apple-system, "Segoe UI",
                    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif);

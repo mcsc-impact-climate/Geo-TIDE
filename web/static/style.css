@@ -479,7 +479,8 @@ height: 100%;
   background: var(--theme-primary, #155DFC);
   color: var(--theme-primary-foreground, #F8FAFC);
   text-align: center;
-  font-family: var(--font-family-sans, Inter);
+  font-family: var(--font-family-sans, 'Inter', system-ui, -apple-system, "Segoe UI",
+                   Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif);
   font-size: var(--font-size-sm, 1rem);
   font-style: normal;
   font-weight: var(--font-weight-medium, 500);

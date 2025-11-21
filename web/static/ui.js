@@ -1062,7 +1062,7 @@ async function showHourlyGridEmissions(zoneName, properties, layerName) {
   const weeklyCsvFileName = `${zoneName}_weekly_summary.csv` 
   // HTML for display
   content.innerHTML = `
-  <button class="close-hourly-grid-emissions">
+  <button class="close-btn">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
       <path d="M18 6.00005L6 18M5.99995 6L17.9999 18" stroke="#020618" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
@@ -1400,7 +1400,7 @@ new Chart(ctxWeekly, {
   // Display the modal
   modal.style.display = 'flex';
   // event listener for the close button
-  const closeButton = modal.querySelector('.close-hourly-grid-emissions');
+  const closeButton = modal.querySelector('.close-btn');
   closeButton.onclick = function(event) {
     event.preventDefault();
     event.stopPropagation();

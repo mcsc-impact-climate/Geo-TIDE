@@ -867,6 +867,141 @@ ul {
   background-color: #f9f9f9;
 }
 
+/* New regulation modal styles to match screenshot */
+.regulation-section {
+  margin-bottom: var(--spacing-8, 2rem);
+}
+
+#regulations-content h2 {
+  font-family: var(--font-family-sans, Inter);
+  margin: 0 -1.25rem;
+  padding: var(--spacing-4, 1rem) 1.25rem;
+  border-top: 1px solid var(--theme-border, #E2E8F0);
+}
+
+.regulation-targets {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.regulation-target-item {
+  border: none;
+  background: transparent;
+  margin: 0;
+  padding: 0;
+}
+
+.regulation-target-header {
+  display: flex;
+  align-items: center;
+  margin: 0 -1.25rem;
+  padding: var(--spacing-4, 1rem) 1.25rem;
+  background: transparent;
+  border-top: 1px solid var(--theme-border, #E2E8F0);
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.regulation-target-header:hover {
+  background: var(--theme-accent, #F8FAFC);
+}
+
+/* Ensure hover background extends fully across modal */
+.regulation-target-item:hover .regulation-target-header {
+  background: var(--theme-accent, #F8FAFC);
+}
+
+.regulation-target-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: var(--spacing-3, 0.75rem);
+  color: var(--theme-muted-foreground, #62748E);
+}
+
+.regulation-target-text {
+  flex: 1;
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: var(--font-weight-medium, 500);
+  font-family: var(--font-family-sans, Inter);
+  color: var(--theme-foreground, #020618);
+  line-height: var(--font-leading-5, 1.25rem);
+}
+
+.regulation-target-chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--theme-muted-foreground, #62748E);
+  transition: transform 0.15s ease-in-out;
+}
+
+.regulation-target-content {
+  padding: var(--spacing-4, 1rem) 0;
+  background: transparent;
+  display: block;
+}
+
+.regulation-target-content h4 {
+  /* Body/Body-normal */
+  font-family: Inter;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  color: var(--theme-foreground, #020618);
+  margin-bottom: var(--spacing-3, 0.75rem);
+  margin-top: var(--spacing-4, 1rem);
+}
+
+.regulation-target-content h4:first-child {
+  margin-top: 0;
+}
+
+.fuel-content {
+  margin-bottom: var(--spacing-4, 1rem);
+}
+
+.fuel-content p {
+  margin-bottom: var(--spacing-2, 0.5rem);
+  font-size: var(--font-size-sm, 0.875rem);
+  font-family: var(--font-family-sans, Inter);
+  line-height: var(--font-leading-5, 1.25rem);
+  color: var(--theme-foreground, #020618);
+}
+
+.fuel-content a {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  color: var(--Foreground-Blue, #155DFC);
+  font-family: Inter;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-skip-ink: auto;
+  text-decoration-thickness: auto;
+  text-underline-offset: auto;
+  text-underline-position: from-font;
+}
+
+.fuel-content a:hover {
+  opacity: 0.9;
+}
+
+/* Style helper text in regulations modal */
+#regulations-content > p {
+  color: var(--theme-muted-foreground, #62748E);
+}
+
+#regulations-content > p:last-child {
+  color: var(--theme-muted-foreground, #62748E);
+}
+
 
 /* Consolidated Select2 selection styling */
 

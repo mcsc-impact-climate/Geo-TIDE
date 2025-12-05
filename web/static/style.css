@@ -1650,7 +1650,7 @@ ul {
   font-size: 0.75rem;
   color: var(--theme-popover-foreground, #020618);
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: auto;
 }
 
 #uploaded-layer-selection .select2-selection__rendered {

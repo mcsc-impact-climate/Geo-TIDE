@@ -1348,10 +1348,27 @@ ul {
 
 
 #layer-selection {
-  max-height: 60vh; /* Layer selection can grow taller */
+  max-height: 50vh;
+  min-height: 2.5rem;
+  height: auto;
+  display: block;
   overflow-y: auto;
   overflow-x: hidden;
   scroll-behavior: smooth;
+}
+
+#layer-selection.closed {
+  height: 2.5rem !important;
+  width: 10rem !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+#uploaded-layer-selection.closed {
+  height: 2.5rem !important;
+  width: 11.75rem !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
 }
 
 #layer-selection {
@@ -1531,7 +1548,9 @@ ul {
   border-radius: 0.25rem;
   flex-wrap: wrap;
   max-width: 100%;
-  overflow: hidden;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
 }
 
 

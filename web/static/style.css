@@ -1,3 +1,130 @@
+/* Accessibility Bar (Restyling existing footer) */
+.footer__container {
+  display: flex !important;
+  width: 100% !important;
+  padding: 4px 0 8px 0 !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 0.625rem !important;
+  background: var(--Background-Muted, #F1F5F9) !important;
+  z-index: 10002 !important;
+  position: relative !important;
+  margin: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  min-height: auto !important;
+  height: auto !important;
+  bottom: auto !important; /* Override app.css bottom: 10px */
+}
+
+/* Strip pseudo-elements that might cause phantom lines or boxes */
+.footer__container::before,
+.footer__container::after,
+.footer__container .container::before,
+.footer__container .container::after,
+.footer__container .footer__nav::before,
+.footer__container .footer__nav::after {
+  content: none !important;
+  display: none !important;
+  border: none !important;
+}
+
+/* Remove influence of intermediate containers to treat link as direct child for flex alignment */
+.footer__container .container,
+.footer__container .footer__nav {
+  display: contents !important;
+  background: transparent !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+.footer__container a {
+  color: var(--Foreground-Blue, #155DFC) !important;
+  font-family: Inter !important;
+  font-size: 0.875rem !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+  line-height: normal !important;
+  text-decoration-line: underline !important;
+  text-decoration-style: solid !important;
+  text-decoration-skip-ink: auto !important;
+  text-decoration-thickness: auto !important;
+  text-underline-offset: auto !important;
+  text-underline-position: from-font !important;
+  text-decoration-color: var(--Foreground-Blue, #155DFC) !important;
+  
+  /* Ensure no extra borders mimic underlines */
+  border: none !important;
+  outline: none !important;
+  background: none !important; /* Override app.css gradients */
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  opacity: 1 !important; /* Default opacity 100% */
+}
+
+.footer__container a:visited {
+  color: var(--Foreground-Blue, #155DFC) !important;
+  text-decoration-color: var(--Foreground-Blue, #155DFC) !important;
+  opacity: 1 !important; /* Default opacity 100% */
+}
+
+.footer__container a:hover {
+  color: var(--Foreground-Blue, #155DFC) !important;
+  text-decoration-color: var(--Foreground-Blue, #155DFC) !important;
+  opacity: 0.9 !important; /* Hover opacity 90% */
+}
+
+/* Flex layout to stack map and footer */
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  margin: 0;
+  overflow: hidden;
+}
+
+/* Ensure map fills space but respects flex layout */
+#map {
+  flex: 1;
+  position: relative !important;
+  top: 0 !important;
+  height: auto !important;
+  width: 100% !important;
+}
+
+/* Wrapper handling to ensure flex propagation and no borders */
+.main_wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    border: none !important;
+}
+
+.conent_wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    border: none !important;
+}
+
 .header {
   display: none;
 }
@@ -1657,20 +1784,24 @@ ul {
   display: flex !important;
   flex-direction: column;
   gap: 0.5rem;
-  width: 100%;
+  width: auto; /* Allow the rendered list to expand horizontally */
+  min-width: 100%; /* Ensure it takes at least 100% width, but can grow */
+  flex-shrink: 0; /* Prevent the list from shrinking */
   margin: 0;
   padding: 0;
   list-style: none;
+  align-items: flex-start; /* Stop stretching items, let them size to content */
 }
 
 #uploaded-layer-selection .select2-selection__rendered > li {
-  width: 100%;
+  flex-shrink: 0; /* Prevent list items from shrinking */
   float: none !important;
+  min-width: 100%; /* Ensure items are full-width but can grow larger */
 }
 
 #uploaded-layer-selection .select2-selection__choice {
   display: flex !important;
-  width: 100%;
+  width: auto; /* Allow the choice pill to expand horizontally */
   align-items: stretch;
   margin: 0 !important;
   padding: 0 !important;
@@ -1680,7 +1811,14 @@ ul {
   color: var(--theme-foreground, #020618);
   font-size: 0.8125rem;
   float: none !important;
-  overflow: hidden;
+  overflow: visible; /* Allow content within the pill to be visible even if it overflows */
+  flex-shrink: 0; /* Prevent the pill from shrinking */
+  min-width: 100%; /* Ensure pill is full-width for short items, but can grow for long ones */
+}
+
+#uploaded-layer-selection .uploaded-pill-body {
+  flex-shrink: 0; /* Prevent it from shrinking below its content */
+  min-width: 0; /* Essential for flex items with long, non-wrapping content */
 }
 
 #uploaded-layer-selection .select2-selection__choice__display,
@@ -1692,8 +1830,11 @@ ul {
   font-weight: 400;
   font-style: normal;
   padding: 0 !important;
-  width: 100%;
+  width: auto; /* Allow the name text to expand horizontally */
   display: block;
+  white-space: nowrap; /* Prevent the name text from wrapping */
+  min-width: 0; /* Allow the text container to shrink if necessary, but white-space: nowrap will prevent text itself from shrinking */
+  flex-shrink: 0; /* Prevent it from shrinking below its content */
 }
 
 #uploaded-layer-selection .select2-selection__choice .select2-selection__choice__remove {

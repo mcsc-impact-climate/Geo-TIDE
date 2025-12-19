@@ -12,7 +12,7 @@
   margin: 0 !important;
   border: none !important;
   box-shadow: none !important;
-  min-height: auto !important;
+  min-height: 0 !important;
   height: auto !important;
   bottom: auto !important; /* Override app.css bottom: 10px */
 }
@@ -1673,6 +1673,7 @@ ul {
   display: flex;
   align-items: stretch;
   width: 100%;
+  min-width: 0; /* Allow shrinking for wrapping */
   font-family: var(--font-family-sans, 'Inter', system-ui, -apple-system, "Segoe UI",
                    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif);
   font-size: 0.75rem;
@@ -1685,6 +1686,7 @@ ul {
   gap: 0.625rem;
   padding: 0.25rem;
   flex: 1 1 auto;
+  min-width: 0; /* Allow shrinking for wrapping */
   align-self: stretch;
   background: var(--Background-Light, #FFF);
 }
@@ -1726,6 +1728,7 @@ ul {
   flex: 0 0 auto;
   margin-left: auto;
   background: transparent;
+  align-self: flex-start !important;
 }
 
 .uploaded-pill-actions .details-btn {
@@ -1801,7 +1804,8 @@ ul {
 
 #uploaded-layer-selection .select2-selection__choice {
   display: flex !important;
-  width: auto; /* Allow the choice pill to expand horizontally */
+  width: 100% !important; /* Constrain width to parent */
+  max-width: 100% !important; /* Prevent expansion */
   align-items: stretch;
   margin: 0 !important;
   padding: 0 !important;
@@ -1811,9 +1815,9 @@ ul {
   color: var(--theme-foreground, #020618);
   font-size: 0.8125rem;
   float: none !important;
-  overflow: visible; /* Allow content within the pill to be visible even if it overflows */
+  overflow: visible; /* Allow content within the pill to be visible */
   flex-shrink: 0; /* Prevent the pill from shrinking */
-  min-width: 100%; /* Ensure pill is full-width for short items, but can grow for long ones */
+  box-sizing: border-box !important; /* Include padding/border in width */
 }
 
 #uploaded-layer-selection .uploaded-pill-body {
@@ -1830,11 +1834,15 @@ ul {
   font-weight: 400;
   font-style: normal;
   padding: 0 !important;
-  width: auto; /* Allow the name text to expand horizontally */
+  width: 0 !important; /* Force flex sizing */
+  flex-basis: 0 !important; /* Force flex sizing */
   display: block;
-  white-space: nowrap; /* Prevent the name text from wrapping */
-  min-width: 0; /* Allow the text container to shrink if necessary, but white-space: nowrap will prevent text itself from shrinking */
-  flex-shrink: 0; /* Prevent it from shrinking below its content */
+  white-space: normal; /* Allow text to wrap */
+  word-break: break-word; /* Ensure long words break */
+  overflow-wrap: break-word; /* Ensure long words break */
+  min-width: 0; /* Allow the text container to shrink if necessary, for flex-grow */
+  flex-grow: 1; /* Allow the name to take up available space */
+  flex-shrink: 1; /* Allow it to shrink! */
 }
 
 #uploaded-layer-selection .select2-selection__choice .select2-selection__choice__remove {

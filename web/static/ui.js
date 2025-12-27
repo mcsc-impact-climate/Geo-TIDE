@@ -763,14 +763,22 @@ function createZefSubLayerCheckboxes(key) {
 
   const container = document.createElement('div');
   container.classList.add('zef-sub-layers-container');
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.flexWrap = 'wrap';
+  container.style.columnGap = '0.5rem';
 
   const label = document.createElement('label');
   label.textContent = 'Show sub-layers:';
+  label.style.display = 'inline-flex';
+  label.style.alignItems = 'center';
+  label.style.marginRight = '0.5rem';
   container.appendChild(label);
 
   function addSubLayerCheckbox(subName) {
     const checkboxContainer = document.createElement('div');
-    checkboxContainer.style.display = 'inline-block';
+    checkboxContainer.style.display = 'inline-flex';
+    checkboxContainer.style.alignItems = 'center';
     checkboxContainer.style.marginRight = '10px';
 
     const checkbox = document.createElement('input');
@@ -898,7 +906,7 @@ document.body.addEventListener('click', function (event) {
   }
 
   // Check if the close button of the modal was clicked
-  if (event.target.classList.contains('close-btn')) {
+  if (event.target.classList.contains('close-btn') || event.target.closest('.close-btn')) {
     //|| event.target.parentElement.tagName === 'SELECT') {
     document.getElementById('details-modal').style.display = 'none';
   }
@@ -1054,7 +1062,11 @@ async function showHourlyGridEmissions(zoneName, properties, layerName) {
   const weeklyCsvFileName = `${zoneName}_weekly_summary.csv` 
   // HTML for display
   content.innerHTML = `
-  <span class="close-hourly-grid-emissions">&times;</span>
+  <button class="close-btn">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <path d="M18 6.00005L6 18M5.99995 6L17.9999 18" stroke="#020618" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
   <h1>Hourly & Weekly Grid Emissions for ${zoneName} from ---</h1>
   <div class="graph-wrapper">
     <div class="chart-container">
@@ -1388,8 +1400,10 @@ new Chart(ctxWeekly, {
   // Display the modal
   modal.style.display = 'flex';
   // event listener for the close button
-  const closeButton = modal.querySelector('.close-hourly-grid-emissions');
-  closeButton.onclick = function() {
+  const closeButton = modal.querySelector('.close-btn');
+  closeButton.onclick = function(event) {
+    event.preventDefault();
+    event.stopPropagation();
     modal.style.display = 'none';
   };
   // Close the modal if the user clicks anywhere outside of the modal content
@@ -1504,6 +1518,48 @@ async function showStateRegulations(stateAbbreviation, properties, layerName) {
   }
 
   // Generate HTML content based on the grouped data
+  const getTargetIcon = (target) => {
+    switch (target) {
+      case 'fuel_use':
+        return `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M9.33105 8.66455H10.6641C11.0176 8.66455 11.3567 8.80499 11.6066 9.05498C11.8566 9.30497 11.9971 9.64402 11.9971 9.99756V11.3306C11.9971 11.6841 12.1375 12.0232 12.3875 12.2731C12.6375 12.5231 12.9765 12.6636 13.3301 12.6636C13.6836 12.6636 14.0227 12.5231 14.2727 12.2731C14.5226 12.0232 14.6631 11.6841 14.6631 11.3306V6.66637C14.6632 6.49047 14.6286 6.31629 14.5611 6.15385C14.4936 5.99142 14.3946 5.84394 14.2698 5.71994L11.9971 3.33252" stroke="#020618" stroke-width="1.33301" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M9.33105 13.9966V3.33252C9.33105 2.97898 9.19061 2.63993 8.94063 2.38994C8.69064 2.13995 8.35158 1.99951 7.99805 1.99951H3.33252C2.97898 1.99951 2.63993 2.13995 2.38994 2.38994C2.13995 2.63993 1.99951 2.97898 1.99951 3.33252V13.9966" stroke="#020618" stroke-width="1.33301" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M1.33301 13.9966H9.99756" stroke="#020618" stroke-width="1.33301" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M1.99951 5.99854H9.33105" stroke="#020618" stroke-width="1.33301" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>`;
+      case 'infrastructure':
+        return `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <g clip-path="url(#clip0_2983_659)">
+            <path d="M3.99902 14.6631V2.66602C3.99902 2.31248 4.13946 1.97342 4.38945 1.72344C4.63944 1.47345 4.9785 1.33301 5.33203 1.33301H10.6641C11.0176 1.33301 11.3567 1.47345 11.6066 1.72344C11.8566 1.97342 11.9971 2.31248 11.9971 2.66602V14.6631H3.99902Z" stroke="#020618" stroke-width="1.33301" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3.99902 7.99805H2.66602C2.31248 7.99805 1.97342 8.13849 1.72344 8.38848C1.47345 8.63846 1.33301 8.97752 1.33301 9.33105V13.3301C1.33301 13.6836 1.47345 14.0227 1.72344 14.2727C1.97342 14.5226 2.31248 14.6631 2.66602 14.6631H3.99902" stroke="#020618" stroke-width="1.33301" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M11.9971 5.99854H13.3301C13.6836 5.99854 14.0227 6.13898 14.2727 6.38896C14.5226 6.63895 14.6631 6.97801 14.6631 7.33154V13.3301C14.6631 13.6836 14.5226 14.0227 14.2727 14.2727C14.0227 14.5226 13.6836 14.6631 13.3301 14.6631H11.9971" stroke="#020618" stroke-width="1.33301" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M6.66504 3.99902H9.33105" stroke="#020618" stroke-width="1.33301" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M6.66504 6.66504H9.33105" stroke="#020618" stroke-width="1.33301" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M6.66504 9.33105H9.33105" stroke="#020618" stroke-width="1.33301" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M6.66504 11.9971H9.33105" stroke="#020618" stroke-width="1.33301" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+          <defs>
+            <clipPath id="clip0_2983_659">
+              <rect width="15.9961" height="15.9961" fill="white"/>
+            </clipPath>
+          </defs>
+        </svg>`;
+      case 'vehicle_purchase':
+        return `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M12.6636 11.3306H13.9966C14.3965 11.3306 14.6631 11.064 14.6631 10.6641V8.66455C14.6631 8.0647 14.1965 7.53149 13.6633 7.39819C12.4636 7.06494 10.6641 6.66504 10.6641 6.66504C10.6641 6.66504 9.79761 5.73193 9.19775 5.13208C8.8645 4.86548 8.4646 4.66553 7.99805 4.66553H3.33252C2.93262 4.66553 2.59937 4.93213 2.39941 5.26538L1.46631 7.19824C1.37805 7.45566 1.33301 7.72592 1.33301 7.99805V10.6641C1.33301 11.064 1.59961 11.3306 1.99951 11.3306H3.33252" stroke="#020618" stroke-width="1.33301" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4.66553 12.6636C5.40173 12.6636 5.99854 12.0668 5.99854 11.3306C5.99854 10.5944 5.40173 9.99756 4.66553 9.99756C3.92933 9.99756 3.33252 10.5944 3.33252 11.3306C3.33252 12.0668 3.92933 12.6636 4.66553 12.6636Z" stroke="#020618" stroke-width="1.33301" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M5.99854 11.3306H9.99756" stroke="#020618" stroke-width="1.33301" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M11.3306 12.6636C12.0668 12.6636 12.6636 12.0668 12.6636 11.3306C12.6636 10.5944 12.0668 9.99756 11.3306 9.99756C10.5944 9.99756 9.99756 10.5944 9.99756 11.3306C9.99756 12.0668 10.5944 12.6636 11.3306 12.6636Z" stroke="#020618" stroke-width="1.33301" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>`;
+      default:
+        return `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></svg>`;
+    }
+  };
+
+  const getChevronIcon = () => {
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>`;
+  };
+
   for (const supportType in groupedData) {
     if (Object.keys(groupedData[supportType]).length > 0) {
       let typeContent = ''; // Temporary variable to store the content for this support type
@@ -1518,7 +1574,18 @@ async function showStateRegulations(stateAbbreviation, properties, layerName) {
             let fuelContent = `<h4>${fuel}</h4><div class="fuel-content">`;
             groupedData[supportType][supportTarget][fuel].forEach((row) => {
               const nameHtml = row.Types.split(', ').length > 1 ? `<i>${row.Name}</i>` : row.Name;
-              fuelContent += `<p>${nameHtml}: <a href="${row.Source}" target="_blank">${row.Source}</a></p>`;
+              const externalLinkIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M8.74634 1.74927H12.2449V5.2478" stroke="#155DFC" stroke-width="1.16618" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5.83093 8.16325L12.2449 1.74927" stroke="#155DFC" stroke-width="1.16618" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M10.4956 7.58016V11.0787C10.4956 11.388 10.3727 11.6846 10.154 11.9033C9.93534 12.122 9.63872 12.2449 9.32943 12.2449H2.91545C2.60616 12.2449 2.30953 12.122 2.09083 11.9033C1.87213 11.6846 1.74927 11.388 1.74927 11.0787V4.66471C1.74927 4.35542 1.87213 4.0588 2.09083 3.8401C2.30953 3.6214 2.60616 3.49854 2.91545 3.49854H6.41398" stroke="#155DFC" stroke-width="1.16618" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>`;
+              if (row.Source && row.Source.trim() !== '') {
+                // Make the name a clickable link if there's a source URL with external link icon
+                fuelContent += `<p><a href="${row.Source}" target="_blank">${nameHtml} ${externalLinkIcon}</a></p>`;
+              } else {
+                // Just display the name if there's no source URL
+                fuelContent += `<p>${nameHtml}</p>`;
+              }
             });
             fuelContent += `</div>`;
             targetContent += fuelContent;
@@ -1526,23 +1593,43 @@ async function showStateRegulations(stateAbbreviation, properties, layerName) {
         }
         if (targetContent) {
           // Add the support target header and content if there are valid entries
-          const supportTarget1 = supportTarget
+          const supportTargetFormatted = supportTarget
             .toLowerCase()
             .replace(/_/g, ' ')
             .replace(/\b\w/g, (char) => char.toUpperCase());
-          typeContent += `<h3 class="collapsible">Target: ${supportTarget1}</h3><div class="content">${targetContent}</div>`;
+          const targetIcon = getTargetIcon(supportTarget);
+          const chevronIcon = getChevronIcon();
+          typeContent += `
+            <div class="regulation-target-item" data-target="${supportTarget}">
+              <div class="regulation-target-header">
+                <div class="regulation-target-icon">${targetIcon}</div>
+                <span class="regulation-target-text">Target: ${supportTargetFormatted}</span>
+                <div class="regulation-target-chevron">${chevronIcon}</div>
+              </div>
+              <div class="regulation-target-content" style="display: none;">${targetContent}</div>
+            </div>`;
         }
       }
       if (typeContent) {
         // Add the support type header and content if there are valid entries
-        detailsHtml += `<h2><ins>${supportType}</ins></h2>${typeContent}<div style="margin-bottom: 15px;"></div>`;
+        detailsHtml += `
+          <div class="regulation-section">
+            <h2>${supportType}</h2>
+            <div class="regulation-targets">
+              ${typeContent}
+            </div>
+          </div>`;
       }
     }
   }
 
   // Set the inner HTML
   content.innerHTML = `
-  <span class="close-btn">&times;</span>
+  <button class="close-btn">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <path d="M18 6.00005L6 18M5.99995 6L17.9999 18" stroke="#020618" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
   <h1>Regulations and Incentives for ${stateName}</h1>
   <p>Click on targets to view more information.</p>
   ${detailsHtml}
@@ -1551,19 +1638,29 @@ async function showStateRegulations(stateAbbreviation, properties, layerName) {
   modal.style.display = 'flex';
 
   const closeButton = modal.querySelector('.close-btn');
-  closeButton.onclick = function () {
+  closeButton.onclick = function (event) {
+    event.preventDefault();
+    event.stopPropagation();
     modal.style.display = 'none';
   };
 
-  // Add collapsible functionality to only h3 elements
-  document.querySelectorAll('h3.collapsible').forEach((header) => {
+  // Add collapsible functionality to regulation target items
+  document.querySelectorAll('.regulation-target-item').forEach((item) => {
+    const header = item.querySelector('.regulation-target-header');
+    const content = item.querySelector('.regulation-target-content');
+    const chevron = item.querySelector('.regulation-target-chevron svg path');
+    
+    // Set initial state to collapsed (chevron pointing down)
+    if (chevron) chevron.setAttribute('d', 'm6 9 6 6 6-6');
+    
     header.addEventListener('click', function () {
-      this.classList.toggle('active');
-      const content = this.nextElementSibling;
-      if (content.style.display === 'block') {
+      const isExpanded = content.style.display === 'block';
+      if (isExpanded) {
         content.style.display = 'none';
+        if (chevron) chevron.setAttribute('d', 'm6 9 6 6 6-6');
       } else {
         content.style.display = 'block';
+        if (chevron) chevron.setAttribute('d', 'm18 15-6-6-6 6');
       }
     });
   });

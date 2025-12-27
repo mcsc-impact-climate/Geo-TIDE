@@ -34,11 +34,7 @@
 
 <div
   id="layer-selection"
-  style="
-    bottom: 7rem;
-    height: 35rem;
-    width: 19.5rem;
-  "
+  style=""
 >
 
 
@@ -346,21 +342,26 @@
       templateSelection: function (data) {
         const container = document.createElement("span");
         container.classList.add("uploaded-layer-pill");
-        container.style.display = "flex";
-        container.style.alignItems = "center";
-        container.style.width = "100%";
+
+        const pillBody = document.createElement("span");
+        pillBody.classList.add("uploaded-pill-body");
 
         const textNode = document.createElement("span");
+        textNode.classList.add("uploaded-pill-name");
         textNode.textContent = data.text;
-        textNode.style.flex = "1";
+        pillBody.appendChild(textNode);
+
+        const pillActions = document.createElement("span");
+        pillActions.classList.add("uploaded-pill-actions");
 
         const moreButton = document.createElement("button");
         moreButton.textContent = "More";
         moreButton.classList.add("details-btn");
         moreButton.setAttribute("data-key", data.text);
 
-        container.appendChild(textNode);
-        container.appendChild(moreButton);
+        pillActions.appendChild(moreButton);
+        container.appendChild(pillBody);
+        container.appendChild(pillActions);
 
         return container;
       },
@@ -389,7 +390,11 @@
 
 <div id="details-modal" class="modal">
   <div class="modal-content">
-    <span class="close-btn">&times;</span>
+    <button class="close-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M18 6.00005L6 18M5.99995 6L17.9999 18" stroke="#020618" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
     <h1 id="details-title">Details</h1>
     <p id="details-content">Details content goes here.</p>
   </div>
@@ -397,7 +402,11 @@
 
 <div id="regulations-modal" class="modal">
   <div id="regulations-content" class="modal-content">
-    <span class="close-btn">&times;</span>
+    <button class="close-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M18 6.00005L6 18M5.99995 6L17.9999 18" stroke="#020618" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
     <h1 style="margin-bottom: 0.75rem">Regulations and Incentives for [State Name]</h1>
     <p><em>Click on targets to view more information.</em></p>
     <div id="regulations-details">
@@ -415,7 +424,11 @@
 
 <div id="hourly-grid-emissions-modal" class="modal">
   <div id="hourly-grid-emissions-content" class="modal-content">
-    <span class="close-hourly-grid-emissions">&times;</span>
+    <button class="close-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M18 6.00005L6 18M5.99995 6L17.9999 18" stroke="#020618" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
     <h1 id="emissions-title">Hourly & Weekly Grid Emissions</h1>
 
   </div>
@@ -460,25 +473,107 @@
 <script type="module"  src='{% static "main.js"%}'></script>
 
 <div id="clear-confirmation-modal" class="modal" style="display: none">
-  <div class="modal-content" style="max-width: 400px">
-    <span class="close-btn" id="clear-modal-close">&times;</span>
-    <h1>Confirm Clear</h1>
-    <p>
-      This will remove all displayed layers from the map and reset selections.
-      Are you sure you want to continue?
-    </p>
-    <div
-      style="
-        display: flex;
+  <div class="modal-content" style="
+    display: flex;
+    width: 27.5rem;
+    padding: 2rem;
+    flex-direction: column;
+    border-radius: 0.5rem;
+    border: 0.625px solid #E2E8F0;
+    background: #FFF;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.02), 0 1px 2px 0 rgba(0, 0, 0, 0.04), 0 4px 8px 0 rgba(0, 0, 0, 0.04), 0 12px 24px 0 rgba(0, 0, 0, 0.06), 0 24px 48px 0 rgba(0, 0, 0, 0.08);
+    position: relative;
+  ">
+    <button class="close-btn" id="clear-modal-close" style="
+      width: 1.5rem; 
+      height: 1.5rem; 
+      flex-shrink: 0;
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+    ">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M18 6.00005L6 18M5.99995 6L17.9999 18" stroke="#020618" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    
+    <!-- Hazard Icon with label -->
+    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+      <div style="
+        width: 3rem; 
+        height: 3rem; 
+        background-color: rgba(21, 93, 252, 0.1); 
+        border-radius: 50%; 
+        display: flex; 
+        align-items: center; 
         justify-content: center;
-        gap: 10px;
-        margin-top: 20px;
-      "
-    >
-      <button id="cancel-clear" class="cancel-clear">Cancel</button>
-      <button id="confirm-clear" class="confirm-clear">
-        Yes, clear layers
-      </button>
+        flex-shrink: 0;
+      ">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M12 17.2466V16.7466" stroke="#155DFC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 8.5V14" stroke="#155DFC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M5.98054 10.7615C8.60706 5.58716 9.92033 3 12 3C14.0797 3 15.3929 5.58716 18.0195 10.7615L18.3467 11.4063C20.5294 15.7061 21.6207 17.856 20.6344 19.428C19.648 21 17.2078 21 12.3273 21H11.6727C6.7922 21 4.35195 21 3.36563 19.428C2.37931 17.856 3.47062 15.7061 5.65325 11.4063L5.98054 10.7615Z" stroke="#155DFC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h1 style="margin: 0; display: flex; align-items: center; height: 3rem; line-height: 1; color: #020618;">Confirm Clear</h1>
+    </div>
+    
+    <!-- Text content -->
+    <div style="margin-bottom: 2rem;">
+      <p style="margin: 0; font-size: 0.9375rem; color: var(--theme-foreground, #020618);">
+        This will remove all displayed layers from the map and reset selections. Are you sure you want to continue?
+      </p>
+    </div>
+    
+    <div style="
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+    ">
+      <button id="cancel-clear" style="
+        padding: 12px 24px;
+        border: 1px solid var(--Border-Primary, #E2E8F0);
+        background: var(--Background-Light, #FFF);
+        color: var(--theme-foreground, #020618);
+        border-radius: var(--radius-md, 0.375rem);
+        font-family: var(--font-family-sans, 'Inter', system-ui, -apple-system, 'Segoe UI',
+                         Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif) !important;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        flex: 1;
+        max-width: 180px;
+        transition: background-color 0.2s ease;
+      " onmouseover="this.style.backgroundColor='var(--Background-Muted, #F1F5F9)'" onmouseout="this.style.backgroundColor='var(--Background-Light, #FFF)'">Cancel</button>
+      <button id="confirm-clear" style="
+        color: var(--theme-destructive-foreground, #F8FAFC);
+        text-align: center;
+        font-family: var(--font-family-sans, 'Inter', system-ui, -apple-system, 'Segoe UI',
+                         Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif) !important;
+        font-size: var(--font-size-sm, 1rem);
+        font-style: normal;
+        font-weight: var(--font-weight-medium, 500);
+        line-height: var(--font-leading-5, 1.25rem);
+        letter-spacing: var(--font-tracking-normal, 0rem);
+        
+        display: inline-flex;
+        height: var(--spacing-10, 2.5rem);
+        padding: var(--spacing-2, 0.5rem) var(--spacing-4, 1rem);
+        justify-content: center;
+        align-items: center;
+        gap: var(--spacing-1-5, 0.375rem);
+        flex-shrink: 0;
+        border-radius: var(--radius-md, 0.375rem);
+        opacity: var(--opacity-100, 1);
+        background: var(--theme-destructive, #E7000B);
+        box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+        border: none;
+        outline: none;
+        cursor: pointer;
+        flex: 1;
+        max-width: 200px;
+        transition: opacity 0.2s ease;
+      " onmouseover="this.style.opacity='var(--opacity-90, 0.9)'" onmouseout="this.style.opacity='var(--opacity-100, 1)'">Yes, clear all layers</button>
     </div>
   </div>
 </div>
@@ -545,7 +640,5 @@
     });
   });
 </script>
-
-
 
 

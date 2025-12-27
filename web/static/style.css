@@ -1,3 +1,130 @@
+/* Accessibility Bar (Restyling existing footer) */
+.footer__container {
+  display: flex !important;
+  width: 100% !important;
+  padding: 4px 0 8px 0 !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 0.625rem !important;
+  background: var(--Background-Muted, #F1F5F9) !important;
+  z-index: 10002 !important;
+  position: relative !important;
+  margin: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  min-height: 0 !important;
+  height: auto !important;
+  bottom: auto !important; /* Override app.css bottom: 10px */
+}
+
+/* Strip pseudo-elements that might cause phantom lines or boxes */
+.footer__container::before,
+.footer__container::after,
+.footer__container .container::before,
+.footer__container .container::after,
+.footer__container .footer__nav::before,
+.footer__container .footer__nav::after {
+  content: none !important;
+  display: none !important;
+  border: none !important;
+}
+
+/* Remove influence of intermediate containers to treat link as direct child for flex alignment */
+.footer__container .container,
+.footer__container .footer__nav {
+  display: contents !important;
+  background: transparent !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+.footer__container a {
+  color: var(--Foreground-Blue, #155DFC) !important;
+  font-family: Inter !important;
+  font-size: 0.875rem !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+  line-height: normal !important;
+  text-decoration-line: underline !important;
+  text-decoration-style: solid !important;
+  text-decoration-skip-ink: auto !important;
+  text-decoration-thickness: auto !important;
+  text-underline-offset: auto !important;
+  text-underline-position: from-font !important;
+  text-decoration-color: var(--Foreground-Blue, #155DFC) !important;
+  
+  /* Ensure no extra borders mimic underlines */
+  border: none !important;
+  outline: none !important;
+  background: none !important; /* Override app.css gradients */
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  opacity: 1 !important; /* Default opacity 100% */
+}
+
+.footer__container a:visited {
+  color: var(--Foreground-Blue, #155DFC) !important;
+  text-decoration-color: var(--Foreground-Blue, #155DFC) !important;
+  opacity: 1 !important; /* Default opacity 100% */
+}
+
+.footer__container a:hover {
+  color: var(--Foreground-Blue, #155DFC) !important;
+  text-decoration-color: var(--Foreground-Blue, #155DFC) !important;
+  opacity: 0.9 !important; /* Hover opacity 90% */
+}
+
+/* Flex layout to stack map and footer */
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  margin: 0;
+  overflow: hidden;
+}
+
+/* Ensure map fills space but respects flex layout */
+#map {
+  flex: 1;
+  position: relative !important;
+  top: 0 !important;
+  height: auto !important;
+  width: 100% !important;
+}
+
+/* Wrapper handling to ensure flex propagation and no borders */
+.main_wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    border: none !important;
+}
+
+.conent_wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    border: none !important;
+}
+
 .header {
   display: none;
 }
@@ -228,7 +355,7 @@ body {
   position: absolute;
   width: 6px;
   height: 6px;
-  background: #5b52a6;
+  background: #155DFC;
   border-radius: 50%;
   animation: lds-default 1.2s linear infinite;
 }
@@ -355,15 +482,53 @@ body {
 }
 
 .modal-content {
-  background-color: #f4f4f4; /* Light gray background */
-  padding: 20px;
-  border-radius: 5px; /* Rounded corners */
-  width: 90%; /* Medium size */
-  max-width: 1000px;
-  min-width: 300px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25); /* Subtle shadow */
+  display: flex;
+  width: 52.3125rem;
+  padding: calc(0.75rem + 1.5rem) 1.25rem 1.25rem 1.25rem;
+  flex-direction: column;
+  align-items: flex-end;
+  border-radius: 0.5rem;
+  background: var(--Background-Light, #FFF);
+  box-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.15);
   font-size: 0.9375rem;
-  position: relative; /* Make close button position relative to this container */
+  position: relative;
+}
+
+.modal-content > *:not(.close-btn):not(h1):not(h2):not(h3) {
+  width: 100%;
+  align-self: flex-start;
+  color: var(--Foreground-Dark, #020618);
+  font-family: Inter, sans-serif;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.modal-content h1 {
+  align-self: stretch;
+  text-align: left;
+  margin-bottom: 0.75rem;
+}
+
+.modal-content a {
+  color: var(--Foreground-Blue, #155DFC);
+  font-family: Inter, sans-serif;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-skip-ink: auto;
+  text-decoration-thickness: auto;
+  text-underline-offset: auto;
+  text-underline-position: from-font;
+}
+
+.modal-content a:hover,
+.modal-content a:focus {
+  color: #0B3BC4;
 }
 
 .checkbox-container {
@@ -441,7 +606,8 @@ height: 100%;
   background: var(--theme-primary, #155DFC);
   color: var(--theme-primary-foreground, #F8FAFC);
   text-align: center;
-  font-family: var(--font-family-sans, Inter);
+  font-family: var(--font-family-sans, 'Inter', system-ui, -apple-system, "Segoe UI",
+                   Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif);
   font-size: var(--font-size-sm, 1rem);
   font-style: normal;
   font-weight: var(--font-weight-medium, 500);
@@ -513,24 +679,66 @@ height: 100%;
 
 /* Generic dropdown container */
 .dropdown-container {
-  font-size: 0.9375rem;
   display: flex;
-  justify-content: left;
   align-items: center;
-  margin-top: 20px;
+  gap: 0.75rem;
+  align-self: stretch;
+  margin-top: 1rem;
+  font-size: 0.9375rem;
 }
 
 /* Generic dropdown label */
 .dropdown-container label {
-  margin-right: 10px;
-  font-size: 0.9375rem;
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--theme-foreground, #020618);
 }
 
 /* Generic select element */
 .dropdown-container select {
-  width: 60%;
-  padding: 5px;
-  font-size: 0.9375rem;
+  display: flex;
+  width: 35.9375rem;
+  height: var(--spacing-10, 2.5rem);
+  padding: var(--spacing-2, 0.5rem) var(--spacing-4, 1rem);
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  border-radius: var(--radius-md, 0.375rem);
+  border: 1px solid var(--Border-Primary, #E2E8F0);
+  opacity: var(--opacity-100, 1);
+  background: var(--Background-Light, #FFF);
+  color: var(--theme-foreground, #020618);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  transition: border-color 0.2s ease;
+  box-shadow: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M5.33325 10.667L7.99992 13.3337L10.6666 10.667M5.33325 5.33366L7.99992 2.66699L10.6666 5.33366' stroke='%2362748E' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: var(--spacing-4, 1rem) var(--spacing-4, 1rem);
+  padding-right: calc(var(--spacing-4, 1rem) + 1.5rem);
+  color: var(--Foreground-Dark, #020618);
+  font-family: Inter, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.dropdown-container select option {
+  color: var(--Foreground-Dark, #020618);
+  font-family: Inter, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.dropdown-container select:focus {
+  outline: none;
+  border-color: #155DFC;
+  box-shadow: none;
 }
 
 /* Area Feature dropdown specific styling */
@@ -546,11 +754,11 @@ height: 100%;
 
 /* Keep checkboxes in one row with proper spacing */
 .zef-sub-layers-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center; /* Ensures checkboxes align with the label */
-  margin-top: 20px; /* Increase spacing between checkboxes */
-  margin-right: 30px; /* Increase spacing between checkboxes */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  width: 100%;
 }
 
 /* Ensure the label and checkboxes are aligned properly */
@@ -558,6 +766,11 @@ height: 100%;
 .zef-sub-layers-container input[type='checkbox'] {
   vertical-align: middle; /* Aligns checkboxes with the label */
   margin-right: 10px; /* Add right margin for spacing */
+}
+
+.zef-sub-layers-container label {
+  display: inline-flex;
+  margin-bottom: 0;
 }
 
 .spinner-circle {
@@ -604,40 +817,54 @@ ul {
 }
 
 #regulations-content {
-  background-color: #fefefe;
-  margin: 15% auto; /* 15% from the top and centered */
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%; /* Could be more or less, depending on screen size */
-  border-radius: 5px;
-  max-height: 80vh; /* Limit the height to 80% of the viewport height */
-  overflow: auto; /* Enable vertical scrolling */
+  display: flex;
+  width: 52.3125rem;
+  padding: calc(0.75rem + 1.5rem) 1.25rem 1.25rem 1.25rem;
+  flex-direction: column;
+  align-items: flex-end;
+  border-radius: 0.5rem;
+  background: var(--Background-Light, #FFF);
+  box-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.15);
+  max-height: 80vh;
+  overflow: auto;
+  position: relative;
+}
+
+#regulations-content > *:not(.close-btn) {
+  width: 100%;
+  align-self: flex-start;
 }
 
 /* State Regulations, Styles */
 
 /* The Close Button */
 .close-btn {
-  color: #aaa;
   position: absolute;
   top: 0.75rem;     /* distance from top edge */
   right: 1.25rem;  /* distance from right edge */
-  font-size: 1.875rem;
-  font-weight: bold;
   cursor: pointer;
   padding: 0;                  /* remove any default padding */
   margin: 0;                   /* remove stray margins */
-  height: auto;                /* let the glyph define its own height */
-  width: auto;
+  width: 1.5rem;
+  height: 1.5rem;
   line-height: 1;              /* remove inherited tall line-height */
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.close-btn:hover,
-.close-btn:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
+.close-btn svg {
+  width: 1.5rem;
+  height: 1.5rem;
 }
+
+.close-btn:hover svg path,
+.close-btn:focus svg path {
+  stroke: #000;
+}
+
 
 /*Hourly Grid Emissions*/
 /* General Modal Styles */
@@ -655,11 +882,22 @@ ul {
 /* Modal Content */
 #hourly-grid-emissions-content {
   display: flex;
+  width: 52.3125rem;
+  padding: calc(0.75rem + 1.5rem) 1.25rem 1.25rem 1.25rem;
   flex-direction: column;
-  justify-content: flex-start;
-  /*gap: 0px;  Ensures no extra space between elements */
-  height: 90vh; /* Modal takes 90% of screen height */
-  width: 80vw; /* Modal width adjusts with screen */
+  align-items: flex-start;
+  border-radius: 0.5rem;
+  background: var(--Background-Light, #FFF);
+  box-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.15);
+  height: 90vh;
+  max-height: 90vh;
+  overflow: auto;
+  position: relative;
+}
+
+#hourly-grid-emissions-content > *:not(.close-btn) {
+  width: 100%;
+  align-self: flex-start;
 }
 #hourly-grid-emissions-content h1 {
   margin-bottom: 10px; /* Reduce title spacing */
@@ -704,22 +942,6 @@ ul {
 }
 
 
-/* Close Button */
-.close-hourly-grid-emissions {
-  color: #aaa;
-  position: absolute; /* Position within the modal */
-  top: 10px; /* Spacing from the top */
-  right: 15px; /* Spacing from the right */
-  font-size: 1.75rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.close-hourly-grid-emissions:hover,
-.close-hourly-grid-emissions:focus {
-  color: black;
-  text-decoration: none;
-}
 
 
 /* Collapsible header styles */
@@ -746,6 +968,141 @@ ul {
   background-color: #f9f9f9;
 }
 
+/* New regulation modal styles to match screenshot */
+.regulation-section {
+  margin-bottom: var(--spacing-8, 2rem);
+}
+
+#regulations-content h2 {
+  font-family: var(--font-family-sans, Inter);
+  margin: 0 -1.25rem;
+  padding: var(--spacing-4, 1rem) 1.25rem;
+  border-top: 1px solid var(--theme-border, #E2E8F0);
+}
+
+.regulation-targets {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.regulation-target-item {
+  border: none;
+  background: transparent;
+  margin: 0;
+  padding: 0;
+}
+
+.regulation-target-header {
+  display: flex;
+  align-items: center;
+  margin: 0 -1.25rem;
+  padding: var(--spacing-4, 1rem) 1.25rem;
+  background: transparent;
+  border-top: 1px solid var(--theme-border, #E2E8F0);
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.regulation-target-header:hover {
+  background: var(--theme-accent, #F8FAFC);
+}
+
+/* Ensure hover background extends fully across modal */
+.regulation-target-item:hover .regulation-target-header {
+  background: var(--theme-accent, #F8FAFC);
+}
+
+.regulation-target-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: var(--spacing-3, 0.75rem);
+  color: var(--theme-muted-foreground, #62748E);
+}
+
+.regulation-target-text {
+  flex: 1;
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: var(--font-weight-medium, 500);
+  font-family: var(--font-family-sans, Inter);
+  color: var(--theme-foreground, #020618);
+  line-height: var(--font-leading-5, 1.25rem);
+}
+
+.regulation-target-chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--theme-muted-foreground, #62748E);
+  transition: transform 0.15s ease-in-out;
+}
+
+.regulation-target-content {
+  padding: var(--spacing-4, 1rem) 0;
+  background: transparent;
+  display: block;
+}
+
+.regulation-target-content h4 {
+  /* Body/Body-normal */
+  font-family: Inter;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  color: var(--theme-foreground, #020618);
+  margin-bottom: var(--spacing-3, 0.75rem);
+  margin-top: var(--spacing-4, 1rem);
+}
+
+.regulation-target-content h4:first-child {
+  margin-top: 0;
+}
+
+.fuel-content {
+  margin-bottom: var(--spacing-4, 1rem);
+}
+
+.fuel-content p {
+  margin-bottom: var(--spacing-2, 0.5rem);
+  font-size: var(--font-size-sm, 0.875rem);
+  font-family: var(--font-family-sans, Inter);
+  line-height: var(--font-leading-5, 1.25rem);
+  color: var(--theme-foreground, #020618);
+}
+
+.fuel-content a {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  color: var(--Foreground-Blue, #155DFC);
+  font-family: Inter;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-skip-ink: auto;
+  text-decoration-thickness: auto;
+  text-underline-offset: auto;
+  text-underline-position: from-font;
+}
+
+.fuel-content a:hover {
+  opacity: 0.9;
+}
+
+/* Style helper text in regulations modal */
+#regulations-content > p {
+  color: var(--theme-muted-foreground, #62748E);
+}
+
+#regulations-content > p:last-child {
+  color: var(--theme-muted-foreground, #62748E);
+}
+
 
 /* Consolidated Select2 selection styling */
 
@@ -753,30 +1110,23 @@ ul {
 /* Force smaller X and correct vertical alignment */
 .select2-container--default
   .select2-selection--multiple
-  .select2-selection__choice__remove {
+.select2-selection__choice__remove {
   font-family: var(--font-family-sans, Inter, system-ui, -apple-system, "Segoe UI",
                    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif) !important;
   font-size: 0.8125rem !important;
   font-weight: normal !important;
   color: var(--theme-accent-foreground, #0F172B) !important;
 
-  /* remove absolute positioning so flex can center it */
   position: static !important;
   background: transparent !important;
   border: none !important;
-  border-right: 1px solid #aaa; /* keep divider if you like */
-  padding: 0 4px !important;
-  margin-right: 0.25rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
   cursor: pointer;
-
-  /* flex-center the glyph within its own box */
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-
-  /* subtle visual balance */
-  transform: scale(0.8) translateX(-1.7rem);
-  transform-origin: center;
+  transform: none !important;
 }
 
 /* set the pill font/size once */
@@ -998,10 +1348,27 @@ ul {
 
 
 #layer-selection {
-  max-height: 60vh; /* Layer selection can grow taller */
+  max-height: 50vh;
+  min-height: 2.5rem;
+  height: auto;
+  display: block;
   overflow-y: auto;
   overflow-x: hidden;
   scroll-behavior: smooth;
+}
+
+#layer-selection.closed {
+  height: 2.5rem !important;
+  width: 10rem !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+#uploaded-layer-selection.closed {
+  height: 2.5rem !important;
+  width: 11.75rem !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
 }
 
 #layer-selection {
@@ -1181,7 +1548,9 @@ ul {
   border-radius: 0.25rem;
   flex-wrap: wrap;
   max-width: 100%;
-  overflow: hidden;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
 }
 
 
@@ -1320,137 +1689,298 @@ ul {
 
 /* Styling for uploaded layer selection */
 .uploaded-layer-pill {
-  background-color: #e4e4e4;
-  border-radius: 3px;
-  padding: 1px 4px; /* Tighten horizontal padding */
-  margin: 2px 2px;
-  display: inline-flex;
-  align-items: center; /* Vertically center contents */
-  font-size: var(--font-size-sm);
-  height: 24px; /* Fixed height for the pill */
-  line-height: 1; /* Remove extra line height */
-  box-sizing: border-box; /* Ensure padding doesn't add height */
-}
-
-/* Custom pill container */
-.select2-container .uploaded-layer-pill,
-.select2-results__option .uploaded-layer-pill {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0; /* Allow shrinking for wrapping */
   font-family: var(--font-family-sans, 'Inter', system-ui, -apple-system, "Segoe UI",
                    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif);
-  font-size: var(--font-size-sm);
-  font-weight: normal;
-  color: var(--theme-accent-foreground, #0F172B);
+  font-size: 0.75rem;
+  color: var(--theme-popover-foreground, #020618);
 }
 
-/* Inner text and the "More" button inherit the same font */
-.select2-container .uploaded-layer-pill > span,
-.select2-container .uploaded-layer-pill .details-btn {
-  font: inherit;
+.uploaded-pill-body {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.25rem;
+  flex: 1 1 auto;
+  min-width: 0; /* Allow shrinking for wrapping */
+  align-self: stretch;
+  background: var(--Background-Light, #FFF);
+}
+
+.uploaded-pill-name {
+  flex: 1 1 auto;
   color: inherit;
-  line-height: var(--font-leading-5, 1.25rem);
 }
 
-#uploaded-layer-selection .select2-selection__choice {
-  height: 1.5rem !important; /* Force exact height */
-  display: inline-flex !important; /* Match your flex layout */
-  align-items: center !important; /* Vertical centering */
-  box-sizing: border-box !important; /* Prevent padding from adding height */
-  max-width: 14rem;           /* sets a horizontal cap */
-  white-space: nowrap;        /* prevent wrapping text */
-  overflow: hidden;           /* hide overflow */
-  text-overflow: ellipsis;    /* show "…" if truncated */
+.uploaded-pill-attributes {
+  color: var(--Foreground-Muted, #62748E);
+  font-family: Inter;
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-top: 0.25rem;
 }
 
-#uploaded-layer-selection .select2-container {
-  margin-top: 1rem;
-  min-width: 16rem !important; /* Set your desired minimum */
-  width: auto !important; /* Allow it to expand beyond the minimum */
-  max-width: 100%; /* Prevent overflow beyond parent container */
+.uploaded-pill-attributes li,
+.uploaded-pill-body .attribute-item,
+.uploaded-pill-body li {
+  color: var(--Foreground-Muted, #62748E);
+  font-family: Inter;
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  list-style-type: disc;
+  margin-left: 1rem;
 }
 
-#uploaded-layer-selection .select2-search__field {
-  min-width: 100% !important; /* Ensure it expands fully */
-  width: 100% !important;
-  box-sizing: border-box; /* Prevent overflow */
-  font-family: var(--font-family-sans, 'Inter', system-ui, -apple-system, "Segoe UI",
-                   Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif);
-  font-size: var(--font-size-sm);
-  font-weight: normal;
-  color: var(--theme-accent-foreground, #0F172B);
+.uploaded-pill-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0.25rem 0.25rem 0.25rem 0.5rem;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+  margin-left: auto;
+  background: transparent;
+  align-self: flex-start !important;
+}
+
+.uploaded-pill-actions .details-btn {
+  opacity: 1;
+  pointer-events: auto;
+  margin-left: 0;
 }
 
 #uploaded-layer-selection {
   position: absolute;
   width: 19.5rem;
   flex-shrink: 0;
-  border-radius: var(--Corner-Small, 0.5rem);
-  background: #FFF;
-  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
-  padding: 10px;
+  border-radius: var(--radius-md, 0.375rem);
+  border: 1px solid var(--Background-Muted, #F1F5F9);
+  background: var(--Background-Light, #FFF);
+  box-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.15);
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75rem;
   right: 1rem;
   box-sizing: border-box;
 }
 
-.uploaded-data-container{
-  position: absolute;
-  top: 275px;
-  right: 10px;
-  width: 19.5rem;
-  height: 6.75rem;
-  flex-shrink: 0;
-  border-radius: var(--Corner-Small, 0.5rem);
-  background: #FFF;
-  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
-}
-
-/* The visible "pillbox" area */
-#uploaded-layer-selection .select2-selection--multiple {
-  align-items: flex-start;
-  box-sizing: border-box !important;
-
-  /* FIXED height – this is what stops it growing */
-  height: 4rem !important;       /* tweak to your desired two-row height */
-  max-height: 4rem !important;
-
-  padding: 2px 4px !important;
-  overflow: hidden;               /* overflow handled by inner UL */
-  
-  display: block !important;         /* undo flex */
+#uploaded-layer-selection .select2-container {
   width: 100% !important;
-  box-sizing: border-box !important;
-
-  overflow-y: auto !important;       /* scroll when there are many pills */
-  overflow-x: hidden !important;     /* no horizontal scroll */
-  
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-  height: auto !important;
-  min-height: 0 !important;
-  box-sizing: border-box !important;
-  line-height: 1 !important;
+  min-width: 0 !important;
+  display: block;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
 }
 
-/* The UL that actually contains the pills + search input */
-#uploaded-layer-selection .select2-selection__rendered {
-  flex-direction: column !important;   /* stack items vertically */
-  flex-wrap: nowrap !important;        /* ⬅ prevent new columns to the right */
-  align-items: flex-start !important;
-  width: 100%;
-  box-sizing: border-box;
-
+#uploaded-layer-selection .select2-selection--multiple {
+  display: flex !important;
+  flex-direction: column;
+  width: 100% !important;
+  min-height: var(--spacing-10, 2.5rem);
+  max-height: min(calc(100vh - 45rem), 12rem);
+  padding: var(--spacing-2, 0.25rem) 0.75rem var(--spacing-2, 0.25rem) var(--spacing-2, 0.25rem);
+  gap: var(--spacing-2, 0.5rem);
+  align-items: stretch;
+  border-radius: var(--radius-md, 0.375rem);
+  border: 1px solid var(--Border-Primary, #E2E8F0);
+  background: var(--Background-Light, #FFF);
+  box-shadow: none;
+  font-size: 0.75rem;
+  color: var(--theme-popover-foreground, #020618);
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: auto;
+}
+
+#uploaded-layer-selection .select2-selection__rendered {
+  display: flex !important;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: auto; /* Allow the rendered list to expand horizontally */
+  min-width: 100%; /* Ensure it takes at least 100% width, but can grow */
+  flex-shrink: 0; /* Prevent the list from shrinking */
   margin: 0;
   padding: 0;
-  
-  display: block !important;         /* undo flex */
-  max-height: none !important;       /* parent handles the clipping */
-  overflow: visible !important;      /* no need to scroll here */
-  
-  max-height: none !important;       /* parent handles the clipping */
-  overflow: visible !important;      /* no need to scroll here */
+  list-style: none;
+  align-items: flex-start; /* Stop stretching items, let them size to content */
 }
 
+#uploaded-layer-selection .select2-selection__rendered > li {
+  flex-shrink: 0; /* Prevent list items from shrinking */
+  float: none !important;
+  min-width: 100%; /* Ensure items are full-width but can grow larger */
+}
 
+#uploaded-layer-selection .select2-selection__choice {
+  display: flex !important;
+  width: 100% !important; /* Constrain width to parent */
+  max-width: 100% !important; /* Prevent expansion */
+  align-items: stretch;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 1px solid var(--Border-Primary, #E2E8F0) !important;
+  border-radius: 0 !important;
+  background: var(--Background-Light, #FFF) !important;
+  color: var(--theme-foreground, #020618);
+  font-size: 0.8125rem;
+  float: none !important;
+  overflow: visible; /* Allow content within the pill to be visible */
+  flex-shrink: 0; /* Prevent the pill from shrinking */
+  box-sizing: border-box !important; /* Include padding/border in width */
+}
 
+#uploaded-layer-selection .uploaded-pill-body {
+  flex-shrink: 0; /* Prevent it from shrinking below its content */
+  min-width: 0; /* Essential for flex items with long, non-wrapping content */
+}
 
+#uploaded-layer-selection .select2-selection__choice__display,
+#uploaded-layer-selection .uploaded-pill-name {
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+  color: var(--theme-foreground, #020618);
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  padding: 0 !important;
+  width: 0 !important; /* Force flex sizing */
+  flex-basis: 0 !important; /* Force flex sizing */
+  display: block;
+  white-space: normal; /* Allow text to wrap */
+  word-break: break-word; /* Ensure long words break */
+  overflow-wrap: break-word; /* Ensure long words break */
+  min-width: 0; /* Allow the text container to shrink if necessary, for flex-grow */
+  flex-grow: 1; /* Allow the name to take up available space */
+  flex-shrink: 1; /* Allow it to shrink! */
+}
+
+#uploaded-layer-selection .select2-selection__choice .select2-selection__choice__remove {
+  order: -1;
+  display: flex;
+  padding: 0.25rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  align-self: stretch;
+  border: none;
+  border-right: 1px solid var(--Border-Primary, #E2E8F0) !important;
+  background: var(--Background-Light, #FFF);
+  margin-right: 0.5rem;
+  transform: none;
+  width: auto;
+  height: auto;
+  min-width: 2rem;
+  min-height: 2rem;
+}
+
+#uploaded-layer-selection .select2-selection__choice__remove span {
+  display: none;
+}
+
+#uploaded-layer-selection .select2-selection__choice__remove::before {
+  content: "";
+  width: var(--spacing-4, 1rem);
+  height: var(--spacing-4, 1rem);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M12 4.00003L4 12M3.99997 4L11.9999 12' stroke='%23020618' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: inline-block;
+}
+
+#uploaded-layer-selection .select2-selection__choice__remove:hover {
+  background: var(--Background-Muted, #F1F5F9);
+}
+
+#uploaded-layer-selection .select2-search--inline {
+  width: 100%;
+}
+
+#uploaded-layer-selection .select2-search__field {
+  display: block;
+  width: 100% !important;
+  min-height: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-family: var(--font-family-sans, 'Inter', system-ui, -apple-system, "Segoe UI",
+                   Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif);
+  font-size: 0.75rem;
+  color: var(--theme-popover-foreground, #020618);
+  box-sizing: border-box;
+  line-height: 1;
+  resize: none;
+  caret-color: var(--theme-popover-foreground, #020618);
+  text-indent: 0;
+  transform: translateY(-0.25rem);
+}
+
+#uploaded-layer-selection .select2-container .selection {
+  width: 100%;
+}
+
+#uploaded-layer-selection .select2-search__field::placeholder {
+  color: var(--Foreground-Muted, #62748E);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1;
+  opacity: 1;
+}
+
+.select2-container--default .select2-dropdown {
+  display: flex;
+  padding: var(--spacing-1, 0.25rem);
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--spacing-0, 0);
+  border-radius: var(--radius-md, 0.375rem) !important;
+  border: 1px solid var(--Background-Muted, #F1F5F9);
+  background: var(--Background-Light, #FFF);
+  box-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.15);
+  margin-top: 0.25rem;
+}
+
+.select2-container--default .select2-dropdown--below {
+  border-top-left-radius: var(--radius-md, 0.375rem) !important;
+  border-top-right-radius: var(--radius-md, 0.375rem) !important;
+}
+
+.select2-container--default .select2-dropdown .select2-results__option {
+  text-align: left;
+  padding-left: 0.5rem;
+}
+
+#uploaded-layer-selection .select2-results__option {
+  display: flex;
+  min-width: 8rem;
+  padding: var(--spacing-1-5, 0.375rem) var(--spacing-2, 0.5rem);
+  align-items: center;
+  gap: var(--spacing-2, 0.5rem);
+  font-size: 0.75rem;
+  color: var(--theme-popover-foreground, #020618);
+  background: var(--theme-popover, #FFF);
+}
+
+#uploaded-layer-selection .select2-results__option--highlighted.select2-results__option--selectable {
+  background: var(--Background-Muted, #F1F5F9);
+  color: var(--Foreground-Dark, #020618);
+}
+.dropdown-container select option {
+  color: var(--Foreground-Dark, #020618);
+  font-family: Inter, sans-serif;
+  font-size: 0.8125rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}

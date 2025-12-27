@@ -25,10 +25,10 @@ function placePanels() {
 }
 
 // Panel state management
-let publicDataOpen = true;
-let uploadedDataOpen = true;
+let publicDataOpen = true; // Default open
+let uploadedDataOpen = true; // Default open
 
-function togglePublicData() {
+function updatePublicPanel() {
   const content = document.getElementById('public-data-content');
   const chevron = document.getElementById('public-chevron-path');
   const layerSelection = document.getElementById('layer-selection');
@@ -36,18 +36,18 @@ function togglePublicData() {
   
   if (!content || !chevron || !layerSelection || !header) return;
   
-  publicDataOpen = !publicDataOpen;
-  
+  // Reset inline styles to let CSS classes take over
+  layerSelection.style.height = '';
+  layerSelection.style.width = '';
+
   if (publicDataOpen) {
-    content.style.display = 'block';
-    layerSelection.style.height = '35rem';
-    layerSelection.style.width = '19.5rem';
+    content.style.display = ''; // Let CSS handle display (flex)
+    layerSelection.classList.remove('closed');
     chevron.setAttribute('d', 'm6 6 6 6 6-6M6 12l6 6 6-6');
     header.classList.remove('closed');
   } else {
     content.style.display = 'none';
-    layerSelection.style.height = '2.5rem';
-    layerSelection.style.width = '10rem';
+    layerSelection.classList.add('closed');
     chevron.setAttribute('d', 'm18 12-6-6-6 6m12 6-6-6-6 6');
     header.classList.add('closed');
   }
@@ -55,28 +55,38 @@ function togglePublicData() {
   setTimeout(() => placePanels(), 50);
 }
 
-function toggleUploadedData() {
+function togglePublicData() {
+  publicDataOpen = !publicDataOpen;
+  updatePublicPanel();
+}
+
+function updateUploadedPanel() {
   const content = document.getElementById('uploaded-data-content');
   const chevron = document.getElementById('uploaded-chevron-path');
   const uploadedPanel = document.getElementById('uploaded-layer-selection');
   
   if (!content || !chevron || !uploadedPanel) return;
   
-  uploadedDataOpen = !uploadedDataOpen;
-  
+  // Reset inline styles
+  uploadedPanel.style.height = '';
+  uploadedPanel.style.width = '';
+
   if (uploadedDataOpen) {
-    content.style.display = 'block';
-    uploadedPanel.style.height = 'auto';
-    uploadedPanel.style.width = '19.5rem';
+    content.style.display = ''; // Let CSS handle display
+    uploadedPanel.classList.remove('closed');
     chevron.setAttribute('d', 'm6 6 6 6 6-6M6 12l6 6 6-6');
   } else {
     content.style.display = 'none';
-    uploadedPanel.style.height = '2.5rem';
-    uploadedPanel.style.width = '11.75rem';
+    uploadedPanel.classList.add('closed');
     chevron.setAttribute('d', 'm18 12-6-6-6 6m12 6-6-6-6 6');
   }
   
   setTimeout(() => placePanels(), 50);
+}
+
+function toggleUploadedData() {
+  uploadedDataOpen = !uploadedDataOpen;
+  updateUploadedPanel();
 }
 
 function initPanelToggles() {
@@ -112,6 +122,11 @@ function initH3SectionToggles() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+  // Ensure panels are initialized in the correct state
+  // We start them as open, so we call update to ensure classes are removed and inline styles cleared
+  updatePublicPanel();
+  updateUploadedPanel();
+
   setTimeout(() => placePanels(), 50);
   initPanelToggles();
   initH3SectionToggles();

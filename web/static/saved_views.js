@@ -231,9 +231,9 @@ function showModal(title, text, onConfirm, isDestructive = false) {
   textEl.textContent = text;
   
   if (isDestructive) {
-    confirmBtn.classList.add('is-destructive');
+    confirmBtn.style.backgroundColor = 'var(--theme-destructive, #E7000B)';
   } else {
-    confirmBtn.classList.remove('is-destructive');
+    confirmBtn.style.backgroundColor = 'var(--Foreground-Blue, #155DFC)';
   }
 
   modal.style.display = 'flex';

@@ -4,22 +4,47 @@ import { layerCache } from './layer-utils.js';
 
 export function initDownload() {
   const downloadBtn = document.getElementById('download-btn');
-  if (downloadBtn) {
-    downloadBtn.onclick = handleDownload;
+  const pdfBtn = document.getElementById('download-pdf-btn');
+  const geojsonBtn = document.getElementById('download-geojson-btn');
+  const dropdown = document.querySelector('.download-dropdown');
+
+  if (downloadBtn && dropdown) {
+    downloadBtn.onclick = (e) => {
+      e.stopPropagation();
+      dropdown.classList.toggle('show');
+    };
   }
-}
 
-async function handleDownload() {
-  // 1. Download GeoJSONs
-  downloadActiveGeoJSONs();
+  if (pdfBtn) {
+    pdfBtn.onclick = (e) => {
+      e.stopPropagation();
+      dropdown.classList.remove('show');
+      downloadMapPDF();
+    };
+  }
 
-  // 2. Download PDF
-  await downloadMapPDF();
+  if (geojsonBtn) {
+    geojsonBtn.onclick = (e) => {
+      e.stopPropagation();
+      dropdown.classList.remove('show');
+      downloadActiveGeoJSONs();
+    };
+  }
+
+  // Close dropdown when clicking outside
+  window.addEventListener('click', () => {
+    if (dropdown) dropdown.classList.remove('show');
+  });
 }
 
 function downloadActiveGeoJSONs() {
   const selectedLayers = getSelectedLayers();
   
+  if (selectedLayers.length === 0) {
+    alert('No active layers selected for GeoJSON download.');
+    return;
+  }
+
   selectedLayers.forEach(layerName => {
     const layer = layerCache[layerName];
     if (layer) {

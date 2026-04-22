@@ -9,6 +9,7 @@ import {
 } from './map.js';
 import { populateLayerDropdown, getSelectedLayers } from './ui.js';
 import { initSavedViews } from './saved_views.js';
+import { initDownload } from './download.js';
 
 let geojsonNames = {};
 
@@ -43,6 +44,7 @@ fetch(GET_GEOJSONS)
     attachEventListeners(); // Attach event listeners after populating the dropdown
     initMap(); // Initialize the map after populating the dropdown
     initSavedViews(); // Initialize Saved Views after map
+    initDownload(); // Initialize Download after map
     map.on('pointermove', handleMapHover);
     map.on('singleclick', handleMapClick);
   })

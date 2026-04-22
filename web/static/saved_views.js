@@ -112,14 +112,6 @@ export function renderViews() {
             <path d="M13.446 3.87397C13.7984 3.52168 13.9964 3.04382 13.9965 2.54553C13.9965 2.04725 13.7986 1.56934 13.4463 1.21696C13.094 0.86457 12.6162 0.666566 12.1179 0.666504C11.6196 0.666441 11.1417 0.864325 10.7893 1.21662L1.89416 10.1138C1.73941 10.2681 1.62497 10.4581 1.56091 10.667L0.680457 13.5676C0.663231 13.6252 0.66193 13.6865 0.676692 13.7448C0.691453 13.8031 0.721727 13.8564 0.764301 13.8989C0.806874 13.9414 0.86016 13.9716 0.918504 13.9862C0.976849 14.0009 1.03808 13.9995 1.09569 13.9822L3.99698 13.1024C4.20571 13.0389 4.39567 12.9252 4.55018 12.7711L13.446 3.87397Z" stroke="#020618" stroke-width="1.33301" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </button>
-        <button class="icon-btn update-btn" title="Update with current state">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M1.99951 7.99805C1.99951 6.40714 2.6315 4.88139 3.75644 3.75644C4.88139 2.6315 6.40714 1.99951 7.99805 1.99951C9.675 2.00582 11.2846 2.66017 12.4903 3.82573L13.9966 5.33203" stroke="#020618" stroke-width="1.33301" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M13.9966 1.99951V5.33203H10.6641" stroke="#020618" stroke-width="1.33301" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M13.9966 7.99805C13.9966 9.58896 13.3646 11.1147 12.2397 12.2397C11.1147 13.3646 9.58896 13.9966 7.99805 13.9966C6.32109 13.9903 4.7115 13.3359 3.50581 12.1704L1.99951 10.6641" stroke="#020618" stroke-width="1.33301" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M5.33203 10.6641H1.99951V13.9966" stroke="#020618" stroke-width="1.33301" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
         <button class="icon-btn delete-btn" title="Delete">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path d="M1.99951 3.99902H13.9966" stroke="#E7000B" stroke-width="1.33301" stroke-linecap="round" stroke-linejoin="round"/>
@@ -144,6 +136,12 @@ export function renderViews() {
       });
       input.select();
     }
+  }
+
+  // Handle empty state
+  const empty = document.querySelector('.saved-views-empty');
+  if (empty) {
+    empty.style.display = views.length === 0 ? 'block' : 'none';
   }
 
   // Trigger panel positioning update
@@ -191,24 +189,6 @@ export function handleLoad(id) {
   }
 }
 
-export function handleUpdate(id) {
-  const views = loadViews();
-  const index = views.findIndex(v => v.id === id);
-  if (index === -1) return;
-
-  const newState = extractStateFromApp();
-  views[index].state = newState;
-  views[index].timestamp = new Date().toISOString();
-  
-  saveViewsToStorage(views);
-  lastLoadedState = newState;
-  renderViews();
-
-  const item = document.querySelector(`.saved-view-item[data-id="${id}"]`);
-  item?.classList.add('flash-success');
-  setTimeout(() => item?.classList.remove('flash-success'), 1000);
-}
-
 export function handleDelete(id) {
   const views = loadViews();
   const view = views.find(v => v.id === id);
@@ -251,9 +231,9 @@ function showModal(title, text, onConfirm, isDestructive = false) {
   textEl.textContent = text;
   
   if (isDestructive) {
-    confirmBtn.style.background = 'var(--theme-destructive, #E7000B)';
+    confirmBtn.classList.add('is-destructive');
   } else {
-    confirmBtn.style.background = 'var(--Foreground-Blue, #155DFC)';
+    confirmBtn.classList.remove('is-destructive');
   }
 
   modal.style.display = 'flex';
@@ -280,6 +260,26 @@ export function initSavedViews() {
   
   const saveBtn = document.querySelector('.save-view-btn');
   if (saveBtn) saveBtn.onclick = handleSave;
+
+  const sessionsBtn = document.getElementById('sessions-btn');
+  const sessionsPanel = document.getElementById('sessions-panel');
+  const closeSessionsBtn = document.getElementById('close-sessions');
+  const appContainer = document.getElementById('app-container');
+
+  if (sessionsBtn && sessionsPanel) {
+    sessionsBtn.onclick = () => {
+      sessionsPanel.classList.toggle('open');
+      if (appContainer) appContainer.classList.toggle('panel-open');
+      renderViews();
+    };
+  }
+
+  if (closeSessionsBtn && sessionsPanel) {
+    closeSessionsBtn.onclick = () => {
+      sessionsPanel.classList.remove('open');
+      if (appContainer) appContainer.classList.remove('panel-open');
+    };
+  }
   
   const list = document.querySelector('.saved-views-list');
   if (list) {
@@ -291,8 +291,6 @@ export function initSavedViews() {
       if (e.target.closest('.edit-btn')) {
         editingId = id;
         renderViews();
-      } else if (e.target.closest('.update-btn')) {
-        handleUpdate(id);
       } else if (e.target.closest('.delete-btn')) {
         handleDelete(id);
       } else if (e.target.closest('.view-main')) {

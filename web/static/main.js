@@ -8,6 +8,7 @@ import {
   map,
 } from './map.js';
 import { populateLayerDropdown, getSelectedLayers } from './ui.js';
+import { initSavedViews } from './saved_views.js';
 
 let geojsonNames = {};
 
@@ -41,6 +42,7 @@ fetch(GET_GEOJSONS)
     populateLayerDropdown(geojsonNames);
     attachEventListeners(); // Attach event listeners after populating the dropdown
     initMap(); // Initialize the map after populating the dropdown
+    initSavedViews(); // Initialize Saved Views after map
     map.on('pointermove', handleMapHover);
     map.on('singleclick', handleMapClick);
   })

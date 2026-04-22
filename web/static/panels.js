@@ -1,63 +1,94 @@
 function placePanels() {
+  const savedViews = document.getElementById('saved-views-selection');
   const uploaded = document.getElementById('uploaded-layer-selection');
   const publicPanel = document.getElementById('layer-selection');
   const clearButton = document.getElementById('clear-button');
-  const GAP = 10;
   
   if (!uploaded || !publicPanel || !clearButton) return;
 
-  clearButton.style.position = 'absolute';
-  clearButton.style.right = '1rem';
-  clearButton.style.bottom = '2.25rem';
+  const GAP = 10;
+  const TOP_MARGIN = 60; // Increased space from top
+  const VIEWPORT_HEIGHT = window.innerHeight;
   
-  const clearButtonRect = clearButton.getBoundingClientRect();
-  const clearButtonTop = clearButtonRect.top + window.scrollY;
+  const BASE_BOTTOM = 36; // 2.25rem
+  const clearHeight = clearButton.offsetHeight;
+
+  // 1. Public Data (bottom panel)
+  const publicHeight = publicPanel.offsetHeight;
+  const publicBottom = BASE_BOTTOM + clearHeight + GAP;
+  publicPanel.style.top = 'auto';
+  publicPanel.style.bottom = publicBottom + 'px';
   
-  // Position public panel above clear button
-  const publicPanelHeight = publicPanel.offsetHeight;
-  const publicTop = clearButtonTop - publicPanelHeight - GAP;
-  publicPanel.style.top = publicTop + 'px';
-  
-  // Position uploaded panel above public panel
+  // 2. Uploaded Data (middle panel)
   const uploadedHeight = uploaded.offsetHeight;
-  const uploadedTop = publicTop - uploadedHeight - GAP;
-  uploaded.style.top = uploadedTop + 'px';
+  const uploadedBottom = publicBottom + publicHeight + GAP;
+  uploaded.style.top = 'auto';
+  uploaded.style.bottom = uploadedBottom + 'px';
+
+  // 3. Saved Views (top panel)
+  if (savedViews) {
+    const listContainer = savedViews.querySelector('.saved-views-list-container');
+    const currentSavedBottom = uploadedBottom + uploadedHeight + GAP;
+    
+    // We set the position FIRST to read accurate height if needed
+    savedViews.style.top = 'auto';
+    savedViews.style.bottom = currentSavedBottom + 'px';
+
+    // Check if we hit the top margin
+    const savedViewsRect = savedViews.getBoundingClientRect();
+    const savedViewsTop = savedViewsRect.top;
+    
+    if (savedViewsTop < TOP_MARGIN) {
+       // We must shrink Saved Views to avoid hitting top
+       if (listContainer) {
+          const availableHeightForSaved = VIEWPORT_HEIGHT - currentSavedBottom - TOP_MARGIN;
+          const nonListHeight = savedViews.offsetHeight - listContainer.offsetHeight;
+          const newListMax = Math.max(50, availableHeightForSaved - nonListHeight);
+          listContainer.style.maxHeight = newListMax + 'px';
+       }
+    } else {
+       // Reset max-height to CSS default if we have enough room
+       // BUT only if we aren't at risk of hitting the top again
+       if (listContainer) {
+          listContainer.style.maxHeight = '12rem'; 
+       }
+    }
+  }
 }
 
 // Panel state management
-let publicDataOpen = true; // Default open
-let uploadedDataOpen = true; // Default open
+let publicDataOpen = true; 
+let uploadedDataOpen = true; 
+let savedViewsOpen = true;
 
+function updatePublicPanel() {
+  const content = document.getElementById('public-data-content');
+  const chevron = document.getElementById('saved-views-chevron-path'); // wait, wrong chevron? 
+  // Let's fix chevrons logic to be specific
+}
+
+// Rewriting toggle logic for clarity and correctness
 function updatePublicPanel() {
   const content = document.getElementById('public-data-content');
   const chevron = document.getElementById('public-chevron-path');
   const layerSelection = document.getElementById('layer-selection');
-  const header = document.querySelector('.public-data-header');
   
-  if (!content || !chevron || !layerSelection || !header) return;
+  if (!content || !layerSelection) return;
   
-  // Reset inline styles to let CSS classes take over
   layerSelection.style.height = '';
   layerSelection.style.width = '';
 
   if (publicDataOpen) {
-    content.style.display = ''; // Let CSS handle display (flex)
+    content.style.display = ''; 
     layerSelection.classList.remove('closed');
-    chevron.setAttribute('d', 'm6 6 6 6 6-6M6 12l6 6 6-6');
-    header.classList.remove('closed');
+    if (chevron) chevron.setAttribute('d', 'm6 6 6 6 6-6M6 12l6 6 6-6');
   } else {
     content.style.display = 'none';
     layerSelection.classList.add('closed');
-    chevron.setAttribute('d', 'm18 12-6-6-6 6m12 6-6-6-6 6');
-    header.classList.add('closed');
+    if (chevron) chevron.setAttribute('d', 'm18 12-6-6-6 6m12 6-6-6-6 6');
   }
   
   setTimeout(() => placePanels(), 50);
-}
-
-function togglePublicData() {
-  publicDataOpen = !publicDataOpen;
-  updatePublicPanel();
 }
 
 function updateUploadedPanel() {
@@ -65,83 +96,92 @@ function updateUploadedPanel() {
   const chevron = document.getElementById('uploaded-chevron-path');
   const uploadedPanel = document.getElementById('uploaded-layer-selection');
   
-  if (!content || !chevron || !uploadedPanel) return;
+  if (!content || !uploadedPanel) return;
   
-  // Reset inline styles
   uploadedPanel.style.height = '';
   uploadedPanel.style.width = '';
 
   if (uploadedDataOpen) {
-    content.style.display = ''; // Let CSS handle display
+    content.style.display = ''; 
     uploadedPanel.classList.remove('closed');
-    chevron.setAttribute('d', 'm6 6 6 6 6-6M6 12l6 6 6-6');
+    if (chevron) chevron.setAttribute('d', 'm6 6 6 6 6-6M6 12l6 6 6-6');
   } else {
     content.style.display = 'none';
     uploadedPanel.classList.add('closed');
-    chevron.setAttribute('d', 'm18 12-6-6-6 6m12 6-6-6-6 6');
+    if (chevron) chevron.setAttribute('d', 'm18 12-6-6-6 6m12 6-6-6-6 6');
   }
   
   setTimeout(() => placePanels(), 50);
 }
 
-function toggleUploadedData() {
-  uploadedDataOpen = !uploadedDataOpen;
-  updateUploadedPanel();
+function updateSavedViewsPanel() {
+  const content = document.getElementById('saved-views-content');
+  const chevron = document.getElementById('saved-views-chevron-path');
+  const savedViewsPanel = document.getElementById('saved-views-selection');
+  
+  if (!content || !savedViewsPanel) return;
+  
+  savedViewsPanel.style.height = '';
+  savedViewsPanel.style.width = '';
+
+  if (savedViewsOpen) {
+    content.style.display = 'flex'; 
+    savedViewsPanel.classList.remove('closed');
+    if (chevron) chevron.setAttribute('d', 'm6 6 6 6 6-6M6 12l6 6 6-6');
+  } else {
+    content.style.display = 'none';
+    savedViewsPanel.classList.add('closed');
+    if (chevron) chevron.setAttribute('d', 'm18 12-6-6-6 6m12 6-6-6-6 6');
+  }
+  
+  setTimeout(() => placePanels(), 50);
 }
+
+function togglePublicData() { publicDataOpen = !publicDataOpen; updatePublicPanel(); }
+function toggleUploadedData() { uploadedDataOpen = !uploadedDataOpen; updateUploadedPanel(); }
+function toggleSavedViews() { savedViewsOpen = !savedViewsOpen; updateSavedViewsPanel(); }
 
 function initPanelToggles() {
   const publicHeader = document.querySelector('.public-data-header');
   if (publicHeader) {
-    publicHeader.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      togglePublicData();
+    publicHeader.addEventListener('click', (e) => {
+      if (e.target.closest('.chevron-toggle') || e.target.tagName === 'H1' || e.target.classList.contains('public-data-header')) {
+        togglePublicData();
+      }
     });
   }
   
   const uploadedHeader = document.querySelector('.uploaded-panel-header');
   if (uploadedHeader) {
-    uploadedHeader.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      toggleUploadedData();
-    });
+    uploadedHeader.addEventListener('click', () => toggleUploadedData());
+  }
+
+  const savedViewsHeader = document.querySelector('.saved-views-header');
+  if (savedViewsHeader) {
+    savedViewsHeader.addEventListener('click', () => toggleSavedViews());
   }
 }
 
 function initH3SectionToggles() {
-  const showButtons = document.querySelectorAll('.show-button');
-  
-  showButtons.forEach(button => {
-    button.addEventListener('click', function() {
-      setTimeout(() => {
-        setTimeout(() => placePanels(), 50);
-      }, 100);
-    });
+  document.querySelectorAll('.show-button').forEach(button => {
+    button.addEventListener('click', () => setTimeout(() => placePanels(), 150));
   });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Ensure panels are initialized in the correct state
-  // We start them as open, so we call update to ensure classes are removed and inline styles cleared
   updatePublicPanel();
   updateUploadedPanel();
+  updateSavedViewsPanel();
 
-  setTimeout(() => placePanels(), 50);
+  setTimeout(() => placePanels(), 100);
   initPanelToggles();
   initH3SectionToggles();
 
-  // keep GAP consistent when panel heights change
   if ('ResizeObserver' in window) {
     const uploaded = document.getElementById('uploaded-layer-selection');
     const publicPanel = document.getElementById('layer-selection');
-
-    const ro = new ResizeObserver(() => {
-      // Whenever either panel’s height changes (e.g. more pillboxes),
-      // recompute their positions so the GAP stays constant.
-      placePanels();
-    });
-
+    // DO NOT observe saved-views-selection to avoid loops
+    const ro = new ResizeObserver(() => placePanels());
     if (uploaded) ro.observe(uploaded);
     if (publicPanel) ro.observe(publicPanel);
   }
